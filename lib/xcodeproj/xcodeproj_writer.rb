@@ -222,10 +222,17 @@ module Xcodegen
 				!(file.include? '.xcassets/') and
 				!(file.include? '.bundle/') and
 				!(file.include? '.framework/') and
-				!File.directory?(file) and
 				!(file.end_with? 'Info.plist') and
 				!(file.include? '.lproj')
+			}.select { |file|
+				if File.directory?(file) and !file.end_with? '.xcassets'
+					next false
+				end
+
+				next true
 			}
+
+			puts files
 
 			if target.res_dir != target.source_dir
 				files = files.select { |file|
@@ -253,8 +260,7 @@ module Xcodegen
 					native_target.source_build_phase.files_references << native_file
 					native_target.add_file_references [native_file]
 				else
-					native_target.resources_build_phase.files_references << native_file
-					native_target.add_file_references [native_file]
+					native_target.add_resources [native_file]
 				end
 			}
 
