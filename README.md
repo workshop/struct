@@ -14,7 +14,7 @@ To install from a checked out version of this gem, run:
 
 Then run:
 
-    $ rake install
+    $ rake install && gem install --local pkg/path-to-gem.gem
     
 Or install it directly from rubygems by running:
 
