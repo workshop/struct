@@ -163,7 +163,6 @@ module Xcodegen
 				}
 
 				build_settings = build_settings.merge config.settings
-				puts build_settings
 				target_build_settings[config.name] = { :type => spec_configuration_type_map[config.name], :settings => build_settings }
 			}
 
@@ -228,6 +227,12 @@ module Xcodegen
 				!(file.include? '.lproj')
 			}
 
+			if target.res_dir != target.source_dir
+				files = files.select { |file|
+					!(file.include? target.res_dir)
+				}
+			end
+
 			rel_source_root = target.source_dir.sub(project_directory, '')
 			if rel_source_root.start_with? '/'
 				rel_source_root[0] = ''
@@ -280,14 +285,11 @@ module Xcodegen
 					end
 				}
 
-				puts lproj_variant_files
-
 				lproj_variant_files.each { |lproj_file|
 					variant_group = resource_group.new_variant_group(lproj_file, target.res_dir, '<group>')
 					# Add all lproj files to the variant group
 
 					Dir.glob(File.join(target.res_dir, '*.lproj', lproj_file)).each { |file|
-						puts file
 						native_file = variant_group.new_file(file, '<group>')
 						native_target.add_resources [native_file]
 					}

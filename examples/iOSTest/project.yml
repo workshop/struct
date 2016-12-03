@@ -42,8 +42,8 @@ targets:
     # directory for your .lproj files. Subdirectories will not be scanned.
     # If you wish to store your lproj files in another directory or a subdirectory, you can
     # specify the 'i18n-resources' key. Any lproj folders will be ignored as normal
-    # source/resource files. For example:
-    # i18n-resources: iOSTest/lproj
+    # source/resource files.
+    i18n-resources: iOSTest/lproj
     #
     # The platform for this target. Supported platforms are 'ios' and 'mac'.
     platform: ios
