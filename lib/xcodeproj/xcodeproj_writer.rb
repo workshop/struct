@@ -232,8 +232,6 @@ module Xcodegen
 				next true
 			}
 
-			puts files
-
 			if target.res_dir != target.source_dir
 				files = files.select { |file|
 					!(file.include? target.res_dir)

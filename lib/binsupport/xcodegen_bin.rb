@@ -7,7 +7,11 @@ module Xcodegen
 		def self.run
 			opts = Slop.parse do |o|
 				o.on '-w', '--watch', 'watches your source dirs for changes and generates an xcode project' do
-					Xcodegen::Watcher.new.watch(Dir.pwd)
+					begin
+					Xcodegen::Watcher.watch(Dir.pwd)
+					rescue SystemExit, Interrupt
+						exit
+					end
 					exit
 				end
 				o.on '--version', 'print the version' do

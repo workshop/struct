@@ -32,6 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'paint', '~> 1.0.1'
   spec.add_dependency 'xcodeproj', '~> 1.4.1'
   spec.add_dependency 'fastlane_core', '~> 0.57.1'
-  spec.add_dependency 'filewatcher', '~> 0.4.0'
+  spec.add_dependency 'listen', '~> 3.1.5'
   spec.add_dependency 'semantic', '~> 1.4.1'
 end
