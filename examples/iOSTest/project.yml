@@ -1,0 +1,49 @@
+---
+version: 1.0.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+  release:
+    profiles:
+    - general:release
+    - ios:release
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+targets:
+  iOSTest:
+    sources: iOSTest
+    platform: ios
+    type: ":application"
+    configuration:
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      INFOPLIST_FILE: iOSTest/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTest
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+  iOSTestTests:
+    sources: iOSTestTests
+    references:
+    - iOSTest
+    profiles:
+    - platform:ios
+    - bundle.unit-test
+    configuration:
+      TEST_HOST: "$(BUILT_PRODUCTS_DIR)/iOSTest.app/iOSTest"
+      INFOPLIST_FILE: iOSTestTests/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTestTests
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+    type: ":bundle.unit-test"
+  iOSTestUITests:
+    sources: iOSTestTests
+    references:
+    - iOSTest
+    platform: ios
+    type: ":bundle.ui-testing"
+    configuration:
+      INFOPLIST_FILE: iOSTestUITests/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTestUITests
+      TEST_TARGET_NAME: iOSTest
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'

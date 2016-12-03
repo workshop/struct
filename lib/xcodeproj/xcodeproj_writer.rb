@@ -32,7 +32,10 @@ module Xcodegen
 
 		# @param spec [Xcodegen::Specfile]
 		# @param filename [String]
-		def self.write(spec, filename)
+		def self.write(source_spec, filename)
+			# Create a clone of the spec to avoid affecting the original referenced object
+			# noinspection RubyResolve
+			spec = Marshal.load(Marshal.dump(source_spec))
 			spec_xcodeproj_type_map = {}
 			spec_xcodeproj_type_map['debug'] = :debug
 			spec_xcodeproj_type_map['release'] = :release
@@ -114,7 +117,8 @@ module Xcodegen
 				remaining_targets.rotate!
 			end
 
-			return project
+			project.save filename
+			return nil
 		end
 
 		# @param target [Xcodegen::Specfile::Target]

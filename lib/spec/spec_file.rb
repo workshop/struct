@@ -125,12 +125,14 @@ module Xcodegen
 
 			# @param target_name [String]
 			# @param target_type [String]
+			# @param source_dir [String]
 			# @param configurations [Array<Xcodegen::Specfile::Target::Configuration>]
 			# @param references [Array<Xcodegen::Specfile::Target::FrameworkReference>]
 			# @param options [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
-			def initialize(target_name, target_type, configurations, references, options)
+			def initialize(target_name, target_type, source_dir, configurations, references, options)
 				@name = target_name
 				@type = target_type
+				@source_dir = source_dir
 				@configurations = configurations
 				@references = references
 				@options = options
@@ -159,6 +161,11 @@ module Xcodegen
 			# @return [String]
 			def type
 				@type
+			end
+
+			# @return [String]
+			def source_dir
+				@source_dir
 			end
 
 			def self.create(target_name, target_opts, project_base_dir, valid_config_names)
@@ -294,7 +301,7 @@ module Xcodegen
 					end
 				end
 
-				return Target.new target_name, type, configurations, references, options
+				return Target.new target_name, type, target_sources_dir, configurations, references, options
 			end
 		end
 
@@ -307,7 +314,8 @@ module Xcodegen
 			@configurations = configurations
 		end
 
-		def self.parse(filename)
+		def self.parse(path)
+			filename = (Pathname.new(path)).absolute? ? path : File.join(Dir.pwd, path)
 			raise StandardError.new "Error: Spec file #{filename} does not exist" unless File.exist? filename
 
 			if filename.end_with? 'yml' or filename.end_with? 'yaml'
@@ -350,6 +358,7 @@ module Xcodegen
 			}.compact
 			raise StandardError.new 'Error: Invalid spec file. Project should have at least one configuration' unless configurations.count > 0
 
+			puts 'aaaaaaa'
 			return Specfile.new(spec_version, [], configurations) unless spec_hash.key? 'targets'
 			raise StandardError.new "Error: Invalid spec file. Key 'targets' should be a hash" unless spec_hash['targets'].is_a?(Hash)
 
@@ -358,6 +367,7 @@ module Xcodegen
 				Target.create(target_name, target_opts, project_base_dir, valid_configuration_names)
 			}.compact
 
+			puts 'bbbbbbb'
 			return Specfile.new(spec_version, targets, configurations)
 		end
 
