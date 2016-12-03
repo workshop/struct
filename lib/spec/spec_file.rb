@@ -202,7 +202,7 @@ module Xcodegen
 				if profiles == nil and target_opts.key? 'platform'
 					raw_platform = target_opts['platform']
 					# TODO: Add support for 'tvos', 'watchos'
-					unless ['ios', 'osx'].include? raw_platform
+					unless ['ios', 'mac'].include? raw_platform
 						puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{raw_platform}'. Ignoring target...", :yellow]
 						return nil
 					end

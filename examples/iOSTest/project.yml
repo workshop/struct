@@ -1,10 +1,25 @@
 ---
+# The project spec version number - this is for xcodegen to identify this spec's schema
 version: 1.0.0
+# Project-level configurations and build settings. You can add as many as you want here.
+# If you do add another configuration that's not one of debug, release, you must specify
+# its type as either 'debug' or 'release'.
 configurations:
+  # An individual project-level configuration
   debug:
+    # Project configuration profiles. Each profile will provide a subset of configuration
+    # settings. You will almost always want 'general', as this defines a large portion of
+    # the settings you would get by default with a project.
+    #
+    # Additional profiles can be used to produce a project that more closely matches your
+    # needs. For example if you mainly need iOS targets, then applying the 'ios' profile
+    # will provide some additional sensible defaults for new targets.
     profiles:
     - general:debug
     - ios:debug
+    # Configuration overrides go here. After all of the configuration profiles have been
+    # applied, any settings here will be applied on top. This may be useful to provide
+    # defaults for code signing for example.
     overrides:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
   release:
@@ -13,11 +28,37 @@ configurations:
     - ios:release
     overrides:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+# Build targets. Currently any kind of target should be supported, however only common
+# types have been tested.
 targets:
+  # An individual build target. The name you choose here will correlate to its name in
+  # the project navigator.
   iOSTest:
+    # The directory where the source, resource and framework files for this project are located.
+    # Every file will be picked up recursively in this directory and added to the project.
     sources: iOSTest
+    # The platform for this target. Supported platforms are 'ios' and 'mac'.
     platform: ios
+    # The type of target. This corresponds to the UTI Apple associates with each target type.
+    # ':' will be replaced with the namespace of Apple's UTI, e.g. ':application' will
+    # become 'com.apple.product-type.application'.
+    #
+    # Some common types are ':application', ':bundle.unit-test', and ':bundle.ui-testing'.
     type: ":application"
+    # Configuration settings for this target. This will override project-level settings.
+    # This is generally useful for providing settings such as the location of the plist file,
+    # and the bundle identifier.
+    #
+    # The settings within this configuration object will be applied to every configuration
+    # for this target.
+    #
+    # If you wanted different settings applied for each configuration, you can use the
+    # following format instead:
+    # configurations:
+    #   debug:
+    #     ASSETCATALOG_COMPILER_APPICON_NAME: AppIconDebug
+    #   release:
+    #     ASSETCATALOG_COMPILER_APPICON_NAME: AppIconRelease
     configuration:
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       INFOPLIST_FILE: iOSTest/Info.plist
@@ -25,8 +66,22 @@ targets:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
   iOSTestTests:
     sources: iOSTestTests
+    # References configure any dependencies this target has on other targets, both in this
+    # project and in external projects.
+    # A string will be treated as a target name to search for within this project, whereas
+    # an object will be treated as information to use when associating a subproject's products
+    # with this target, e.g.:
+    # - Carthage/Checkouts/BrightFutures/BrightFutures.xcodeproj:
+    #   frameworks:
+    #   - name: BrightFutures.framework
+    #     copy: true
+    #     codeSignOnCopy: false
     references:
     - iOSTest
+    type: ":bundle.unit-test"
+    # Target configuration profiles to apply to this target. This will override project-level
+    # settings. You should usually apply a platform profile e.g. platform:ios. Currently 'ios'
+    # and 'mac' are supported.
     profiles:
     - platform:ios
     - bundle.unit-test
@@ -35,7 +90,6 @@ targets:
       INFOPLIST_FILE: iOSTestTests/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTestTests
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
-    type: ":bundle.unit-test"
   iOSTestUITests:
     sources: iOSTestTests
     references:
