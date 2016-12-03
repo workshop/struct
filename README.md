@@ -1,36 +1,25 @@
 # Xcodegen
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/xcodegen`. To experiment with that code, run `bin/console` for an interactive prompt.
 
-TODO: Delete this and the text above, and describe your gem
+Xcodegen comes in two parts - a file watcher that auto-generates
+a project based on a simple YAML specification that targets a
+dynamic source files directory, and options to assist in adding
+new files and targets to your dynamic project.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+To install from a checked out version of this gem, run:
 
-```ruby
-gem 'xcodegen'
-```
+    $ bundle install
 
-And then execute:
+Then run:
 
-    $ bundle
-
-Or install it yourself as:
+    $ rake install
+    
+Or install it directly from rubygems by running:
 
     $ gem install xcodegen
 
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/xcodegen.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/lyptt/xcodegen.
