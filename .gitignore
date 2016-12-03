@@ -173,3 +173,4 @@ fabric.properties
 modules.xml
 .idea
 *.ipr
+*.xcodeproj
