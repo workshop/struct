@@ -37,6 +37,14 @@ targets:
     # The directory where the source, resource and framework files for this project are located.
     # Every file will be picked up recursively in this directory and added to the project.
     sources: iOSTest
+    # Language-specific resources contained in lproj files have special mechanics in an Xcode
+    # project, so in order to simplify things, Xcodegen will search in the root of the sources
+    # directory for your .lproj files. Subdirectories will not be scanned.
+    # If you wish to store your lproj files in another directory or a subdirectory, you can
+    # specify the 'i18n-resources' key. Any lproj folders will be ignored as normal
+    # source/resource files. For example:
+    # i18n-resources: iOSTest/lproj
+    #
     # The platform for this target. Supported platforms are 'ios' and 'mac'.
     platform: ios
     # The type of target. This corresponds to the UTI Apple associates with each target type.
@@ -91,7 +99,7 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTestTests
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
   iOSTestUITests:
-    sources: iOSTestTests
+    sources: iOSTestUITests
     references:
     - iOSTest
     platform: ios

@@ -129,13 +129,15 @@ module Xcodegen
 			# @param configurations [Array<Xcodegen::Specfile::Target::Configuration>]
 			# @param references [Array<Xcodegen::Specfile::Target::FrameworkReference>]
 			# @param options [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
-			def initialize(target_name, target_type, source_dir, configurations, references, options)
+			# @param res_dir [String]
+			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir)
 				@name = target_name
 				@type = target_type
 				@source_dir = source_dir
 				@configurations = configurations
 				@references = references
 				@options = options
+				@res_dir = res_dir || source_dir
 			end
 
 			# @return [String]
@@ -166,6 +168,11 @@ module Xcodegen
 			# @return [String]
 			def source_dir
 				@source_dir
+			end
+
+			# @return [String]
+			def res_dir
+				@res_dir
 			end
 
 			def self.create(target_name, target_opts, project_base_dir, valid_config_names)
@@ -249,6 +256,13 @@ module Xcodegen
 					return nil
 				end
 
+				# Parse target ressources
+				if target_opts.key? 'i18n-resources'
+					target_resources_dir = File.join(project_base_dir, target_opts['i18n-resources'])
+				else
+					target_resources_dir = target_sources_dir
+				end
+
 				if target_opts.key? 'references'
 					raw_references = target_opts['references']
 					if raw_references.is_a?(Array)
@@ -301,17 +315,18 @@ module Xcodegen
 					end
 				end
 
-				return Target.new target_name, type, target_sources_dir, configurations, references, options
+				return Target.new target_name, type, target_sources_dir, configurations, references, options, target_resources_dir
 			end
 		end
 
 		# @param version [String]
 		# @param targets [Array<Xcodegen::Specfile::Target>]
 		# @param configurations [Array<Xcodegen::Specfile::Configuration>]
-		def initialize(version, targets, configurations)
+		def initialize(version, targets, configurations, base_dir)
 			@version = version
 			@targets = targets
 			@configurations = configurations
+			@base_dir = base_dir
 		end
 
 		def self.parse(path)
@@ -358,17 +373,15 @@ module Xcodegen
 			}.compact
 			raise StandardError.new 'Error: Invalid spec file. Project should have at least one configuration' unless configurations.count > 0
 
-			puts 'aaaaaaa'
-			return Specfile.new(spec_version, [], configurations) unless spec_hash.key? 'targets'
+			project_base_dir = File.dirname filename
+			return Specfile.new(spec_version, [], configurations, project_base_dir) unless spec_hash.key? 'targets'
 			raise StandardError.new "Error: Invalid spec file. Key 'targets' should be a hash" unless spec_hash['targets'].is_a?(Hash)
 
-			project_base_dir = File.dirname filename
 			targets = (spec_hash['targets'] || {}).map { |target_name, target_opts|
 				Target.create(target_name, target_opts, project_base_dir, valid_configuration_names)
 			}.compact
 
-			puts 'bbbbbbb'
-			return Specfile.new(spec_version, targets, configurations)
+			return Specfile.new(spec_version, targets, configurations, project_base_dir)
 		end
 
 		# @return [String]
@@ -384,6 +397,11 @@ module Xcodegen
 		# @return [Array<Xcodegen::Specfile::Configuration>]
 		def configurations
 			@configurations
+		end
+
+		# @return [String]
+		def base_dir
+			@base_dir
 		end
 
 	end

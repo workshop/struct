@@ -82,7 +82,8 @@ module Xcodegen
 
 			# Create all of the targets
 			target_refs = {}
-			remaining_targets = spec.targets
+			# noinspection RubyResolve
+			remaining_targets = Marshal.load(Marshal.dump(spec.targets))
 			iterations_remaining = remaining_targets.count
 			remaining_targets_removed = 0
 
@@ -117,6 +118,10 @@ module Xcodegen
 				remaining_targets.rotate!
 			end
 
+			spec.targets.each { |target|
+				add_files_to_target target, target_refs[target.name], project, spec.base_dir
+			}
+
 			project.save filename
 			return nil
 		end
@@ -140,7 +145,8 @@ module Xcodegen
 				puts Paint["Warning: Not all target references could be resolved for target: '#{target.name}'.", :yellow]
 			end
 
-			target_build_settings = Hash[target.configurations.map { |config|
+			target_build_settings = {}
+			target.configurations.each { |config|
 				build_settings = {}
 				config.profiles.map { |profile_name|
 					[profile_name, File.join(TARGET_CONFIG_PROFILE_PATH, "#{profile_name.sub(':', '_')}.yml")]
@@ -157,8 +163,9 @@ module Xcodegen
 				}
 
 				build_settings = build_settings.merge config.settings
-				next ["#{config.name}", { :type => spec_configuration_type_map[config.name], :settings => build_settings }]
-			}]
+				puts build_settings
+				target_build_settings[config.name] = { :type => spec_configuration_type_map[config.name], :settings => build_settings }
+			}
 
 			sdk = target_build_settings[target_build_settings.keys.first][:settings]['SDKROOT']
 
@@ -192,6 +199,101 @@ module Xcodegen
 			}
 
 			return native_target
+		end
+
+		def self.create_group(parent_group, components)
+			if components.first == nil
+				return parent_group
+			end
+			group = parent_group[components.first]
+			unless group
+				group = parent_group.new_group(components.first)
+				group.source_tree = '<group>'
+				group.path = components.first
+			end
+			create_group group, components.drop(1)
+		end
+
+		# @param target [Xcodegen::Specfile::Target]
+		# @param native_target [Xcodeproj::PBXNativeTarget]
+		# @param project [Xcodeproj::Project]
+		# @param project_working_dir [String]
+		def self.add_files_to_target(target, native_target, project, project_directory)
+			files = Dir.glob(File.join(target.source_dir, '**', '*')).select { |file|
+				!(file.include? '.xcassets/') and
+				!(file.include? '.bundle/') and
+				!(file.include? '.framework/') and
+				!File.directory?(file) and
+				!(file.end_with? 'Info.plist') and
+				!(file.include? '.lproj')
+			}
+
+			rel_source_root = target.source_dir.sub(project_directory, '')
+			if rel_source_root.start_with? '/'
+				rel_source_root[0] = ''
+			end
+
+			source_group = project.new_group(File.basename(target.source_dir), rel_source_root, 'SOURCE_ROOT')
+
+			files.map { |file|
+				new_file = file.sub(target.source_dir, '')
+				if new_file.start_with? '/'
+					new_file[0] = ''
+				end
+				next new_file
+			}.each { |file|
+				native_group = file.include?('/') ? create_group(source_group, File.dirname(file).split('/')) : source_group
+				native_file = native_group.new_file File.basename(file)
+				if file.end_with? '.swift'
+					native_target.source_build_phase.files_references << native_file
+					native_target.add_file_references [native_file]
+				else
+					native_target.resources_build_phase.files_references << native_file
+					native_target.add_file_references [native_file]
+				end
+			}
+
+			lfiles = Dir.glob(File.join(target.res_dir, '*.lproj', '**', '*'))
+			if lfiles.length > 0
+				# Create a virtual path since lproj files go through a layer of indirection before hitting the filesystem
+				resource_group = source_group.new_group('$lang', nil, '<group>')
+				resource_group.source_tree = 'SOURCE_ROOT'
+				lproj_variant_files = []
+				lfiles.map { |lfile|
+					new_lfile = lfile.sub(target.source_dir, '')
+					if new_lfile.start_with? '/'
+						new_lfile[0] = ''
+					end
+					next new_lfile
+				}.each { |lfile|
+					lfile_components = lfile.split('/')
+					lfile_lproj_idx = lfile_components.index{|component|
+						component.include? '.lproj'
+					}
+
+					lfile_variant_components = []
+					lfile_variant_components.unshift *lfile_components
+					lfile_variant_components.shift(lfile_lproj_idx + 1)
+					lfile_variant_path = lfile_variant_components.join('/')
+					unless lproj_variant_files.include? lfile_variant_path
+						lproj_variant_files << lfile_variant_path
+					end
+				}
+
+				puts lproj_variant_files
+
+				lproj_variant_files.each { |lproj_file|
+					variant_group = resource_group.new_variant_group(lproj_file, target.res_dir, '<group>')
+					# Add all lproj files to the variant group
+
+					Dir.glob(File.join(target.res_dir, '*.lproj', lproj_file)).each { |file|
+						puts file
+						native_file = variant_group.new_file(file, '<group>')
+						native_target.add_resources [native_file]
+					}
+				}
+			end
+
 		end
 	end
 end
