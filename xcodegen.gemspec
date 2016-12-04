@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['account+github@lyptt.uk']
   spec.summary       = 'A tool to make managing an Xcode project way easier'
   spec.description   = 'Xcodegen comes in two parts - a file watcher that auto-generates '\
-                       'a project based on a simple project specification written in YAML or '
+                       'a project based on a simple project specification written in YAML or '\
                        'JSON, and options to assist in adding new files and targets to your '\
                        'dynamic project.'
   spec.homepage      = 'https://www.github.com/lyptt/xcodegen'
