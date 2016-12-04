@@ -27,4 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'fastlane_core', '~> 0.57.1'
   spec.add_dependency 'listen', '~> 3.1.5'
   spec.add_dependency 'semantic', '~> 1.4.1'
+  spec.add_dependency 'awesome_print', '~> 1.7.0'
 end

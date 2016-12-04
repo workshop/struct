@@ -230,18 +230,23 @@ module Xcodegen
 		# @param project [Xcodeproj::Project]
 		# @param project_working_dir [String]
 		def self.add_files_to_target(target, native_target, project, project_directory)
-			files = Dir.glob(File.join(target.source_dir, '**', '*')).select { |file|
+			all_source_files = Dir.glob("#{target.source_dir}/**{,/*/**}/*").select { |file|
 				!(file.include? '.xcassets/') and
-				!(file.include? '.bundle/') and
-				!(file.include? '.framework/') and
-				!(file.end_with? 'Info.plist') and
-				!(file.include? '.lproj')
-			}.select { |file|
+					!(file.include? '.bundle/') and
+					!(file.end_with? 'Info.plist') and
+					!(file.include? '.lproj')
+			}.uniq.select { |file| # For some reason our symlink-traversing glob duplicates the results
+				!(target.file_excludes.any? { |exclude|
+					File.fnmatch(exclude, file)
+				})
+			}
+
+			files = all_source_files.select { |file|
 				if File.directory?(file) and !file.end_with? '.xcassets'
 					next false
 				end
 
-				next true
+				next !(file.include? '.framework/')
 			}
 
 			if target.res_dir != target.source_dir
@@ -312,6 +317,26 @@ module Xcodegen
 				}
 			end
 
+			framework_files = all_source_files.select { |file|
+				file.end_with? '.framework'
+			}
+
+			framework_group = project.frameworks_group.groups.find { |group| group.display_name == '$local' }
+			if framework_group == nil
+				framework_group = project.frameworks_group.new_group '$local', nil, '<group>'
+			end
+			# The 'Embed Frameworks' phase is missing by default from the Xcodeproj template, so we have to add it.
+			embed_phase = project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
+			embed_phase.name = 'Embed Frameworks'
+			embed_phase.symbol_dst_subfolder_spec = :frameworks
+			native_target.build_phases << embed_phase
+
+			frameworks = framework_files.map { |framework|
+				framework_group.new_file framework
+			}.each { |framework|
+				(embed_phase.add_file_reference framework).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
+				native_target.frameworks_build_phase.add_file_reference framework
+			}
 		end
 	end
 end

@@ -152,7 +152,7 @@ module Xcodegen
 			# @param references [Array<Xcodegen::Specfile::Target::FrameworkReference>]
 			# @param options [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
 			# @param res_dir [String]
-			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir)
+			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes)
 				@name = target_name
 				@type = target_type
 				@source_dir = source_dir
@@ -160,6 +160,7 @@ module Xcodegen
 				@references = references
 				@options = options
 				@res_dir = res_dir || source_dir
+				@file_excludes = file_excludes || []
 			end
 
 			# @return [String]
@@ -195,6 +196,11 @@ module Xcodegen
 			# @return [String]
 			def res_dir
 				@res_dir
+			end
+
+			# @return [Array<String>]
+			def file_excludes
+				@file_excludes
 			end
 
 			def self.create(target_name, target_opts, project_base_dir, valid_config_names)
@@ -278,11 +284,22 @@ module Xcodegen
 					return nil
 				end
 
-				# Parse target ressources
+				# Parse target resources
 				if target_opts.key? 'i18n-resources'
 					target_resources_dir = File.join(project_base_dir, target_opts['i18n-resources'])
 				else
 					target_resources_dir = target_sources_dir
+				end
+
+				# Parse excludes
+				if target_opts.key? 'excludes'
+					file_excludes = (target_opts['excludes'] || {})['files'] || []
+					unless file_excludes.is_a?(Array)
+						puts Paint["Warning: Target #{target_name}'s file excludes was not an array. Ignoring file excludes...", :yellow]
+						file_excludes = []
+					end
+				else
+					file_excludes = []
 				end
 
 				if target_opts.key? 'references'
@@ -347,7 +364,7 @@ module Xcodegen
 					end
 				end
 
-				return Target.new target_name, type, target_sources_dir, configurations, references, options, target_resources_dir
+				return Target.new target_name, type, target_sources_dir, configurations, references, options, target_resources_dir, file_excludes
 			end
 		end
 
