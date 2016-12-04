@@ -6,9 +6,9 @@ Gem::Specification.new do |spec|
   spec.email         = ['account+github@lyptt.uk']
   spec.summary       = 'A tool to make managing an Xcode project way easier'
   spec.description   = 'Xcodegen comes in two parts - a file watcher that auto-generates '\
-                       'a project based on a simple YAML specification that targets a'\
-                       'dynamic source files directory, and options to assist in adding'\
-                       'new files and targets to your dynamic project.'
+                       'a project based on a simple project specification written in YAML or '
+                       'JSON, and options to assist in adding new files and targets to your '\
+                       'dynamic project.'
   spec.homepage      = 'https://www.github.com/lyptt/xcodegen'
 
   spec.files         = Dir['{lib,res}/**/*'].reject { |f| f.match(%r{^(test|spec|features)/}) }
