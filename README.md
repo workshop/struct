@@ -1,6 +1,6 @@
 # Xcodegen
 [![Latest Gem Release](https://img.shields.io/gem/v/xcodegen.svg)](https://rubygems.org/gems/xcodegen) 
-[![Git Version](https://img.shields.io/github/tag/lyptt/xcodegen.svg)](https://github.com/lyptt/xcodegen) 
+[![Git Version](https://img.shields.io/github/tag/lyptt/xcodegen.svg)](https://github.com/lyptt/xcodegen/releases/tag/0.1.2) 
 [![Git Version](https://img.shields.io/github/commits-since/lyptt/xcodegen/0.1.2.svg)](https://github.com/lyptt/xcodegen/commits/master)
 
 Xcodegen comes in two parts - a file watcher that auto-generates
