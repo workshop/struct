@@ -2,10 +2,39 @@
 
 
 Xcodegen comes in two parts - a file watcher that auto-generates
-a project based on a simple YAML specification that targets a
-dynamic source files directory, and options to assist in adding
+a project based on a simple project specification, and options to assist in adding
 new files and targets to your dynamic project.
 
+Project files are automatically included into the project from a source directory,
+with Swift files going into the compilation phase, and everything else going to the
+resource phase, so there's no IDE fiddling necessary.
+
+Xcodegen can take a project spec like this:
+
+```yaml
+---
+version: 1.0.0
+configurations:
+    profiles:
+    - general:debug
+    - ios:debug
+  release:
+    profiles:
+    - general:release
+    - ios:release
+targets:
+  MyApp:
+    sources: src
+    i18n-resources: res
+    platform: ios
+    type: ":application"
+    configuration:
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      INFOPLIST_FILE: Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
+```
+
+And transform it into a fully formed Xcode project.
 
 You can find a documented example of the project specification in the examples folder.
 
@@ -32,6 +61,15 @@ To start the file watcher, run the following from your project directory:
 The project will be automatically regenerated whenever the project or any source files change.
 
 ![usage example](https://github.com/lyptt/xcodegen/raw/master/readme_files/usage_example.gif)
+
+## To do
+
+Xcodegen is still under development, so it's not yet feature complete. Notable features missing include:
+- Ability to specify system frameworks to link against for a target
+- Project generation support for subproject dependencies
+- Project generation support for subproject linking
+- Project generation support for file exclusion globs
+- CLI support for generating common files and targets
 
 ## Contributing
 
