@@ -44,7 +44,21 @@ targets:
     # specify the 'i18n-resources' key. Any lproj folders will be ignored as normal
     # source/resource files.
     i18n-resources: iOSTest/lproj
-    #
+    # References configure any dependencies this target has on other targets, both in this
+    # project and in external projects.
+    # There are three possible values for each reference entry:
+    # - A string beginning with 'sdkroot:' will be treated as a reference to a system library
+    #   or framework. Example values are 'sdkroot:UIKit.framework' and 'sdkroot:libz.tbd'
+    # - Any other string will be treated as a target name to search for within this project
+    # - An object will be treated as information to use when associating a subproject's products
+    #   with this target, e.g.:
+    #   - Carthage/Checkouts/BrightFutures/BrightFutures.xcodeproj:
+    #     frameworks:
+    #     - name: BrightFutures.framework
+    #       copy: true
+    #       codeSignOnCopy: false
+    references:
+    - sdkroot:UIKit.framework
     # The platform for this target. Supported platforms are 'ios' and 'mac'.
     platform: ios
     # The type of target. This corresponds to the UTI Apple associates with each target type.
@@ -74,16 +88,6 @@ targets:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
   iOSTestTests:
     sources: iOSTestTests
-    # References configure any dependencies this target has on other targets, both in this
-    # project and in external projects.
-    # A string will be treated as a target name to search for within this project, whereas
-    # an object will be treated as information to use when associating a subproject's products
-    # with this target, e.g.:
-    # - Carthage/Checkouts/BrightFutures/BrightFutures.xcodeproj:
-    #   frameworks:
-    #   - name: BrightFutures.framework
-    #     copy: true
-    #     codeSignOnCopy: false
     references:
     - iOSTest
     type: ":bundle.unit-test"

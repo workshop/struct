@@ -134,6 +134,7 @@ module Xcodegen
 		def self.add_target(target, project, target_refs, spec_configuration_type_map)
 			requested_target_refs = target.references.select { |ref| ref.is_a? Xcodegen::Specfile::Target::TargetReference }
 			target_references = requested_target_refs.map { |ref|
+				# If the referenced target has not been added to the project yet, skip this target for now
 				unless target_refs.has_key? ref.target_name
 					return nil
 				end
@@ -196,6 +197,17 @@ module Xcodegen
 			target_references.each { |native_ref|
 				native_target.add_dependency native_ref
 			}
+
+			requested_sys_framework_refs = target.references
+				.select { |ref| ref.is_a? Xcodegen::Specfile::Target::SystemFrameworkReference }
+				.map { |ref| ref.name }
+				.select { |ref| ref != 'Foundation' } # Filter out Foundation as it's already added by default
+			native_target.add_system_framework requested_sys_framework_refs
+
+			requested_sys_library_refs = target.references
+				.select { |ref| ref.is_a? Xcodegen::Specfile::Target::SystemLibraryReference }
+				.map { |ref| ref.name }
+			native_target.add_system_library requested_sys_library_refs
 
 			return native_target
 		end

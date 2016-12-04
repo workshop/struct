@@ -72,6 +72,28 @@ module Xcodegen
 				end
 			end
 
+			class SystemFrameworkReference
+				def initialize(name)
+					@name = name
+				end
+
+				# @return [String]
+				def name
+					@name
+				end
+			end
+
+			class SystemLibraryReference
+				def initialize(name)
+					@name = name
+				end
+
+				# @return [String]
+				def name
+					@name
+				end
+			end
+
 			class FrameworkReference
 				def initialize(project_path, settings)
 					@project_path = project_path
@@ -277,7 +299,17 @@ module Xcodegen
 
 								next Target::FrameworkReference.new(project_path, raw_reference)
 							else
-								next Target::TargetReference.new(raw_reference)
+								# De-symbolise :sdkroot:-prefixed entries
+								ref = raw_reference.to_s
+								if ref.start_with? 'sdkroot:'
+									if ref.end_with? '.framework'
+										next Target::SystemFrameworkReference.new(raw_reference.sub('sdkroot:', '').sub('.framework', ''))
+									else
+										next Target::SystemLibraryReference.new(raw_reference.sub('sdkroot:', ''))
+									end
+								else
+									next Target::TargetReference.new(raw_reference)
+								end
 							end
 						}.compact
 					else
