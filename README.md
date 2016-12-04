@@ -72,7 +72,6 @@ The project will be automatically regenerated whenever the project or any source
 ## To do
 
 Xcodegen is still under development, so it's not yet feature complete. Notable features missing include:
-- Ability to specify system frameworks to link against for a target
 - Project generation support for subproject dependencies
 - Project generation support for subproject linking
 - Project generation support for file exclusion globs
