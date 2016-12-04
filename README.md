@@ -55,6 +55,10 @@ Or install it directly from rubygems by running:
     
 ## Usage
 
+To generate an Xcode project from your spec file, run the following from your project directory:
+
+    $ xcodegen --generate
+
 To start the file watcher, run the following from your project directory:
 
     $ xcodegen --watch
