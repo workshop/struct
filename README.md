@@ -15,6 +15,7 @@ Xcodegen can take a project spec like this:
 ---
 version: 1.0.0
 configurations:
+  debug:
     profiles:
     - general:debug
     - ios:debug
