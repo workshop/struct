@@ -2,7 +2,7 @@
 
 
 Xcodegen comes in two parts - a file watcher that auto-generates
-a project based on a simple project specification, and options to assist in adding
+a project based on a simple project specification written in YAML or JSON, and options to assist in adding
 new files and targets to your dynamic project.
 
 Project files are automatically included into the project from a source directory,
