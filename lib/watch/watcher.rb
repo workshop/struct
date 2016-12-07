@@ -35,6 +35,7 @@ module Xcodegen
 				end
 			end
 			listener.start # not blocking
+			puts Paint['All files and folders within this directory are now being watched for changes...', :green]
 			sleep
 		end
 	end
