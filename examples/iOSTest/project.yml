@@ -49,7 +49,7 @@ targets:
       # File excludes should be file globs, for example to exclude all markdown files from
       # a project, you would add '**/*.md' to the list.
       files:
-      - **/*.md
+      - "**/*.md"
     # References configure any dependencies this target has on other targets, both in this
     # project and in external projects.
     # There are three possible values for each reference entry:
@@ -58,7 +58,7 @@ targets:
     # - Any other string will be treated as a target name to search for within this project
     # - An object will be treated as information to use when associating a subproject's products
     #   with this target, e.g.:
-    #   - Carthage/Checkouts/BrightFutures/BrightFutures.xcodeproj:
+    #   - location: Carthage/Checkouts/BrightFutures/BrightFutures.xcodeproj
     #     frameworks:
     #     - name: BrightFutures.framework
     #       copy: true
