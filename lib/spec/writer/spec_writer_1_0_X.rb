@@ -15,6 +15,38 @@ module Xcodegen
 
 		end
 
+		# @param configuration [Xcodegen::Specfile::Configuration]
+		# @param path [String]
+		def write_configuration(configuration, path)
+			unless configuration != nil && configuration.is_a?(Xcodegen::Specfile::Configuration)
+				raise StandardError.new 'Invalid configuration object'
+			end
+
+			puts Paint["Adding configuration #{configuration.name} to project", :green]
+
+			if path.end_with? 'yml' or path.end_with? 'yaml'
+				spec_hash = YAML.load_file path
+				format = :yml
+			elsif path.end_with? 'json'
+				spec_hash = JSON.parse File.read(path)
+				format = :json
+			else
+				raise StandardError.new 'Error: Unable to determine file format of project file'
+			end
+
+			unless spec_hash.key? 'configurations'
+				spec_hash['configurations'] = {}
+			end
+
+			spec_hash['configurations'][configuration.name] = configuration_to_hash configuration
+
+			if format == :yml
+				File.open(path, 'w+') {|f| f.write spec_hash.to_yaml }
+			elsif format == :json
+				File.open(path, 'w+') {|f| f.write spec_hash.to_json }
+			end
+		end
+
 		# @param target [Xcodegen::Specfile::Target]
 		# @param path [String]
 		def write_target(target, path)
@@ -60,6 +92,22 @@ module Xcodegen
 		end
 
 		private
+		# @param config [Xcodegen::Specfile::Configuration]
+		def configuration_to_hash(configuration)
+			config_hash = {}
+			config_hash['profiles'] = configuration.profiles
+
+			unless configuration.overrides == nil
+				config_hash['overrides'] = configuration.overrides
+			end
+
+			unless configuration.raw_type == nil
+				config_hash['type'] = configuration.raw_type
+			end
+
+			config_hash
+		end
+
 		# @param target [Xcodegen::Specfile::Target]
 		def target_to_hash(target)
 			target_hash = {}

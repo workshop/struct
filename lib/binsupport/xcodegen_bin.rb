@@ -9,6 +9,7 @@ require_relative '../xcodeproj/xcodeproj_writer'
 require_relative '../create/create_class'
 require_relative '../create/create_struct'
 require_relative '../create/create_target'
+require_relative '../create/create_configuration'
 
 module Xcodegen
 	class XcodegenBin
@@ -91,6 +92,8 @@ module Xcodegen
 						Xcodegen::Create::Struct.run_interactive
 					elsif selected_option == 2
 						Xcodegen::Create::Target.run_interactive
+					elsif selected_option == 3
+						Xcodegen::Create::Configuration.run_interactive
 					end
 
 					exit 0

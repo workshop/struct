@@ -38,6 +38,25 @@ module Xcodegen
 			writer.write_spec(spec, path)
 		end
 
+		# @param configuration [Xcodegen::Specfile::Configuration]
+		# @param spec_version [Semantic::Version]
+		# @param path [String]
+		def write_configuration(configuration, spec_version, path)
+			if @writers.length == 0
+				register_defaults
+			end
+
+			raise StandardError.new 'Error: Invalid configuration object. Configuration object was nil.' unless configuration != nil
+
+			writer = @writers.find { |writer|
+				writer.can_write_version(spec_version)
+			}
+
+			raise StandardError.new "Error: Invalid spec version. Project version #{spec_version.to_s} is unsupported by this version of xcodegen." unless writer != nil
+
+			writer.write_configuration(configuration, path)
+		end
+
 		# @param target [Xcodegen::Specfile::Target]
 		# @param spec_version [Semantic::Version]
 		# @param path [String]
@@ -52,7 +71,7 @@ module Xcodegen
 				writer.can_write_version(spec_version)
 			}
 
-			raise StandardError.new "Error: Invalid spec object. Project version #{spec_version.to_s} is unsupported by this version of xcodegen." unless writer != nil
+			raise StandardError.new "Error: Invalid spec version. Project version #{spec_version.to_s} is unsupported by this version of xcodegen." unless writer != nil
 
 			writer.write_target(target, path)
 		end
