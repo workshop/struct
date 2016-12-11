@@ -12,14 +12,20 @@ module Xcodegen
 				@type = type
 			end
 
+			# @return [String]
 			def type
 				if name == 'debug'
 					'debug'
 				elsif name == 'release'
 					'release'
 				else
-					@type
+					raw_type
 				end
+			end
+
+			# @return [String]
+			def raw_type
+				@type
 			end
 
 			# @return [String]
@@ -153,6 +159,7 @@ module Xcodegen
 			# @param references [Array<Xcodegen::Specfile::Target::FrameworkReference>]
 			# @param options [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
 			# @param res_dir [String]
+			# @param file_excludes [String]
 			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes)
 				@name = target_name
 				@type = target_type
@@ -205,7 +212,7 @@ module Xcodegen
 			end
 		end
 
-		# @param version [String]
+		# @param version [Semantic::Version]
 		# @param targets [Array<Xcodegen::Specfile::Target>]
 		# @param configurations [Array<Xcodegen::Specfile::Configuration>]
 		def initialize(version, targets, configurations, base_dir)
@@ -215,15 +222,16 @@ module Xcodegen
 			@base_dir = base_dir
 		end
 
+		# @return Xcodegen::Specfile
 		def self.parse(path, parser = nil)
 			if parser == nil
 				return Specparser.new.parse(path)
 			else
-				parser.parse(path)
+				return parser.parse(path)
 			end
 		end
 
-		# @return [String]
+		# @return [Semantic::Version]
 		def version
 			@version
 		end

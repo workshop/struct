@@ -2,9 +2,13 @@ require 'slop'
 require 'version'
 require 'paint'
 require 'awesome_print'
+require 'inquirer'
 require_relative '../watch/watcher'
 require_relative '../spec/spec_file'
 require_relative '../xcodeproj/xcodeproj_writer'
+require_relative '../create/create_class'
+require_relative '../create/create_struct'
+require_relative '../create/create_target'
 
 module Xcodegen
 	class XcodegenBin
@@ -71,6 +75,24 @@ module Xcodegen
 				end
 				o.on '--version', 'print the version' do
 					puts Xcodegen::VERSION
+					exit 0
+				end
+				o.on '-c', '--create', 'starts the resource creation wizard for creating files, targets, etc.' do
+					selected_option = Ask.list 'What do you want to create?', [
+						'Class',
+						'Struct',
+						'Target',
+						'Build Configuration'
+					]
+
+					if selected_option == 0
+						Xcodegen::Create::Class.run_interactive
+					elsif selected_option == 1
+						Xcodegen::Create::Struct.run_interactive
+					elsif selected_option == 2
+						Xcodegen::Create::Target.run_interactive
+					end
+
 					exit 0
 				end
 			end

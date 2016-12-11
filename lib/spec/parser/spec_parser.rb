@@ -7,7 +7,7 @@ module Xcodegen
 		end
 
 		def register(parser)
-			if parser.respond_to?(:parse) and parser.respond_to?(:can_parse_version)
+			if parser.respond_to?(:parse) && parser.respond_to?(:can_parse_version)
 				@parsers << parser
 			else
 				raise StandardError.new 'Unsupported parser object. Parser object must support :parse and :can_parse_version'
