@@ -28,6 +28,8 @@ module Xcodegen
 
 			puts Paint["Writing spec to: #{path}", :green]
 
+			project_directory = File.dirname(path)
+
 			spec_hash = {}
 			spec_hash['version'] = '1.0.0'
 
@@ -40,7 +42,7 @@ module Xcodegen
 
 			targets = {}
 			spec.targets.each { |target|
-				targets[target.name] = target_to_hash target
+				targets[target.name] = target_to_hash target, project_directory
 			}
 
 			spec_hash['targets'] = targets
@@ -118,7 +120,7 @@ module Xcodegen
 				spec_hash['targets'] = {}
 			end
 
-			new_target = target_to_hash target
+			new_target = target_to_hash target, File.dirname(path)
 			spec_hash['targets'][target.name] = new_target
 
 			if format == :yml
@@ -129,12 +131,12 @@ module Xcodegen
 		end
 
 		private
-		# @param config [Xcodegen::Specfile::Configuration]
+		# @param configuration [Xcodegen::Specfile::Configuration]
 		def configuration_to_hash(configuration)
 			config_hash = {}
 			config_hash['profiles'] = configuration.profiles
 
-			unless configuration.overrides == nil
+			unless configuration.overrides == nil || configuration.overrides.keys.length == 0
 				config_hash['overrides'] = configuration.overrides
 			end
 
@@ -146,11 +148,17 @@ module Xcodegen
 		end
 
 		# @param target [Xcodegen::Specfile::Target]
-		def target_to_hash(target)
+		def target_to_hash(target, project_directory)
 			target_hash = {}
 
-			target_hash['sources'] = target.source_dir unless (target.source_dir == nil || target.source_dir.length == 0)
-			target_hash['i18n-resources'] = target.res_dir unless (target.res_dir == nil || target.res_dir.length == 0)
+			unless target.source_dir == nil || target.source_dir.length == 0
+				target_hash['sources'] = target.source_dir.sub("#{project_directory}/", '')
+			end
+
+			unless target.res_dir == nil || target.res_dir.length == 0
+				target_hash['i18n-resources'] = target.res_dir.sub("#{project_directory}/", '')
+			end
+
 			target_hash['type'] = target.type.sub('com.apple.product-type.', ':')
 
 			# Try to reconcile configuration blocks into shorthand first.
@@ -206,7 +214,7 @@ module Xcodegen
 					obj.merge! ref.settings
 					obj['location'] = ref.project_path
 				elsif ref.is_a? Xcodegen::Specfile::Target::TargetReference
-					ref.name
+					ref.target_name
 				else
 					nil
 				end

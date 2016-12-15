@@ -1,6 +1,7 @@
 require 'json'
 require 'semantic'
 require_relative 'parser/spec_parser'
+require_relative 'writer/spec_writer'
 
 module Xcodegen
 	class Specfile
@@ -228,6 +229,14 @@ module Xcodegen
 				return Specparser.new.parse(path)
 			else
 				return parser.parse(path)
+			end
+		end
+
+		def write(path, writer = nil)
+			if writer == nil
+				Specwriter.new.write_spec(self, path)
+			else
+				writer.write_spec(self, path)
 			end
 		end
 
