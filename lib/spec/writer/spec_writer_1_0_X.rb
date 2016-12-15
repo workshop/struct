@@ -11,8 +11,45 @@ module Xcodegen
 			version.major == 1 && version.minor == 0
 		end
 
+		# @param spec [Xcodegen::Specfile]
+		# @param path [String]
 		def write_spec(spec, path)
+			unless spec != nil && spec.is_a?(Xcodegen::Specfile)
+				raise StandardError.new 'Invalid configuration object'
+			end
 
+			if path.end_with? 'yml' or path.end_with? 'yaml'
+				format = :yml
+			elsif path.end_with? 'json'
+				format = :json
+			else
+				raise StandardError.new 'Error: Unable to determine file format of project file'
+			end
+
+			puts Paint["Writing spec to: #{path}", :green]
+
+			spec_hash = {}
+			spec_hash['version'] = '1.0.0'
+
+			configurations = {}
+			spec.configurations.each { |config|
+				configurations[config.name] = configuration_to_hash config
+			}
+
+			spec_hash['configurations'] = configurations
+
+			targets = {}
+			spec.targets.each { |target|
+				targets[target.name] = target_to_hash target
+			}
+
+			spec_hash['targets'] = targets
+
+			if format == :yml
+				File.open(path, 'w+') {|f| f.write spec_hash.to_yaml }
+			elsif format == :json
+				File.open(path, 'w+') {|f| f.write spec_hash.to_json }
+			end
 		end
 
 		# @param configuration [Xcodegen::Specfile::Configuration]
