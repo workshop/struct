@@ -1,16 +1,16 @@
 ---
-latest: 0.1.4
+latest: 0.1.5
 versions:
   0.1.4:
-    - "Added parse command to easily see spec parsing output"
-    - "Added support for linking to framework files in your source directory"
-    - "Added support for excluding files based on exclude globs"
-    - "Updated example project spec based on new functionality"
-    - "Updated the xcodegen API to support per-version parsing"
-    - "Added message indicating that the watcher's actually doing something"
-    - "Updated project sample to correct schema & syntax"
-    - "Added class, struct and target generators, target serialisation"
-    - "Added writer for project configurations"
+  - Added parse command to easily see spec parsing output
+  - Added support for linking to framework files in your source directory
+  - Added support for excluding files based on exclude globs
+  - Updated example project spec based on new functionality
+  - Updated the xcodegen API to support per-version parsing
+  - Added message indicating that the watcher's actually doing something
+  - Updated project sample to correct schema & syntax
+  - Added class, struct and target generators, target serialisation
+  - Added writer for project configurations
   0.1.5:
-    - "Implemented full spec serialisation - the API can now write full spec files"
-    - "Added public method for project writing, fixed some spec writing bugs"
+  - Implemented full spec serialisation - the API can now write full spec files
+  - Added public method for project writing, fixed some spec writing bugs
