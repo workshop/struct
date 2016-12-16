@@ -36,7 +36,7 @@ unless changelog_content['versions'].key? Xcodegen::VERSION
 end
 
 commit_message = "Version #{Xcodegen::VERSION}\n\n"
-commit_message += ['versions'][Xcodegen::VERSION].map{ |str| " -  #{str}" }.join("\n")
+commit_message += changelog_content['versions'][Xcodegen::VERSION].map{ |str| " -  #{str}" }.join("\n")
 
 puts `git add -A; git commit -m "#{commit_message}"`
 puts `git tag #{Xcodegen::VERSION}`
