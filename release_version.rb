@@ -26,7 +26,7 @@ File.write 'lib/version.rb', content
 load 'lib/version.rb'
 puts "Updated gem version to #{Xcodegen::VERSION}"
 
-changelog_content = YAML.load 'changelog.yml'
+changelog_content = YAML.load_file 'changelog.yml'
 changelog_content['latest'] = Xcodegen::VERSION
 
 unless changelog_content['versions'].key? Xcodegen::VERSION
