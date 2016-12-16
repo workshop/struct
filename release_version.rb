@@ -28,6 +28,7 @@ puts "Updated gem version to #{Xcodegen::VERSION}"
 
 changelog_content = YAML.load_file 'changelog.yml'
 changelog_content['latest'] = Xcodegen::VERSION
+File.write 'changelog.yml', changelog_content.to_yaml
 
 unless changelog_content['versions'].key? Xcodegen::VERSION
 	puts 'No changelog content available for this version, aborting.'
