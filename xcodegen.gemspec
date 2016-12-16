@@ -29,4 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'awesome_print', '~> 1.7.0'
   spec.add_dependency 'mustache', '~> 1.0.0'
   spec.add_dependency 'inquirer', '~> 0.2.1'
+  spec.add_dependency 'excon', '~> 0.54.0'
 end
