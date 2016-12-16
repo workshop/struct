@@ -80,10 +80,6 @@ module Xcodegen
 					puts Paint["Generated project.xcodeproj from #{File.basename(project_file)}", :green]
 					quit 0
 				end
-				o.on '--version', 'print the version' do
-					puts Xcodegen::VERSION
-					quit 0
-				end
 				o.on '-c', '--create', 'starts the resource creation wizard for creating files, targets, etc.' do
 					selected_option = Ask.list 'What do you want to create?', [
 						'Class',
@@ -104,9 +100,14 @@ module Xcodegen
 
 					quit 0
 				end
+				o.on '--version', 'print the version' do
+					puts Xcodegen::VERSION
+					quit 0
+				end
 			end
 
 			puts opts
+			quit 0
 		end
 	end
 end

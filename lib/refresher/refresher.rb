@@ -43,12 +43,12 @@ module Xcodegen
 					return
 				end
 
-				changed_datetime = Time.at(changelog['updated']).to_date
-				if changed_datetime == nil
+				changed_date = Time.at(changelog['updated']).to_date
+				if changed_date == nil
 					return
 				end
 
-				if changed_datetime == Time.now.to_date
+				if changed_date == Time.now.to_date
 					print changelog, local_gem_version, xcodegen_cache_dir
 					return
 				end
@@ -69,10 +69,12 @@ module Xcodegen
 				return
 			end
 
+			changelog['updated'] = Time.now.to_i
+
 			begin
 				FileUtils.mkdir_p xcodegen_cache_dir
 				FileUtils.rm_rf cached_changelog_path
-				File.write cached_changelog_path, changelog_res.body
+				File.write cached_changelog_path, changelog.to_yaml
 			rescue StandardError => _
 				return
 			end
