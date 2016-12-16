@@ -41,3 +41,4 @@ commit_message += changelog_content['versions'][Xcodegen::VERSION].map{ |str| " 
 
 puts `git add -A; git commit -m "#{commit_message}"`
 puts `git tag #{Xcodegen::VERSION}`
+puts `git push --follow-tags`
