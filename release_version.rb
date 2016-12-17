@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 require 'semantic'
+require 'json'
 require 'yaml'
+require 'excon'
 
 content = File.read 'lib/version.rb'
 ver_idx_s = content.index('\'')+1
@@ -42,3 +44,18 @@ commit_message += changelog_content['versions'][Xcodegen::VERSION].map{ |str| " 
 puts `git add -A; git commit -m "#{commit_message}"`
 puts `git tag #{Xcodegen::VERSION}`
 puts `git push --follow-tags`
+
+return if ENV['GITHUB_API_KEY'] == nil
+
+Excon.post('https://api.github.com/repos/lyptt/xcodegen/releases',
+	:connect_timeout => 30,
+	:body => {
+		:tag_name => Xcodegen::VERSION,
+		:name => "Version #{Xcodegen::VERSION}",
+		:body => changelog_content['versions'][Xcodegen::VERSION].map{ |str| " -  #{str}" }.join("\n")
+	}.to_json,
+	:headers => {
+		'Content-Type' => 'application/json',
+		'Authorization' => "Bearer #{ENV['GITHUB_API_KEY']}"
+	}
+)
