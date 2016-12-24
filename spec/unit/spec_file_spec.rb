@@ -15,7 +15,9 @@ RSpec.describe Xcodegen::Specfile do
 			expect(spec.targets).to include(target)
 			expect(spec.configurations).to include(config)
 		end
+	end
 
+	describe '#parse' do
 		it 'creates a parser object when parsing if one has not been provided' do
 			fake_parser_result = {}
 			parse_arg = '1/2/3.yaml'
@@ -31,7 +33,9 @@ RSpec.describe Xcodegen::Specfile do
 
 			expect(Xcodegen::Specfile.parse(parse_arg, parser)).to equal(fake_parser_result)
 		end
+	end
 
+	describe '#write' do
 		it 'creates a writer object when writing if one has not been provided' do
 			fake_writer_result = {}
 			write_arg = '1/2/3.yaml'
