@@ -11,6 +11,7 @@ require_relative '../create/create_class'
 require_relative '../create/create_struct'
 require_relative '../create/create_target'
 require_relative '../create/create_configuration'
+require_relative '../migrator/migrator'
 
 module Xcodegen
 	class XcodegenBin
@@ -98,6 +99,26 @@ module Xcodegen
 						Xcodegen::Create::Configuration.run_interactive
 					end
 
+					quit 0
+				end
+				o.on '-m', '--migrate', 'migrates an Xcode project and its files to a specfile' do
+					args = ARGV.select { |item| item != '-m' && item != '--migrate' }
+
+					mopts = Slop.parse(args) do |mopts|
+						mopts.string '-p', '--path', 'specifies the path of the xcode project to migrate'
+						mopts.string '-d', '--destination', 'specifies the destination folder to store the migrated project files'
+						mopts.on '--help', 'help on using this command' do
+							puts mopts
+							quit 0
+						end
+					end
+
+					unless mopts.path? && mopts.destination?
+						puts mopts
+						quit 0
+					end
+
+					Xcodegen::Migrator.migrate mopts[:path], mopts[:destination]
 					quit 0
 				end
 				o.on '--version', 'print the version' do
