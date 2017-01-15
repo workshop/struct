@@ -83,8 +83,8 @@ module Xcodegen
 
 			# Parse target configurations
 			if target_opts.key? 'configurations'
-				unless target_opts['configurations'].is_a?(Array)
-					puts Paint["Warning: Key 'configurations' for target #{target_name} is not an array. Ignoring target...", :yellow]
+				unless target_opts['configurations'].is_a?(Hash)
+					puts Paint["Warning: Key 'configurations' for target #{target_name} is not a hash. Ignoring target...", :yellow]
 					return nil
 				end
 				configurations = target_opts['configurations'].map do |config_name, config|
