@@ -14,3 +14,8 @@ versions:
   0.1.5:
   - Implemented full spec serialisation - the API can now write full spec files
   - Added public method for project writing, fixed some spec writing bugs
+  0.1.6:
+  - Added support for migrating Xcode projects to spec files. This only supports
+    a handful of scenarios, please see https://github.com/lyptt/xcodegen/wiki/Migrating-Xcode-projects
+    for this feature for more details.
+  - Fixed a parsing bug with multi-configuration overrides in targets
