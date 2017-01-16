@@ -102,7 +102,10 @@ module Xcodegen
 
 			targets_files = project.targets.map { |target|
 				target_files = target.source_build_phase.files.map { |file| file.file_ref.real_path }
-				target_files.unshift *(target.resources_build_phase.files.map { |file| file.file_ref.real_path }.compact)
+				target_files.unshift *(target.resources_build_phase.files.map { |file|
+					next nil if file.file_ref == nil
+					file.file_ref.real_path
+				}.compact)
 				target_files = target_files.map { |f| f.to_s }
 				target_files = target_files.select { |f| !File.directory?(f) || f.end_with?('xcassets') }
 				target_glob_files = target_files.select { |f|
@@ -118,7 +121,7 @@ module Xcodegen
 				})
 
 				target_res_files = target.resources_build_phase.files.select { |f|
-					f.file_ref.name != nil && (
+					f.file_ref&.name && (
 						f.file_ref.name.end_with?('.storyboard') ||
 						f.file_ref.name.end_with?('.strings') ||
 						f.file_ref.name.end_with?('.stringsdict')
@@ -143,6 +146,7 @@ module Xcodegen
 
 				files.each { |f|
 					FileUtils.mkdir_p File.dirname(f.sub(project_dir, destination_dir))
+					next unless File.exist? f
 					FileUtils.cp_r f, f.sub(project_dir, destination_dir)
 				}
 			}
