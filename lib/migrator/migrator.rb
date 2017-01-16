@@ -69,6 +69,21 @@ module Xcodegen
 					[config_name, extract_target_config_overrides(profiles, config.build_settings)]
 				}.to_h
 
+				target_references = target.frameworks_build_phase.files.map { |f|
+					if f.file_ref.source_tree == 'SDKROOT'
+						if f.file_ref.path.start_with? 'System/Library/Frameworks'
+							Xcodegen::Specfile::Target::SystemFrameworkReference.new(f.file_ref.path.sub('System/Library/Frameworks/', '').sub('.framework', ''))
+						elsif f.file_ref.path.start_with? 'usr/lib'
+							Xcodegen::Specfile::Target::SystemLibraryReference.new(f.file_ref.path.sub('usr/lib/', ''))
+						else
+							next nil
+						end
+					else
+						# TODO: Support migrating local frameworks
+						next nil
+					end
+				}.compact
+
 				Xcodegen::Specfile::Target.new(
 					name,
 					type,
@@ -78,7 +93,7 @@ module Xcodegen
 							config.name, target_configuration_overrides[config.name], profiles
 						)
 					},
-					[],
+					target_references,
 					[],
 					nil,
 					[]
