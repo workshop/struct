@@ -101,7 +101,7 @@ module Xcodegen
 
 					quit 0
 				end
-				o.on '-m', '--migrate', 'migrates an Xcode project and its files to a specfile' do
+				o.on '-m', '--migrate', 'migrates an Xcode project and its files to a specfile (beta)' do
 					args = ARGV.select { |item| item != '-m' && item != '--migrate' }
 
 					mopts = Slop.parse(args) do |mopts|
