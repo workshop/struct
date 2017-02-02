@@ -119,3 +119,46 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTestUITests
       TEST_TARGET_NAME: iOSTest
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+# Project variants allow you to generate multiple xcode projects from one spec file.
+# Each variant will output an equivalent project file, e.g. 'dev.xcodeproj' and 'beta.xcodeproj'.
+#
+# A project variant can override or extend any property already set by the equivalent target
+# declared in the targets group. The target name specified in the variant must match the target
+# name in order for the overrides to apply.
+variants:
+  # A '$base' variant is a special variant that correlates directly to the default project generated
+  # by xcodegen - 'project.xcodeproj'. This variant will always output to 'project.xcodeproj'.
+  # If you omit this variant, it will be implicitly included when generating projects.
+  $base:
+    # By declaring a variant as abstract, it prevents an xcode project from being written. This can be
+    # useful in scenarios where the base variant is not useful without additional files and configuration
+    # defined by other variants. Any variant can be declared as abstract.
+    abstract: true
+  dev:
+    # Any target can be declared within a variant, and the declaration syntax is identical to the
+    # 'targets' group in behaviour, however there are no required parameters in these definitions
+    # as they act as overrides for the base target definitions.
+    iOSTest:
+      configuration:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_DEV
+  beta:
+    iOSTest:
+      # Any additional source files can be included from a separate source folder, these will be added
+      # in addition to the default sources directory declared on the target.
+      sources: iOSTest-beta
+      # Any additional resources can be included from a separate folder, these will be added in addition
+      # to the default resources directory declared on the target.
+      i18n-resources: iOSTest-beta/lproj
+      # Any excludes declared here will only apply to this variant's sources directory. The target's
+      # excludes should be declared within the target definition.
+      excludes:
+        files:
+        - "**/*.md"
+      # Additional references can be declared here, references are merged with the base target's
+      # references to produce the final set.
+      references:
+      - sdkroot:CoreData.framework
+      # Configuration options are merged with the base target's configuration options. This will
+      # replace any previous definitions for matching options.
+      configuration:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_BETA
