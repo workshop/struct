@@ -1,16 +1,16 @@
 require 'semantic'
 
 module Xcodegen
-	class Specparser10X
+	class Specparser11X
 		# @param version [Semantic::Version]
 		def can_parse_version(version)
-			version.major == 1 && version.minor == 0
+			version.major == 1 && version.minor == 1
 		end
 
 		def parse(spec_version, spec_hash, filename)
 			valid_configuration_names = []
 			configurations = spec_hash['configurations'].map { |name, config|
-				unless config != nil and config.key? 'profiles' and config['profiles'].is_a?(Array) and config['profiles'].count > 0
+				unless config&.key? 'profiles' and config['profiles'].is_a?(Array) and config['profiles'].count > 0
 					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
 					next nil
 				end
@@ -35,7 +35,170 @@ module Xcodegen
 				parse_target_data(target_name, target_opts, project_base_dir, valid_configuration_names)
 			}.compact
 
-			Specfile.new(spec_version, targets, configurations, [], project_base_dir)
+			variants = (spec_hash['variants'] || {}).map { |variant_name, variant_targets|
+				parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names)
+			}.compact
+
+			Specfile.new(spec_version, targets, configurations, variants, project_base_dir)
+		end
+
+		def parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names)
+			unless (variant_name || '').length > 0 && !variant_targets.empty?
+				return nil
+			end
+
+			abstract = false
+			targets = []
+
+			(variant_targets || {}).each { |key, value|
+				if key == 'abstract'
+					abstract = true
+				else
+					targets.unshift(parse_variant_target_data(key, value, project_base_dir, valid_configuration_names))
+				end
+			}
+
+			Xcodegen::Specfile::Variant.new(variant_name, targets, abstract)
+		end
+
+		def parse_variant_target_data(target_name, target_opts, project_base_dir, valid_config_names)
+			type = nil
+			raw_type = nil
+			# Parse target type
+			if target_opts.key? 'type'
+				type = target_opts['type']
+				if type.is_a?(Symbol)
+					type = type.to_s
+				end
+
+				# : at the start of the type is shorthand for 'com.apple.product-type.'
+				if type.start_with? ':'
+					type[0] = ''
+					raw_type = type
+					type = "com.apple.product-type.#{type}"
+				else
+					raw_type = type
+				end
+			end
+
+			# Parse target platform/type/profiles into a profiles list
+			profiles = []
+			if target_opts.key? 'profiles'
+				if target_opts['profiles'].is_a?(Array)
+					profiles = target_opts['profiles']
+				else
+					puts Paint["Warning: Key 'profiles' for variant override #{target_name} is not an array. Ignoring...", :yellow]
+				end
+			elsif profiles == nil and target_opts.key? 'platform'
+				raw_platform = target_opts['platform']
+				profiles = [raw_type, "platform:#{raw_platform}"].compact
+			end
+
+			# Parse target configurations
+			if target_opts.key? 'configurations'
+				if target_opts['configurations'].is_a?(Hash)
+					configurations = target_opts['configurations'].map {|config_name, config|
+						if valid_config_names.include? config_name
+							next nil
+						end
+						Specfile::Target::Configuration.new(config_name, config, profiles)
+					}.compact
+				end
+			elsif target_opts.key? 'configuration'
+				configurations = valid_config_names.map { |name|
+					Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
+				}
+			end
+
+			# Parse target sources
+			if target_opts.key? 'sources'
+				target_sources_dir = File.join(project_base_dir, target_opts['sources'])
+				unless Dir.exist? target_sources_dir
+					target_sources_dir = nil
+				end
+			end
+
+			# Parse target resources
+			if target_opts.key? 'i18n-resources'
+				target_resources_dir = File.join(project_base_dir, target_opts['i18n-resources'])
+			else
+				target_resources_dir = nil
+			end
+
+			# Parse excludes
+			if target_opts.key? 'excludes'
+				file_excludes = (target_opts['excludes'] || {})['files'] || []
+				unless file_excludes.is_a?(Array)
+					puts Paint["Warning: Target #{target_name}'s file excludes was not an array. Ignoring file excludes...", :yellow]
+					file_excludes = []
+				end
+			else
+				file_excludes = []
+			end
+
+			if target_opts.key? 'references'
+				raw_references = target_opts['references']
+				if raw_references.is_a?(Array)
+					references = raw_references.map { |raw_reference|
+						if raw_reference.is_a?(Hash)
+							project_path = raw_reference['location']
+
+							unless File.exist? File.join(project_base_dir, project_path)
+								puts Paint["Warning: Project reference #{project_path} could not be found. Ignoring project...", :yellow]
+								next nil
+							end
+
+							next Specfile::Target::FrameworkReference.new(project_path, raw_reference)
+						else
+							# De-symbolise :sdkroot:-prefixed entries
+							ref = raw_reference.to_s
+							if ref.start_with? 'sdkroot:'
+								if ref.end_with? '.framework'
+									next Specfile::Target::SystemFrameworkReference.new(raw_reference.sub('sdkroot:', '').sub('.framework', ''))
+								else
+									next Specfile::Target::SystemLibraryReference.new(raw_reference.sub('sdkroot:', ''))
+								end
+							else
+								next Specfile::Target::TargetReference.new(raw_reference)
+							end
+						end
+					}.compact
+				else
+					puts Paint["Warning: Key 'references' for target #{target_name} is not an array. Ignoring...", :yellow]
+					references = []
+				end
+			else
+				references = []
+			end
+
+			options = []
+			if target_opts.key? 'options'
+				if target_opts['options'].is_a?(Hash)
+					if target_opts['options'].key? 'files'
+						if target_opts['options']['files'].is_a?(Hash)
+							options.unshift *target_opts['options']['files'].map { |glob, fileOpts|
+								Specfile::Target::FileOption.new(glob, fileOpts)
+							}
+						else
+							puts Paint["Warning: Key 'files' for target #{target_name}'s options is not a hash. Ignoring...", :yellow]
+						end
+					end
+
+					if target_opts['options'].key? 'frameworks'
+						if target_opts['options']['frameworks'].is_a?(Hash)
+							options.unshift *target_opts['options']['frameworks'].map { |name, frameworkOpts|
+								Specfile::Target::FrameworkOption.new(name, frameworkOpts)
+							}
+						else
+							puts Paint["Warning: Key 'frameworks' for target #{target_name}'s options is not a hash. Ignoring...", :yellow]
+						end
+					end
+				else
+					puts Paint["Warning: Key 'options' for target #{target_name} is not a hash. Ignoring...", :yellow]
+				end
+			end
+
+			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, options, target_resources_dir, file_excludes
 		end
 
 		# @return Xcodegen::Specfile::Target

@@ -8,7 +8,7 @@ RSpec.describe Xcodegen::Specfile do
 			target = Xcodegen::Specfile::Target.new '', '', '', [], [], [], '', []
 			config = Xcodegen::Specfile::Configuration.new '', [], {}, 'debug'
 
-			spec = Xcodegen::Specfile.new version, [target], [config], base_dir
+			spec = Xcodegen::Specfile.new version, [target], [config], [], base_dir
 
 			expect(spec.version).to eq(version)
 			expect(spec.base_dir).to eq(base_dir)
@@ -45,7 +45,7 @@ RSpec.describe Xcodegen::Specfile do
 			target = Xcodegen::Specfile::Target.new '', '', '', [], [], [], '', []
 			config = Xcodegen::Specfile::Configuration.new '', [], {}, 'debug'
 
-			spec = Xcodegen::Specfile.new version, [target], [config], base_dir
+			spec = Xcodegen::Specfile.new version, [target], [config], [], base_dir
 
 			allow_any_instance_of(Xcodegen::Specwriter).to receive(:write_spec).and_return(fake_writer_result)
 			expect(spec.write(write_arg, nil)).to equal(fake_writer_result)
@@ -60,7 +60,7 @@ RSpec.describe Xcodegen::Specfile do
 			target = Xcodegen::Specfile::Target.new '', '', '', [], [], [], '', []
 			config = Xcodegen::Specfile::Configuration.new '', [], {}, 'debug'
 
-			spec = Xcodegen::Specfile.new version, [target], [config], base_dir
+			spec = Xcodegen::Specfile.new version, [target], [config], [], base_dir
 			writer = double('writer', write_spec: fake_writer_result, register: nil, register_defaults: nil, write_configuration: nil, write_target: nil)
 
 			expect(spec.write(write_arg, writer)).to equal(fake_writer_result)

@@ -213,12 +213,97 @@ module Xcodegen
 			end
 		end
 
+		class Variant
+			class Target
+				# @param target_name [String]
+				# @param target_type [String]
+				# @param source_dir [String]
+				# @param configurations [Array<Xcodegen::Specfile::Target::Configuration>]
+				# @param references [Array<Xcodegen::Specfile::Target::FrameworkReference>]
+				# @param options [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
+				# @param res_dir [String]
+				# @param file_excludes [String]
+				def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes)
+					@name = target_name
+					@type = target_type
+					@source_dir = source_dir
+					@configurations = configurations
+					@references = references
+					@options = options
+					@res_dir = res_dir || source_dir
+					@file_excludes = file_excludes || []
+				end
+
+				# @return [String]
+				def name
+					@name
+				end
+
+				# @return [Array<Xcodegen::Specfile::Target::Configuration>]
+				def configurations
+					@configurations
+				end
+
+				# @return [Array<Xcodegen::Specfile::Target::TargetReference, Array<Xcodegen::Specfile::Target::FrameworkReference>]
+				def references
+					@references
+				end
+
+				# @return [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
+				def options
+					@options
+				end
+
+				# @return [String]
+				def type
+					@type
+				end
+
+				# @return [String]
+				def source_dir
+					@source_dir
+				end
+
+				# @return [String]
+				def res_dir
+					@res_dir
+				end
+
+				# @return [Array<String>]
+				def file_excludes
+					@file_excludes
+				end
+			end
+
+			def initialize(variant_name, targets, abstract)
+				@name = variant_name
+				@targets = targets
+				@abstract = abstract
+			end
+
+			# @return [String]
+			def name
+				@name
+			end
+
+			# @return [Array<Xcodegen::Specfile::Variant::Target>]
+			def targets
+				@targets
+			end
+
+			# @return [Boolean]
+			def abstract
+				@abstract
+			end
+		end
+
 		# @param version [Semantic::Version]
 		# @param targets [Array<Xcodegen::Specfile::Target>]
 		# @param configurations [Array<Xcodegen::Specfile::Configuration>]
-		def initialize(version, targets, configurations, base_dir)
+		def initialize(version, targets, configurations, variants, base_dir)
 			@version = version
 			@targets = targets
+			@variants = variants
 			@configurations = configurations
 			@base_dir = base_dir
 		end
@@ -248,6 +333,11 @@ module Xcodegen
 		# @return [Array<Xcodegen::Specfile::Target>]
 		def targets
 			@targets
+		end
+
+		# @return [Array<Xcodegen::Specfile::Variant>]
+		def variants
+			@variants
 		end
 
 		# @return [Array<Xcodegen::Specfile::Configuration>]

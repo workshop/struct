@@ -1,4 +1,5 @@
 require_relative 'spec_parser_1_0_X'
+require_relative 'spec_parser_1_1_X'
 
 module Xcodegen
 	class Specparser
@@ -16,7 +17,8 @@ module Xcodegen
 
 		def register_defaults
 			@parsers.unshift *[
-				Xcodegen::Specparser10X.new
+				Xcodegen::Specparser10X.new,
+				Xcodegen::Specparser11X.new
 			]
 		end
 
