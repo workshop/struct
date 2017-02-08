@@ -20,29 +20,17 @@ module Xcodegen
 				elsif name == 'release'
 					'release'
 				else
-					raw_type
+					@type
 				end
 			end
 
-			# @return [String]
-			def raw_type
-				@type
+			def type=(value)
+				@type = value
 			end
 
-			# @return [String]
-			def name
-				@name
-			end
-
-			# @return [Array<String>]
-			def profiles
-				@profiles
-			end
-
-			# @return [Hash]
-			def overrides
-				@overrides
-			end
+			attr_accessor :name
+			attr_accessor :profiles
+			attr_accessor :overrides
 		end
 
 		class Target
@@ -53,20 +41,9 @@ module Xcodegen
 					@profiles = profiles || []
 				end
 
-				# @return [String]
-				def name
-					@name
-				end
-
-				# @return [Hash]
-				def settings
-					@settings
-				end
-
-				# @return [Array<String>]
-				def profiles
-					@profiles
-				end
+				attr_accessor :name
+				attr_accessor :settings
+				attr_accessor :profiles
 			end
 
 			class TargetReference
@@ -74,10 +51,7 @@ module Xcodegen
 					@target_name = target_name
 				end
 
-				# @return [String]
-				def target_name
-					@target_name
-				end
+				attr_accessor :target_name
 			end
 
 			class SystemFrameworkReference
@@ -85,10 +59,7 @@ module Xcodegen
 					@name = name
 				end
 
-				# @return [String]
-				def name
-					@name
-				end
+				attr_accessor :name
 			end
 
 			class SystemLibraryReference
@@ -96,10 +67,7 @@ module Xcodegen
 					@name = name
 				end
 
-				# @return [String]
-				def name
-					@name
-				end
+				attr_accessor :name
 			end
 
 			class FrameworkReference
@@ -108,15 +76,8 @@ module Xcodegen
 					@settings = settings
 				end
 
-				# @return [String]
-				def project_path
-					@project_path
-				end
-
-				# @return [Hash]
-				def settings
-					@settings
-				end
+				attr_accessor :project_path
+				attr_accessor :settings
 			end
 
 			class FileOption
@@ -125,15 +86,8 @@ module Xcodegen
 					@options = options
 				end
 
-				# @return [String]
-				def glob
-					@glob
-				end
-
-				# @return [Hash]
-				def options
-					@options
-				end
+				attr_accessor :glob
+				attr_accessor :options
 			end
 
 			class FrameworkOption
@@ -142,15 +96,8 @@ module Xcodegen
 					@options = options
 				end
 
-				# @return [String]
-				def name
-					@name
-				end
-
-				# @return [Hash]
-				def options
-					@options
-				end
+				attr_accessor :name
+				attr_accessor :options
 			end
 
 			# @param target_name [String]
@@ -159,8 +106,8 @@ module Xcodegen
 			# @param configurations [Array<Xcodegen::Specfile::Target::Configuration>]
 			# @param references [Array<Xcodegen::Specfile::Target::FrameworkReference>]
 			# @param options [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
-			# @param res_dir [String]
-			# @param file_excludes [String]
+			# @param res_dir [Array<String>]
+			# @param file_excludes [Array<String>]
 			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes)
 				@name = target_name
 				@type = target_type
@@ -219,45 +166,14 @@ module Xcodegen
 					@file_excludes = file_excludes || []
 				end
 
-				# @return [String]
-				def name
-					@name
-				end
-
-				# @return [Array<Xcodegen::Specfile::Target::Configuration>]
-				def configurations
-					@configurations
-				end
-
-				# @return [Array<Xcodegen::Specfile::Target::TargetReference, Array<Xcodegen::Specfile::Target::FrameworkReference>]
-				def references
-					@references
-				end
-
-				# @return [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
-				def options
-					@options
-				end
-
-				# @return [String]
-				def type
-					@type
-				end
-
-				# @return [String]
-				def source_dir
-					@source_dir
-				end
-
-				# @return [String]
-				def res_dir
-					@res_dir
-				end
-
-				# @return [Array<String>]
-				def file_excludes
-					@file_excludes
-				end
+				attr_accessor :name
+				attr_accessor :type
+				attr_accessor :source_dir
+				attr_accessor :configurations
+				attr_accessor :references
+				attr_accessor :options
+				attr_accessor :res_dir
+				attr_accessor :file_excludes
 			end
 
 			def initialize(variant_name, targets, abstract)
@@ -266,20 +182,9 @@ module Xcodegen
 				@abstract = abstract
 			end
 
-			# @return [String]
-			def name
-				@name
-			end
-
-			# @return [Array<Xcodegen::Specfile::Variant::Target>]
-			def targets
-				@targets
-			end
-
-			# @return [Boolean]
-			def abstract
-				@abstract
-			end
+			attr_accessor :name
+			attr_accessor :targets
+			attr_accessor :abstract
 		end
 
 		# @param version [Semantic::Version]
@@ -310,30 +215,10 @@ module Xcodegen
 			end
 		end
 
-		# @return [Semantic::Version]
-		def version
-			@version
-		end
-
-		# @return [Array<Xcodegen::Specfile::Target>]
-		def targets
-			@targets
-		end
-
-		# @return [Array<Xcodegen::Specfile::Variant>]
-		def variants
-			@variants
-		end
-
-		# @return [Array<Xcodegen::Specfile::Configuration>]
-		def configurations
-			@configurations
-		end
-
-		# @return [String]
-		def base_dir
-			@base_dir
-		end
-
+		attr_accessor :version
+		attr_accessor :targets
+		attr_accessor :variants
+		attr_accessor :configurations
+		attr_accessor :base_dir
 	end
 end

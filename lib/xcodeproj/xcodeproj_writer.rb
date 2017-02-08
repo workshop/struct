@@ -62,6 +62,13 @@ module Xcodegen
 
 						spec_target.source_dir = spec_target.source_dir.unshift(*target.source_dir).uniq
 						spec_target.res_dir = spec_target.res_dir.unshift(*target.res_dir).uniq
+						spec_target.file_excludes = [].unshift(*spec_target.file_excludes).unshift(*target.file_excludes).uniq
+
+						target.configurations.each { |configuration|
+							spec_config = spec_target.configurations.find { |sc| sc.name == configuration.name }
+							spec_config.settings.merge! configuration.settings
+							spec_config.profiles = [].unshift(*configuration.profiles).unshift(*spec_config.profiles).uniq
+						}
 					}
 
 					[variant.name, Xcodegen::Specfile.new(spec.version, spec_targets, spec.configurations, [], spec.base_dir)]
