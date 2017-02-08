@@ -185,7 +185,7 @@ module Xcodegen
 
 				f.settings['frameworks'].map { |f_opts|
 					remote_target = remote_project.targets.select { |t|
-						t.product_reference.path == f_opts['name'] and t.product_type === 'com.apple.product-type.framework' and t.platform_name == platform
+						t.product_reference.path == f_opts['name'] and t.product_type === 'com.apple.product-type.framework' and [nil, platform].include? t.platform_name
 					}.first
 					next nil if remote_target == nil
 
