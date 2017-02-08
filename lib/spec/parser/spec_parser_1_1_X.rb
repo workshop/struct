@@ -363,7 +363,18 @@ module Xcodegen
 				end
 			end
 
-			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, options, target_resources_dir, file_excludes
+			# Parse target run scripts
+			if target_opts.key? 'scripts' and target_opts['scripts'].is_a?(Array)
+				scripts = target_opts['scripts'].map { |s|
+					next nil if s.start_with? '/' # Script file should be relative to project
+					next nil unless File.exist? File.join(project_base_dir, s)
+					Specfile::Target::RunScript.new s
+				}.compact
+			else
+				scripts = []
+			end
+
+			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, options, target_resources_dir, file_excludes, run_scripts=scripts
 		end
 	end
 end

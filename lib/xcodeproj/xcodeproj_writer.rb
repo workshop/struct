@@ -403,6 +403,14 @@ module Xcodegen
 				(embed_phase.add_file_reference framework).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
 				native_target.frameworks_build_phase.add_file_reference framework
 			}
+
+			target.run_scripts.each { |script|
+				script_name = script.script_path
+				script = File.read(File.join(project_directory, script.script_path))
+
+				script_phase = native_target.new_shell_script_build_phase script_name
+				script_phase.shell_script = script
+			}
 		end
 	end
 end

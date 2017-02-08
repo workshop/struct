@@ -92,6 +92,8 @@ targets:
       INFOPLIST_FILE: iOSTest/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTest
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+    scripts:
+    - scripts/sample.sh
   iOSTestTests:
     sources: iOSTestTests
     references:

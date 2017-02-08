@@ -100,6 +100,14 @@ module Xcodegen
 				attr_accessor :options
 			end
 
+			class RunScript
+				def initialize(script_path)
+					@script_path = script_path
+				end
+
+				attr_accessor :script_path
+			end
+
 			# @param target_name [String]
 			# @param target_type [String]
 			# @param source_dir [Array<String>]
@@ -108,7 +116,8 @@ module Xcodegen
 			# @param options [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
 			# @param res_dir [Array<String>]
 			# @param file_excludes [Array<String>]
-			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes)
+			# @param run_scripts [Array<Xcodegen::Specfile::Target::RunScript>]
+			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes, run_scripts=[])
 				@name = target_name
 				@type = target_type
 				if source_dir != nil
@@ -133,6 +142,7 @@ module Xcodegen
 					@res_dir = @source_dir
 				end
 				@file_excludes = file_excludes || []
+				@run_scripts = run_scripts || []
 			end
 
 			attr_accessor :name
@@ -143,6 +153,7 @@ module Xcodegen
 			attr_accessor :options
 			attr_accessor :res_dir
 			attr_accessor :file_excludes
+			attr_accessor :run_scripts
 		end
 
 		class Variant
