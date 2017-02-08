@@ -203,7 +203,7 @@ module Xcodegen
 						embed_phase = project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
 						embed_phase.name = "Embed Framework #{framework.path}"
 						embed_phase.symbol_dst_subfolder_spec = :frameworks
-						native_target.build_phases + [embed_phase]
+						native_target.build_phases.insert(native_target.build_phases.count, embed_phase)
 
 						attributes = ['RemoveHeadersOnCopy']
 
@@ -441,7 +441,7 @@ module Xcodegen
 			embed_phase = project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
 			embed_phase.name = 'Embed Frameworks'
 			embed_phase.symbol_dst_subfolder_spec = :frameworks
-			native_target.build_phases << embed_phase
+			native_target.build_phases.insert(native_target.build_phases.count, embed_phase)
 
 			framework_files.map { |framework|
 				framework_group.new_file framework
