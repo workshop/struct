@@ -171,6 +171,52 @@ module Xcodegen
 				.map { |ref| ref.name }
 			native_target.add_system_library requested_sys_library_refs
 
+			subproj_group = project.frameworks_group.groups.find { |g| g.display_name == '$subproj' }
+			if subproj_group == nil
+				 subproj_group = project.frameworks_group.new_group '$subproj', nil, '<group>'
+			end
+			framework_group = project.frameworks_group.groups.find { |group| group.display_name == '$local' }
+			if framework_group == nil
+				framework_group = project.frameworks_group.new_group '$local', nil, '<group>'
+			end
+			target.references.select { |ref| ref.is_a? Xcodegen::Specfile::Target::FrameworkReference }.each { |f|
+				subproj = subproj_group.new_file f.project_path
+				remote_project = Xcodeproj::Project.open f.project_path
+
+				f.settings['frameworks'].map { |f_opts|
+					remote_target = remote_project.targets.select { |t|
+						t.product_reference.path == f_opts['name'] and t.product_type === 'com.apple.product-type.framework'
+					}.first
+					next nil if remote_target == nil
+
+					native_target.add_dependency remote_target
+
+					[subproj.file_reference_proxies.select { |p| p.path == remote_target.product_reference.path }.first, f_opts]
+				}.compact.each { |data|
+					framework, f_opts = data
+					framework_path = File.expand_path framework.path, File.dirname(f.project_path)
+					framework_group.new_file framework_path
+
+					native_target.frameworks_build_phase.add_file_reference framework
+
+					if f_opts['copy']
+						embed_phase = project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
+						embed_phase.name = "Embed Framework #{framework.path}"
+						embed_phase.symbol_dst_subfolder_spec = :frameworks
+						native_target.build_phases + [embed_phase]
+
+						attributes = ['RemoveHeadersOnCopy']
+
+						if f_opts['codeSignOnCopy']
+							attributes << 'CodeSignOnCopy'
+						end
+
+						framework_build_file = embed_phase.add_file_reference framework
+						framework_build_file.settings = { 'ATTRIBUTES' => attributes }
+					end
+				}
+			}
+
 			return native_target
 		end
 
@@ -392,7 +438,11 @@ module Xcodegen
 				framework_group = project.frameworks_group.new_group '$local', nil, '<group>'
 			end
 			# The 'Embed Frameworks' phase is missing by default from the Xcodeproj template, so we have to add it.
-			embed_phase = project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
+			embed_phase = project.objects.select { |obj| obj.isa == 'PBXCopyFilesBuildPhase' }.first
+			if embed_phase == nil
+				embed_phase = project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
+				embed_phase.symbol_dst_subfolder_spec = :frameworks
+			end
 			embed_phase.name = 'Embed Frameworks'
 			embed_phase.symbol_dst_subfolder_spec = :frameworks
 			native_target.build_phases << embed_phase
@@ -411,6 +461,8 @@ module Xcodegen
 				script_phase = native_target.new_shell_script_build_phase script_name
 				script_phase.shell_script = script
 			}
+
+
 		end
 	end
 end
