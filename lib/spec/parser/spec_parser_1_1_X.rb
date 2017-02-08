@@ -43,7 +43,7 @@ module Xcodegen
 		end
 
 		def parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names)
-			unless (variant_name || '').length > 0 && !variant_targets.empty?
+			unless (variant_name || '').empty? and !(variant_targets || '').empty?
 				return nil
 			end
 
