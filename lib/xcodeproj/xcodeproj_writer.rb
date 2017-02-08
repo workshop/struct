@@ -355,7 +355,7 @@ module Xcodegen
 						next false
 					end
 
-					next !(file.include? '.framework/')
+					next !(file.include? '.framework/') && !(file.include? '.xcdatamodeld/')
 				}
 
 				rel_source_root = source_dir.sub(project_directory, '')
@@ -377,6 +377,8 @@ module Xcodegen
 					if file.end_with? '.swift'
 						native_target.source_build_phase.files_references << native_file
 						native_target.add_file_references [native_file]
+					elsif file.end_with? '.entitlements'
+						next
 					else
 						native_target.add_resources [native_file]
 					end
