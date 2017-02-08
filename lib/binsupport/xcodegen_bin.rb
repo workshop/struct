@@ -72,7 +72,7 @@ module Xcodegen
 
 					begin
 						spec = Xcodegen::Specfile.parse project_file
-						Xcodegen::XcodeprojWriter.write spec, File.join(directory, 'project.xcodeproj')
+						Xcodegen::XcodeprojWriter.write spec, directory
 					rescue StandardError => err
 						puts Paint[err, :red]
 						quit -1

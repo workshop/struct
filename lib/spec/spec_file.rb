@@ -155,7 +155,7 @@ module Xcodegen
 
 			# @param target_name [String]
 			# @param target_type [String]
-			# @param source_dir [String]
+			# @param source_dir [Array<String>]
 			# @param configurations [Array<Xcodegen::Specfile::Target::Configuration>]
 			# @param references [Array<Xcodegen::Specfile::Target::FrameworkReference>]
 			# @param options [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
@@ -164,53 +164,38 @@ module Xcodegen
 			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes)
 				@name = target_name
 				@type = target_type
-				@source_dir = source_dir
+				if source_dir != nil
+					if source_dir.is_a? Array
+						@source_dir = [].unshift *source_dir
+					else
+						@source_dir = [source_dir]
+					end
+				else
+					@source_dir = []
+				end
 				@configurations = configurations
 				@references = references
 				@options = options
-				@res_dir = res_dir || source_dir
+				if res_dir != nil
+					if res_dir.is_a? Array
+						@res_dir = [].unshift *res_dir
+					else
+						@res_dir = [res_dir]
+					end
+				else
+					@res_dir = @source_dir
+				end
 				@file_excludes = file_excludes || []
 			end
 
-			# @return [String]
-			def name
-				@name
-			end
-
-			# @return [Array<Xcodegen::Specfile::Target::Configuration>]
-			def configurations
-				@configurations
-			end
-
-			# @return [Array<Xcodegen::Specfile::Target::TargetReference, Array<Xcodegen::Specfile::Target::FrameworkReference>]
-			def references
-				@references
-			end
-
-			# @return [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
-			def options
-				@options
-			end
-
-			# @return [String]
-			def type
-				@type
-			end
-
-			# @return [String]
-			def source_dir
-				@source_dir
-			end
-
-			# @return [String]
-			def res_dir
-				@res_dir
-			end
-
-			# @return [Array<String>]
-			def file_excludes
-				@file_excludes
-			end
+			attr_accessor :name
+			attr_accessor :type
+			attr_accessor :source_dir
+			attr_accessor :configurations
+			attr_accessor :references
+			attr_accessor :options
+			attr_accessor :res_dir
+			attr_accessor :file_excludes
 		end
 
 		class Variant

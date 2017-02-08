@@ -14,7 +14,7 @@ module Xcodegen
 			end
 
 			begin
-				Xcodegen::XcodeprojWriter.write spec, File.join(directory, 'project.xcodeproj')
+				Xcodegen::XcodeprojWriter.write spec, directory
 			rescue StandardError => err
 				puts Paint[err, :red]
 			end
