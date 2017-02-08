@@ -438,11 +438,7 @@ module Xcodegen
 				framework_group = project.frameworks_group.new_group '$local', nil, '<group>'
 			end
 			# The 'Embed Frameworks' phase is missing by default from the Xcodeproj template, so we have to add it.
-			embed_phase = project.objects.select { |obj| obj.isa == 'PBXCopyFilesBuildPhase' }.first
-			if embed_phase == nil
-				embed_phase = project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
-				embed_phase.symbol_dst_subfolder_spec = :frameworks
-			end
+			embed_phase = project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
 			embed_phase.name = 'Embed Frameworks'
 			embed_phase.symbol_dst_subfolder_spec = :frameworks
 			native_target.build_phases << embed_phase
