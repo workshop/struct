@@ -145,10 +145,10 @@ variants:
     iOSTest:
       # Any additional source files can be included from a separate source folder, these will be added
       # in addition to the default sources directory declared on the target.
-      sources: iOSTest-beta
+      sources: iOSTest-Beta
       # Any additional resources can be included from a separate folder, these will be added in addition
       # to the default resources directory declared on the target.
-      i18n-resources: iOSTest-beta/lproj
+      i18n-resources: iOSTest-Beta/lproj
       # Any excludes declared here will only apply to this variant's sources directory. The target's
       # excludes should be declared within the target definition.
       excludes:

@@ -69,6 +69,10 @@ module Xcodegen
 							spec_config.settings.merge! configuration.settings
 							spec_config.profiles = [].unshift(*configuration.profiles).unshift(*spec_config.profiles).uniq
 						}
+
+						spec_target.file_excludes = [].unshift(*spec_target.file_excludes).unshift(*target.file_excludes)
+						spec_target.options = [].unshift(*spec_target.options).unshift(*target.options)
+						spec_target.references = [].unshift(*spec_target.references).unshift(*target.references)
 					}
 
 					[variant.name, Xcodegen::Specfile.new(spec.version, spec_targets, spec.configurations, [], spec.base_dir)]
@@ -287,9 +291,10 @@ module Xcodegen
 					source_files_minus_dir.count(f.sub(source_dir, '')) == 0
 				}
 
+				new_files_minus_dir = new_files.map { |f| f.sub(source_dir, '') }
 				all_source_files.unshift(*new_files)
 				grouped_source_files[source_dir] = new_files
-				source_files_minus_dir = source_files_minus_dir.unshift(*new_files.map { |f| f.sub(source_dir, '') }).uniq
+				source_files_minus_dir = source_files_minus_dir.unshift(*new_files_minus_dir).uniq
 			}
 
 			grouped_source_files.each { |source_dir, all_files|
