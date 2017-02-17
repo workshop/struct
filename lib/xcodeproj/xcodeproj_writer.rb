@@ -183,21 +183,18 @@ module Xcodegen
 				subproj = subproj_group.new_file f.project_path
 				remote_project = Xcodeproj::Project.open f.project_path
 
-				f.settings['frameworks'].map { |f_opts|
+				f.settings['frameworks'].each { |f_opts|
 					remote_target = remote_project.targets.select { |t|
 						t.product_reference.path == f_opts['name'] and t.product_type === 'com.apple.product-type.framework' and [nil, platform].include? t.platform_name
 					}.first
-					next nil if remote_target == nil
+					next if remote_target == nil
 
-					native_target.add_dependency remote_target
+					framework = subproj.file_reference_proxies.select { |p| p.path == remote_target.product_reference.path }.first
 
-					[subproj.file_reference_proxies.select { |p| p.path == remote_target.product_reference.path }.first, f_opts]
-				}.compact.each { |data|
-					framework, f_opts = data
 					framework_path = File.expand_path framework.path, File.dirname(f.project_path)
 					framework_group.new_file framework_path
 
-					native_target.frameworks_build_phase.add_file_reference framework
+					native_target.add_dependency remote_target
 
 					if f_opts['copy']
 						embed_phase = project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
@@ -214,6 +211,8 @@ module Xcodegen
 						framework_build_file = embed_phase.add_file_reference framework
 						framework_build_file.settings = { 'ATTRIBUTES' => attributes }
 					end
+
+					native_target.frameworks_build_phase.add_file_reference framework
 				}
 			}
 
@@ -332,7 +331,8 @@ module Xcodegen
 					!(file.include? '.xcassets/') and
 						!(file.include? '.bundle/') and
 						!(file.end_with? 'Info.plist') and
-						!(file.include? '.lproj')
+						!(file.include? '.lproj') and
+						(file.include? '.')
 				}.uniq.select { |f|
 					source_files_minus_dir.count(f.sub(source_dir, '')) == 0
 				}
@@ -351,7 +351,7 @@ module Xcodegen
 				}
 
 				files = files.select { |file|
-					if File.directory?(file) and !file.end_with? '.xcassets'
+					if File.directory?(file) and !file.end_with? '.xcassets' and !file.end_with? '.xcdatamodeld'
 						next false
 					end
 
@@ -374,12 +374,12 @@ module Xcodegen
 				}.each { |file|
 					native_group = file.include?('/') ? create_group(source_group, File.dirname(file).split('/')) : source_group
 					native_file = native_group.new_file File.basename(file)
-					if file.end_with? '.swift'
+					if file.end_with? '.swift' or file.end_with? '.m' or file.end_with? '.mm'
 						native_target.source_build_phase.files_references << native_file
 						native_target.add_file_references [native_file]
 					elsif file.end_with? '.entitlements'
 						next
-					else
+					elsif file.include? '.' # Files without an extension break Xcode compilation during resource phase
 						native_target.add_resources [native_file]
 					end
 				}
@@ -459,8 +459,6 @@ module Xcodegen
 				script_phase = native_target.new_shell_script_build_phase script_name
 				script_phase.shell_script = script
 			}
-
-
 		end
 	end
 end

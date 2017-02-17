@@ -112,8 +112,13 @@ module Xcodegen
 
 			# Parse target sources
 			if target_opts.key? 'sources'
-				target_sources_dir = File.join(project_base_dir, target_opts['sources'])
-				unless Dir.exist? target_sources_dir
+				if target_opts['sources'].is_a?(Array)
+					target_sources_dir = target_opts['sources'].map { |src| File.join(project_base_dir, src) }
+				else
+					target_sources_dir = [File.join(project_base_dir, target_opts['sources'])]
+				end
+				target_sources_dir = target_sources_dir.select { |dir| Dir.exist? dir }
+				unless target_sources_dir.count > 0
 					target_sources_dir = nil
 				end
 			end
@@ -273,13 +278,23 @@ module Xcodegen
 
 			# Parse target sources
 			unless target_opts.key? 'sources'
-				puts Paint["Warning: Target #{target_name} has no sources directory. Ignoring target...", :yellow]
+				puts Paint["Warning: Target #{target_name} contained no valid sources directories. Ignoring target...", :yellow]
 				return nil
 			end
 
-			target_sources_dir = File.join(project_base_dir, target_opts['sources'])
-			unless Dir.exist? target_sources_dir
-				puts Paint["Warning: Target #{target_name}'s sources directory does not exist. Ignoring target...", :yellow]
+			if target_opts.key? 'sources'
+				if target_opts['sources'].is_a?(Array)
+					target_sources_dir = target_opts['sources'].map { |src| File.join(project_base_dir, src) }
+				else
+					target_sources_dir = [File.join(project_base_dir, target_opts['sources'])]
+				end
+				target_sources_dir = target_sources_dir.select { |dir| Dir.exist? dir }
+				unless target_sources_dir.count > 0
+					target_sources_dir = nil
+				end
+			end
+			if target_sources_dir == nil
+				puts Paint["Warning: Target #{target_name} contained no valid sources directories. Ignoring target...", :yellow]
 				return nil
 			end
 

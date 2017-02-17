@@ -18,3 +18,9 @@ versions:
   - Added support for migrating Xcode projects to spec files. This only supports a
     handful of scenarios, please see https://git.io/vMKs9 for more details.
   - Fixed a parsing bug with multi-configuration overrides in targets
+  0.3.0:
+  - Added support for subprojects
+  - Added support for including Objective-C source files (*.m and *.mm)
+  - Added support for including Core Data models
+  - Added support for including multiple source directories
+  - Various bug fixes
