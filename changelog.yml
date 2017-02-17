@@ -19,8 +19,9 @@ versions:
     handful of scenarios, please see https://git.io/vMKs9 for more details.
   - Fixed a parsing bug with multi-configuration overrides in targets
   0.3.0:
-  - Added support for subprojects
-  - Added support for including Objective-C source files (*.m and *.mm)
-  - Added support for including Core Data models
-  - Added support for including multiple source directories
+  - Added a new beta Specfile format containing new functionality
+  - Added support for subprojects (v1.1.0)
+  - Added support for including Objective-C source files (*.m and *.mm) (v1.1.0)
+  - Added support for including Core Data models (v1.1.0)
+  - Added support for including multiple source directories (v1.1.0)
   - Various bug fixes
