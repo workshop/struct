@@ -4,6 +4,7 @@ require 'date'
 require 'yaml'
 require 'semantic'
 require 'paint'
+require 'tmpdir'
 require_relative '../version'
 
 module Xcodegen
