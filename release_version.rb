@@ -47,7 +47,8 @@ puts `git push --follow-tags`
 
 return if ENV['GITHUB_API_KEY'] == nil
 
-Excon.post('https://api.github.com/repos/lyptt/xcodegen/releases',
+begin
+puts Excon.post('https://api.github.com/repos/lyptt/xcodegen/releases',
 	:connect_timeout => 30,
 	:body => {
 		:tag_name => Xcodegen::VERSION,
@@ -56,6 +57,10 @@ Excon.post('https://api.github.com/repos/lyptt/xcodegen/releases',
 	}.to_json,
 	:headers => {
 		'Content-Type' => 'application/json',
-		'Authorization' => "Bearer #{ENV['GITHUB_API_KEY']}"
+		'Authorization' => "Bearer #{ENV['GITHUB_API_KEY']}",
+		'User-Agent' => 'xcodegen releaser'
 	}
-)
+).body
+rescue StandardError => err
+	puts err
+end
