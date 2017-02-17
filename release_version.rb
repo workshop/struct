@@ -43,7 +43,8 @@ commit_message += changelog_content['versions'][Xcodegen::VERSION].map{ |str| " 
 
 puts `git add -A; git commit -m "#{commit_message}"`
 puts `git tag #{Xcodegen::VERSION}`
-puts `git push --follow-tags`
+puts `git push`
+puts `git push origin #{Xcodegen::VERSION}`
 
 return if ENV['GITHUB_API_KEY'] == nil
 
