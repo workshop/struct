@@ -25,3 +25,5 @@ versions:
   - Added support for including Core Data models (v1.1.0)
   - Added support for including multiple source directories (v1.1.0)
   - Various bug fixes
+  0.3.1:
+  - Fixed issue with refresher
