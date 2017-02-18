@@ -39,11 +39,15 @@ module Xcodegen
 				parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names)
 			}.compact
 
+			if variants.select { |variant| variant.name == '$base' }.count == 0
+				variants.push Xcodegen::Specfile::Variant.new('$base', [], false)
+			end
+
 			Specfile.new(spec_version, targets, configurations, variants, project_base_dir)
 		end
 
 		def parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names)
-			unless (variant_name || '').empty? and !(variant_targets || '').empty?
+			if (variant_name || '').empty? and variant_targets == nil
 				return nil
 			end
 
@@ -146,14 +150,18 @@ module Xcodegen
 				if raw_references.is_a?(Array)
 					references = raw_references.map { |raw_reference|
 						if raw_reference.is_a?(Hash)
-							project_path = raw_reference['location']
+							path = raw_reference['location']
 
-							unless File.exist? File.join(project_base_dir, project_path)
-								puts Paint["Warning: Project reference #{project_path} could not be found. Ignoring project...", :yellow]
+							unless File.exist? File.join(project_base_dir, path)
+								puts Paint["Warning: Reference #{path} could not be found. Ignoring...", :yellow]
 								next nil
 							end
 
-							next Specfile::Target::FrameworkReference.new(project_path, raw_reference)
+							if raw_reference['frameworks'] == nil
+								next Specfile::Target::LocalFrameworkReference.new(path, raw_reference)
+							else
+								next Specfile::Target::FrameworkReference.new(path, raw_reference)
+							end
 						else
 							# De-symbolise :sdkroot:-prefixed entries
 							ref = raw_reference.to_s
@@ -321,14 +329,18 @@ module Xcodegen
 				if raw_references.is_a?(Array)
 					references = raw_references.map { |raw_reference|
 						if raw_reference.is_a?(Hash)
-							project_path = raw_reference['location']
+							path = raw_reference['location']
 
-							unless File.exist? File.join(project_base_dir, project_path)
-								puts Paint["Warning: Project reference #{project_path} could not be found. Ignoring project...", :yellow]
+							unless File.exist? File.join(project_base_dir, path)
+								puts Paint["Warning: Reference #{path} could not be found. Ignoring...", :yellow]
 								next nil
 							end
 
-							next Specfile::Target::FrameworkReference.new(project_path, raw_reference)
+							if raw_reference['frameworks'] == nil
+								next Specfile::Target::LocalFrameworkReference.new(path, raw_reference)
+							else
+								next Specfile::Target::FrameworkReference.new(path, raw_reference)
+							end
 						else
 							# De-symbolise :sdkroot:-prefixed entries
 							ref = raw_reference.to_s

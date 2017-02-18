@@ -78,7 +78,6 @@ module Xcodegen
 						quit -1
 					end
 
-					puts Paint["Generated project.xcodeproj from #{File.basename(project_file)}", :green]
 					quit 0
 				end
 				o.on '-c', '--create', 'starts the resource creation wizard for creating files, targets, etc.' do

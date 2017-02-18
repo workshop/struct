@@ -48,6 +48,7 @@ module Xcodegen
 
 			if spec.variants.count == 0
 				write_xcodeproj spec, File.join(destination, 'project.xcodeproj')
+				puts Paint['Generated project.xcodeproj', :green]
 			else
 				# Generate a derived spec for each variant and write out the variants
 				specs = spec.variants.map { |variant|
@@ -81,8 +82,11 @@ module Xcodegen
 				specs.each { |name, variant_spec|
 					if name == '$base'
 						write_xcodeproj variant_spec, File.join(destination, 'project.xcodeproj')
+						puts Paint['Generated project.xcodeproj', :green]
 					else
-						write_xcodeproj variant_spec, File.join(destination, "#{name.downcase.gsub(/[^0-9a-z]/, '')}.xcodeproj")
+						project_name = name.downcase.gsub(/[^0-9a-z]/, '')
+						write_xcodeproj variant_spec, File.join(destination, "#{project_name}.xcodeproj")
+						puts Paint["Generated #{project_name}.xcodeproj", :green]
 					end
 				}
 			end
@@ -450,6 +454,24 @@ module Xcodegen
 			}.each { |framework|
 				(embed_phase.add_file_reference framework).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
 				native_target.frameworks_build_phase.add_file_reference framework
+			}
+
+			target.references.select { |ref| ref.is_a? Xcodegen::Specfile::Target::LocalFrameworkReference }.each { |ref|
+				framework = framework_group.new_file ref.framework_path
+
+				# Link
+				native_target.frameworks_build_phase.add_file_reference framework
+
+				# Embed
+				unless ref.settings.has_key?('copy') and ref.settings['copy'] == false
+					attributes = ['RemoveHeadersOnCopy']
+
+					unless ref.has_key?('codeSignOnCopy') and ref.settings['codeSignOnCopy'] == false
+						attributes.push 'CodeSignOnCopy'
+					end
+
+					(embed_phase.add_file_reference framework).settings = { 'ATTRIBUTES' => attributes }
+				end
 			}
 
 			target.run_scripts.each { |script|

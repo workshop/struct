@@ -56,13 +56,16 @@ targets:
     # - A string beginning with 'sdkroot:' will be treated as a reference to a system library
     #   or framework. Example values are 'sdkroot:UIKit.framework' and 'sdkroot:libz.tbd'
     # - Any other string will be treated as a target name to search for within this project
-    # - An object will be treated as information to use when associating a subproject's products
-    #   with this target, e.g.:
+    # - An object will be treated as a local framework reference either via a subproject, or
+    #   a pre-built binary framework:
     #   - location: Carthage/Checkouts/BrightFutures/BrightFutures.xcodeproj
     #     frameworks:
     #     - name: BrightFutures.framework
     #       copy: true
     #       codeSignOnCopy: false
+    #   - location: Carthage/Build/ISO8601.framework
+    #     copy: false
+    #     codeSignOnCopy: false
     references:
     - sdkroot:UIKit.framework
     # The platform for this target. Supported platforms are 'ios' and 'mac'.

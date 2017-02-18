@@ -80,6 +80,16 @@ module Xcodegen
 				attr_accessor :settings
 			end
 
+			class LocalFrameworkReference
+				def initialize(framework_path, settings)
+					@framework_path = framework_path
+					@settings = settings
+				end
+
+				attr_accessor :framework_path
+				attr_accessor :settings
+			end
+
 			class FileOption
 				def initialize(glob, options)
 					@glob = glob
