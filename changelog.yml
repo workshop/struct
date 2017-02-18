@@ -27,3 +27,8 @@ versions:
   - Various bug fixes
   0.3.1:
   - Fixed issue with refresher
+  0.4.0:
+  - The $base variant is now generated if omitted
+  - Issues with parsing variant configuration data have now been resolved
+  - Added support for adding local frameworks in the references section to customise how they're copied and code signed
+  - Added more detailed console output when generating variant projects
