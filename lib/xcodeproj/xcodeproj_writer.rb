@@ -355,11 +355,11 @@ module Xcodegen
 				}
 
 				files = files.select { |file|
-					if File.directory?(file) and !file.end_with? '.xcassets' and !file.end_with? '.xcdatamodeld'
+					if File.directory?(file) and !file.end_with? '.xcassets' and !file.end_with? '.xcdatamodeld' and !file.end_with? '.bundle'
 						next false
 					end
 
-					next !(file.include? '.framework/') && !(file.include? '.xcdatamodeld/')
+					next !(file.include? '.framework/') && !(file.include? '.xcdatamodeld/') && !(file.include? '.bundle/')
 				}
 
 				rel_source_root = source_dir.sub(project_directory, '')
@@ -463,10 +463,11 @@ module Xcodegen
 				native_target.frameworks_build_phase.add_file_reference framework
 
 				# Embed
-				unless ref.settings.has_key?('copy') and ref.settings['copy'] == false
+				settings = ref.settings || {}
+				unless settings.has_key?('copy') and settings['copy'] == false
 					attributes = ['RemoveHeadersOnCopy']
 
-					unless ref.has_key?('codeSignOnCopy') and ref.settings['codeSignOnCopy'] == false
+					unless settings.has_key?('codeSignOnCopy') and settings['codeSignOnCopy'] == false
 						attributes.push 'CodeSignOnCopy'
 					end
 
