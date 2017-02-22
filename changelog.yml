@@ -33,3 +33,5 @@ versions:
   - Added support for adding local frameworks in the references section to customise
     how they're copied and code signed
   - Added more detailed console output when generating variant projects
+  0.4.1:
+  - Fixed issues with writing local references to an xcodeproj file
