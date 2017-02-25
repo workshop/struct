@@ -2,6 +2,8 @@ AllCops:
   Exclude:
     - 'spec/**/*'
     - 'release_version.rb'
+    - 'Rakefile'
+    - 'struct.gemspec'
 Metrics/LineLength:
   Max: 200
 Style/Tab:
