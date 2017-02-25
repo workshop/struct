@@ -29,7 +29,7 @@ module Xcodegen
 
 			rebuild(project_file, directory)
 
-			listener = Listen.to(directory, ignore: /project\.xcodeproj/) do |modified, added, removed|
+			listener = Listen.to(directory, ignore: /\.xcodeproj/) do |modified, added, removed|
 				if modified.include? project_file or added.length > 0 or removed.length > 0
 					rebuild(project_file, directory)
 				end
