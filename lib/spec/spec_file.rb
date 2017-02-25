@@ -3,7 +3,7 @@ require 'semantic'
 require_relative 'parser/spec_parser'
 require_relative 'writer/spec_writer'
 
-module Xcodegen
+module StructCore
 	class Specfile
 		class Configuration
 			def initialize(name, profiles, overrides, type=nil)
@@ -121,12 +121,12 @@ module Xcodegen
 			# @param target_name [String]
 			# @param target_type [String]
 			# @param source_dir [Array<String>]
-			# @param configurations [Array<Xcodegen::Specfile::Target::Configuration>]
-			# @param references [Array<Xcodegen::Specfile::Target::FrameworkReference>]
-			# @param options [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
+			# @param configurations [Array<StructCore::Specfile::Target::Configuration>]
+			# @param references [Array<StructCore::Specfile::Target::FrameworkReference>]
+			# @param options [Array<StructCore::Specfile::Target::FileOption, StructCore::Specfile::Target::FrameworkOption>]
 			# @param res_dir [Array<String>]
 			# @param file_excludes [Array<String>]
-			# @param run_scripts [Array<Xcodegen::Specfile::Target::RunScript>]
+			# @param run_scripts [Array<StructCore::Specfile::Target::RunScript>]
 			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes, run_scripts=[])
 				@name = target_name
 				@type = target_type
@@ -171,9 +171,9 @@ module Xcodegen
 				# @param target_name [String]
 				# @param target_type [String]
 				# @param source_dir [String]
-				# @param configurations [Array<Xcodegen::Specfile::Target::Configuration>]
-				# @param references [Array<Xcodegen::Specfile::Target::FrameworkReference>]
-				# @param options [Array<Xcodegen::Specfile::Target::FileOption, Xcodegen::Specfile::Target::FrameworkOption>]
+				# @param configurations [Array<StructCore::Specfile::Target::Configuration>]
+				# @param references [Array<StructCore::Specfile::Target::FrameworkReference>]
+				# @param options [Array<StructCore::Specfile::Target::FileOption, StructCore::Specfile::Target::FrameworkOption>]
 				# @param res_dir [String]
 				# @param file_excludes [String]
 				def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes)
@@ -209,8 +209,8 @@ module Xcodegen
 		end
 
 		# @param version [Semantic::Version]
-		# @param targets [Array<Xcodegen::Specfile::Target>]
-		# @param configurations [Array<Xcodegen::Specfile::Configuration>]
+		# @param targets [Array<StructCore::Specfile::Target>]
+		# @param configurations [Array<StructCore::Specfile::Configuration>]
 		def initialize(version, targets, configurations, variants, base_dir)
 			@version = version
 			@targets = targets
@@ -219,7 +219,7 @@ module Xcodegen
 			@base_dir = base_dir
 		end
 
-		# @return Xcodegen::Specfile
+		# @return StructCore::Specfile
 		def self.parse(path, parser = nil)
 			if parser == nil
 				return Specparser.new.parse(path)

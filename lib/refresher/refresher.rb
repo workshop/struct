@@ -7,7 +7,7 @@ require 'paint'
 require 'tmpdir'
 require_relative '../version'
 
-module Xcodegen
+module StructCore
 	class Refresher
 		GIT_CONTENT_REPOSITORY_BASE = 'https://raw.githubusercontent.com/lyptt/xcodegen/master'
 
@@ -18,21 +18,21 @@ module Xcodegen
 			end
 
 			begin
-				local_gem_version = Semantic::Version.new Xcodegen::VERSION
+				local_gem_version = Semantic::Version.new StructCore::VERSION
 			rescue StandardError => _
 				return
 			end
 
-			xcodegen_cache_dir = File.join Dir.tmpdir, 'xcodegen-cache'
-			unless File.exist? xcodegen_cache_dir
+			struct_cache_dir = File.join Dir.tmpdir, 'struct-cache'
+			unless File.exist? struct_cache_dir
 				begin
-				Dir.mkdir xcodegen_cache_dir
+				Dir.mkdir struct_cache_dir
 				rescue StandardError => _
 					return
 				end
 			end
 
-			cached_changelog_path = File.join xcodegen_cache_dir, 'changelog.yml'
+			cached_changelog_path = File.join struct_cache_dir, 'changelog.yml'
 			if File.exist? cached_changelog_path
 				begin
 					changelog = YAML.load_file cached_changelog_path
@@ -50,7 +50,7 @@ module Xcodegen
 				end
 
 				if changed_date == Time.now.to_date
-					print changelog, local_gem_version, xcodegen_cache_dir
+					print changelog, local_gem_version, struct_cache_dir
 					return
 				end
 			end
@@ -73,14 +73,14 @@ module Xcodegen
 			changelog['updated'] = Time.now.to_i
 
 			begin
-				FileUtils.mkdir_p xcodegen_cache_dir
+				FileUtils.mkdir_p struct_cache_dir
 				FileUtils.rm_rf cached_changelog_path
 				File.write cached_changelog_path, changelog.to_yaml
 			rescue StandardError => _
 				return
 			end
 
-			print changelog, local_gem_version, xcodegen_cache_dir
+			print changelog, local_gem_version, struct_cache_dir
 		end
 
 		private
@@ -94,7 +94,7 @@ module Xcodegen
 			end
 		end
 
-		def self.print(changelog, local_gem_version, xcodegen_cache_dir)
+		def self.print(changelog, local_gem_version, struct_cache_dir)
 			if changelog == nil || changelog['latest'] == nil
 				return
 			end
@@ -112,9 +112,9 @@ module Xcodegen
 			end
 
 			# It's now confirmed the user is not on the latest version. Yay!
-			puts Paint["\nThere's a newer version of Xcodegen out! Why not give it a try?\n"\
+			puts Paint["\nThere's a newer version of Struct out! Why not give it a try?\n"\
 						  "You're on #{local_gem_version.to_s}, and the latest is #{latest_gem_version.to_s}.\n\n"\
-						  "I'd love to get your feedback on Xcodegen. Feel free to ping me\n"\
+						  "I'd love to get your feedback on Struct. Feel free to ping me\n"\
 						  "on Twitter @lyptt, or file a github issue if there's something that\n"\
 						  "can be improved at https://github.com/lyptt/xcodegen/issues.\n", :green]
 

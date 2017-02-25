@@ -1,6 +1,6 @@
 require 'semantic'
 
-module Xcodegen
+module StructCore
 	class Specparser11X
 		# @param version [Semantic::Version]
 		def can_parse_version(version)
@@ -40,7 +40,7 @@ module Xcodegen
 			}.compact
 
 			if variants.select { |variant| variant.name == '$base' }.count == 0
-				variants.push Xcodegen::Specfile::Variant.new('$base', [], false)
+				variants.push StructCore::Specfile::Variant.new('$base', [], false)
 			end
 
 			Specfile.new(spec_version, targets, configurations, variants, project_base_dir)
@@ -62,7 +62,7 @@ module Xcodegen
 				end
 			}
 
-			Xcodegen::Specfile::Variant.new(variant_name, targets, abstract)
+			StructCore::Specfile::Variant.new(variant_name, targets, abstract)
 		end
 
 		def parse_variant_target_data(target_name, target_opts, project_base_dir, valid_config_names)
@@ -214,7 +214,7 @@ module Xcodegen
 			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, options, target_resources_dir, file_excludes
 		end
 
-		# @return Xcodegen::Specfile::Target
+		# @return StructCore::Specfile::Target
 		def parse_target_data(target_name, target_opts, project_base_dir, valid_config_names)
 			# Parse target type
 			unless target_opts.key? 'type'

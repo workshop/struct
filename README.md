@@ -1,9 +1,9 @@
-# Xcodegen
-[![Latest Gem Release](https://img.shields.io/gem/v/xcodegen.svg)](https://rubygems.org/gems/xcodegen) 
-[![Git Version](https://img.shields.io/github/tag/lyptt/xcodegen.svg)](https://github.com/lyptt/xcodegen/releases/tag/0.4.1) 
-[![Git Version](https://img.shields.io/github/commits-since/lyptt/xcodegen/0.4.1.svg)](https://github.com/lyptt/xcodegen/commits/master)
+# Struct
+[![Latest Gem Release](https://img.shields.io/gem/v/struct.svg)](https://rubygems.org/gems/struct) 
+[![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/1.0.0) 
+[![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/1.0.0.svg)](https://github.com/lyptt/struct/commits/master)
 
-Xcodegen comes in two parts - a file watcher that auto-generates
+Struct comes in two parts - a file watcher that auto-generates
 a project based on a simple project specification written in YAML or JSON, and options to assist in adding 
 new files and targets to your dynamic project.
 
@@ -11,7 +11,7 @@ Project files are automatically included into the project from a source director
 with Swift files going into the compilation phase, and everything else going to the
 resource phase, so there's no IDE fiddling necessary.
 
-Xcodegen can take a project spec like this:
+Struct can take a project spec like this:
 
 ```yaml
 ---
@@ -53,28 +53,28 @@ Then run:
     
 Or install it directly from rubygems by running:
 
-    $ gem install xcodegen
+    $ gem install struct
     
 ## Usage
 
 To generate an Xcode project from your spec file, run the following from your project directory:
 
-    $ xcodegen --generate
+    $ struct --generate
 
 To start the file watcher, run the following from your project directory:
 
-    $ xcodegen --watch
+    $ struct --watch
     
 The project will be automatically regenerated whenever the project or any source files change.
 
-![usage example](https://github.com/lyptt/xcodegen/raw/master/readme_files/usage_example.gif)
+![usage example](https://github.com/lyptt/struct/raw/master/readme_files/usage_example.gif)
 
 ## To do
 
-Xcodegen is still under development, so it's not yet feature complete. Notable features missing include:
+Struct is still under development, so it's not yet feature complete. Notable features missing include:
 - Project generation support for subproject dependencies
 - Project generation support for subproject linking
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/lyptt/xcodegen.
+Bug reports and pull requests are welcome on GitHub at https://github.com/lyptt/struct.

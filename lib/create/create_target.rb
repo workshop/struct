@@ -4,7 +4,7 @@ require 'paint'
 require 'mustache'
 require 'inquirer'
 
-module Xcodegen
+module StructCore
 	module Create
 		class Target
 			PRODUCT_TYPE = {
@@ -45,7 +45,7 @@ module Xcodegen
 				end
 
 				raise StandardError.new 'Unable to locate project file' unless File.exist? project_file
-				spec = Xcodegen::Specfile.parse(project_file)
+				spec = StructCore::Specfile.parse(project_file)
 
 				valid_config_names = spec.configurations.map { |config|
 					config.name
@@ -111,7 +111,7 @@ module Xcodegen
 					Specfile::Target::Configuration.new(name, configuration, profiles)
 				}
 
-				target = Xcodegen::Specfile::Target.new(
+				target = StructCore::Specfile::Target.new(
 					target_name,
 					type,
 					sources,
@@ -126,11 +126,11 @@ module Xcodegen
 			end
 
 			def self.run(project_file, target)
-				unless target != nil && target.is_a?(Xcodegen::Specfile::Target)
+				unless target != nil && target.is_a?(StructCore::Specfile::Target)
 					raise StandardError.new 'Invalid target object'
 				end
 
-				spec = Xcodegen::Specfile.parse project_file
+				spec = StructCore::Specfile.parse project_file
 
 				unless spec.targets.find { |existing_target| existing_target.name == target.name } == nil
 					raise StandardError.new "A target with the name #{target.name} already exists in this spec"
@@ -138,7 +138,7 @@ module Xcodegen
 
 				spec.targets << target
 
-				Xcodegen::Specwriter.new.write_target target, spec.version, project_file
+				StructCore::Specwriter.new.write_target target, spec.version, project_file
 			end
 		end
 	end

@@ -3,7 +3,7 @@ require 'xcodeproj'
 require 'semantic'
 require_relative '../spec/spec_file'
 
-module Xcodegen
+module StructCore
 	class Migrator
 		CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'config_profiles')
 		TARGET_CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'target_config_profiles')
@@ -72,9 +72,9 @@ module Xcodegen
 				target_references = target.frameworks_build_phase.files.map { |f|
 					if f.file_ref.source_tree == 'SDKROOT'
 						if f.file_ref.path.start_with? 'System/Library/Frameworks'
-							Xcodegen::Specfile::Target::SystemFrameworkReference.new(f.file_ref.path.sub('System/Library/Frameworks/', '').sub('.framework', ''))
+							StructCore::Specfile::Target::SystemFrameworkReference.new(f.file_ref.path.sub('System/Library/Frameworks/', '').sub('.framework', ''))
 						elsif f.file_ref.path.start_with? 'usr/lib'
-							Xcodegen::Specfile::Target::SystemLibraryReference.new(f.file_ref.path.sub('usr/lib/', ''))
+							StructCore::Specfile::Target::SystemLibraryReference.new(f.file_ref.path.sub('usr/lib/', ''))
 						else
 							next nil
 						end
@@ -84,12 +84,12 @@ module Xcodegen
 					end
 				}.compact
 
-				Xcodegen::Specfile::Target.new(
+				StructCore::Specfile::Target.new(
 					name,
 					type,
 					"src-#{name.downcase.sub(' ', '_')}",
 					target.build_configurations.map { |config|
-						Xcodegen::Specfile::Target::Configuration.new(
+						StructCore::Specfile::Target::Configuration.new(
 							config.name, target_configuration_overrides[config.name], profiles
 						)
 					},
@@ -137,7 +137,7 @@ module Xcodegen
 				[target.name, target_files]
 			}
 
-			spec_file = Xcodegen::Specfile.new(spec_version, targets, configurations, directory)
+			spec_file = StructCore::Specfile.new(spec_version, targets, configurations, directory)
 			spec_file.write File.join(directory, 'project.yml')
 
 			targets_files.each { |name, files|
@@ -157,10 +157,10 @@ module Xcodegen
 			project.build_configurations.map { |config|
 				if config.type == :debug
 					overrides = config.build_settings.reject { |k, _| DEBUG_SETTINGS_MERGED.include? k }
-					next Xcodegen::Specfile::Configuration.new(config.name, ['general:debug', 'ios:debug'], overrides, 'debug')
+					next StructCore::Specfile::Configuration.new(config.name, ['general:debug', 'ios:debug'], overrides, 'debug')
 				elsif config.type == :release
 					overrides = config.build_settings.reject { |k, _| RELEASE_SETTINGS_MERGED.include? k }
-					next Xcodegen::Specfile::Configuration.new(config.name, ['general:release', 'ios:release'], overrides, 'release')
+					next StructCore::Specfile::Configuration.new(config.name, ['general:release', 'ios:release'], overrides, 'release')
 				else
 					raise StandardError.new "Unsupported build configuration type: #{config.type}"
 				end

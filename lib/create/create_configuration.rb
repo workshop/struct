@@ -4,7 +4,7 @@ require 'paint'
 require 'mustache'
 require 'inquirer'
 
-module Xcodegen
+module StructCore
 	module Create
 		class Configuration
 
@@ -26,7 +26,7 @@ module Xcodegen
 				end
 
 				raise StandardError.new 'Unable to locate project file' unless File.exist? project_file
-				spec = Xcodegen::Specfile.parse(project_file)
+				spec = StructCore::Specfile.parse(project_file)
 				name = Ask.input 'Enter a configuration name'
 				raise StandardError.new 'Configuration name must be at least 1 character long' unless name != nil && name.length > 0
 
@@ -47,7 +47,7 @@ module Xcodegen
 					raise StandardError.new 'No platform or configuration profiles were specified'
 				end
 
-				configuration = Xcodegen::Specfile::Configuration.new(
+				configuration = StructCore::Specfile::Configuration.new(
 					name,
 					profiles,
 					nil,
@@ -58,17 +58,17 @@ module Xcodegen
 			end
 
 			def self.run(project_file, configuration)
-				unless configuration != nil && configuration.is_a?(Xcodegen::Specfile::Configuration)
+				unless configuration != nil && configuration.is_a?(StructCore::Specfile::Configuration)
 					raise StandardError.new 'Invalid configuration object'
 				end
 
-				spec = Xcodegen::Specfile.parse project_file
+				spec = StructCore::Specfile.parse project_file
 
 				unless spec.configurations.find { |existing_config| existing_config.name == configuration.name } == nil
 					raise StandardError.new "A configuration with the name #{configuration.name} already exists in this spec"
 				end
 
-				Xcodegen::Specwriter.new.write_configuration configuration, spec.version, project_file
+				StructCore::Specwriter.new.write_configuration configuration, spec.version, project_file
 			end
 		end
 	end

@@ -13,10 +13,10 @@ require_relative '../create/create_target'
 require_relative '../create/create_configuration'
 require_relative '../migrator/migrator'
 
-module Xcodegen
-	class XcodegenBin
+module StructCore
+	class CLI
 		def self.quit(code)
-			Xcodegen::Refresher.run
+			StructCore::Refresher.run
 			exit code
 		end
 
@@ -38,7 +38,7 @@ module Xcodegen
 					end
 
 					begin
-						spec = Xcodegen::Specfile.parse project_file
+						spec = StructCore::Specfile.parse project_file
 					rescue StandardError => err
 						puts Paint[err, :red]
 						quit -1
@@ -49,7 +49,7 @@ module Xcodegen
 				end
 				o.on '-w', '--watch', 'watches your source dirs for changes and generates an xcode project' do
 					begin
-					Xcodegen::Watcher.watch(Dir.pwd)
+					StructCore::Watcher.watch(Dir.pwd)
 					rescue SystemExit, Interrupt
 						quit 0
 					end
@@ -71,8 +71,8 @@ module Xcodegen
 					end
 
 					begin
-						spec = Xcodegen::Specfile.parse project_file
-						Xcodegen::XcodeprojWriter.write spec, directory
+						spec = StructCore::Specfile.parse project_file
+						StructCore::XcodeprojWriter.write spec, directory
 					rescue StandardError => err
 						puts Paint[err, :red]
 						quit -1
@@ -89,13 +89,13 @@ module Xcodegen
 					]
 
 					if selected_option == 0
-						Xcodegen::Create::Class.run_interactive
+						StructCore::Create::Class.run_interactive
 					elsif selected_option == 1
-						Xcodegen::Create::Struct.run_interactive
+						StructCore::Create::Struct.run_interactive
 					elsif selected_option == 2
-						Xcodegen::Create::Target.run_interactive
+						StructCore::Create::Target.run_interactive
 					elsif selected_option == 3
-						Xcodegen::Create::Configuration.run_interactive
+						StructCore::Create::Configuration.run_interactive
 					end
 
 					quit 0
@@ -117,11 +117,11 @@ module Xcodegen
 						quit 0
 					end
 
-					Xcodegen::Migrator.migrate mopts[:path], mopts[:destination]
+					StructCore::Migrator.migrate mopts[:path], mopts[:destination]
 					quit 0
 				end
 				o.on '--version', 'print the version' do
-					puts Xcodegen::VERSION
+					puts StructCore::VERSION
 					quit 0
 				end
 			end

@@ -4,7 +4,7 @@ require 'paint'
 require 'mustache'
 require 'inquirer'
 
-module Xcodegen
+module StructCore
 	module Create
 		class Struct
 			def self.run_interactive

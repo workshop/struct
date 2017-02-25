@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in xcodegen.gemspec
+# Specify your gem's dependencies in struct.gemspec
 gemspec

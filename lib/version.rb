@@ -1,3 +1,3 @@
-module Xcodegen
-  VERSION = '0.4.1'
+module StructCore
+  VERSION = '1.0.0'
 end

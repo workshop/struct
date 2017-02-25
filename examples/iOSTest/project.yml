@@ -1,5 +1,5 @@
 ---
-# The project spec version number - this is for xcodegen to identify this spec's schema
+# The project spec version number - this is for struct to identify this spec's schema
 version: 1.1.0
 # Project-level configurations and build settings. You can add as many as you want here.
 # If you do add another configuration that's not one of debug, release, you must specify
@@ -38,7 +38,7 @@ targets:
     # Every file will be picked up recursively in this directory and added to the project.
     sources: iOSTest
     # Language-specific resources contained in lproj files have special mechanics in an Xcode
-    # project, so in order to simplify things, Xcodegen will search in the root of the sources
+    # project, so in order to simplify things, Struct will search in the root of the sources
     # directory for your .lproj files. Subdirectories will not be scanned.
     # If you wish to store your lproj files in another directory or a subdirectory, you can
     # specify the 'i18n-resources' key. Any lproj folders will be ignored as normal
@@ -132,7 +132,7 @@ targets:
 # name in order for the overrides to apply.
 variants:
   # A '$base' variant is a special variant that correlates directly to the default project generated
-  # by xcodegen - 'project.xcodeproj'. This variant will always output to 'project.xcodeproj'.
+  # by Struct - 'project.xcodeproj'. This variant will always output to 'project.xcodeproj'.
   # If you omit this variant, it will be implicitly included when generating projects.
   $base:
     # By declaring a variant as abstract, it prevents an xcode project from being written. This can be

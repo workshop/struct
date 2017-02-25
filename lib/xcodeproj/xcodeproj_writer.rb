@@ -4,7 +4,7 @@ require 'paint'
 require 'deep_clone'
 require_relative '../spec/spec_file'
 
-module Xcodegen
+module StructCore
 	class XcodeprojWriter
 		CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'config_profiles')
 		TARGET_CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'target_config_profiles')
@@ -31,14 +31,14 @@ module Xcodegen
 			'com.apple.product-type.xpc-service' => :xpc_service
 		}.freeze
 
-		# @param spec [Xcodegen::Specfile]
+		# @param spec [StructCore::Specfile]
 		# @param destination [String]
 		def self.write(source_spec, destination)
 			# Create a clone of the spec to avoid affecting the original referenced object
 			# noinspection RubyResolve
 			spec = Marshal.load(Marshal.dump(source_spec))
 
-			unless spec != nil and spec.is_a? Xcodegen::Specfile
+			unless spec != nil and spec.is_a? StructCore::Specfile
 				raise StandardError.new 'Invalid spec file'
 			end
 
@@ -76,7 +76,7 @@ module Xcodegen
 						spec_target.references = [].unshift(*spec_target.references).unshift(*target.references)
 					}
 
-					[variant.name, Xcodegen::Specfile.new(spec.version, spec_targets, spec.configurations, [], spec.base_dir)]
+					[variant.name, StructCore::Specfile.new(spec.version, spec_targets, spec.configurations, [], spec.base_dir)]
 				}.compact.to_h
 
 				specs.each { |name, variant_spec|
@@ -92,13 +92,13 @@ module Xcodegen
 			end
 		end
 
-		# @param target [Xcodegen::Specfile::Target]
+		# @param target [StructCore::Specfile::Target]
 		# @param project [Xcodeproj::Project]
 		# @param target_refs [Hash<String, Xcodeproj::PBXNativeTarget>]
 		# @param spec_configuration_type_map [Hash<String, String>]
 		# @return [Xcodeproj::PBXNativeTarget]
 		def self.add_target(target, project, target_refs, spec_configuration_type_map)
-			requested_target_refs = target.references.select { |ref| ref.is_a? Xcodegen::Specfile::Target::TargetReference }
+			requested_target_refs = target.references.select { |ref| ref.is_a? StructCore::Specfile::Target::TargetReference }
 			target_references = requested_target_refs.map { |ref|
 				# If the referenced target has not been added to the project yet, skip this target for now
 				unless target_refs.has_key? ref.target_name
@@ -165,13 +165,13 @@ module Xcodegen
 			}
 
 			requested_sys_framework_refs = target.references
-				.select { |ref| ref.is_a? Xcodegen::Specfile::Target::SystemFrameworkReference }
+				.select { |ref| ref.is_a? StructCore::Specfile::Target::SystemFrameworkReference }
 				.map { |ref| ref.name }
 				.select { |ref| ref != 'Foundation' } # Filter out Foundation as it's already added by default
 			native_target.add_system_framework requested_sys_framework_refs
 
 			requested_sys_library_refs = target.references
-				.select { |ref| ref.is_a? Xcodegen::Specfile::Target::SystemLibraryReference }
+				.select { |ref| ref.is_a? StructCore::Specfile::Target::SystemLibraryReference }
 				.map { |ref| ref.name }
 			native_target.add_system_library requested_sys_library_refs
 
@@ -183,7 +183,7 @@ module Xcodegen
 			if framework_group == nil
 				framework_group = project.frameworks_group.new_group '$local', nil, '<group>'
 			end
-			target.references.select { |ref| ref.is_a? Xcodegen::Specfile::Target::FrameworkReference }.each { |f|
+			target.references.select { |ref| ref.is_a? StructCore::Specfile::Target::FrameworkReference }.each { |f|
 				subproj = subproj_group.new_file f.project_path
 				remote_project = Xcodeproj::Project.open f.project_path
 
@@ -320,7 +320,7 @@ module Xcodegen
 			return nil
 		end
 
-		# @param target [Xcodegen::Specfile::Target]
+		# @param target [StructCore::Specfile::Target]
 		# @param native_target [Xcodeproj::PBXNativeTarget]
 		# @param project [Xcodeproj::Project]
 		# @param project_working_dir [String]
@@ -456,7 +456,7 @@ module Xcodegen
 				native_target.frameworks_build_phase.add_file_reference framework
 			}
 
-			target.references.select { |ref| ref.is_a? Xcodegen::Specfile::Target::LocalFrameworkReference }.each { |ref|
+			target.references.select { |ref| ref.is_a? StructCore::Specfile::Target::LocalFrameworkReference }.each { |ref|
 				framework = framework_group.new_file ref.framework_path
 
 				# Link

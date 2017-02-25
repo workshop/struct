@@ -3,19 +3,17 @@ require File.expand_path('../lib/version', __FILE__)
 
 Gem::Specification.new do |spec|
   spec.authors       = ['Rhys Cox']
-  spec.email         = ['account+github@lyptt.uk']
-  spec.summary       = 'A tool to make managing an Xcode project way easier'
-  spec.description   = 'Xcodegen comes in two parts - a file watcher that auto-generates '\
-                       'a project based on a simple project specification written in YAML or '\
-                       'JSON, and options to assist in adding new files and targets to your '\
-                       'dynamic project.'
-  spec.homepage      = 'https://www.github.com/lyptt/xcodegen'
+  spec.email         = ['contact@struct.io']
+  spec.summary       = 'Xcode projects - simplified'
+  spec.description   = 'Struct provides structure and predictability for Xcode projects.\n' +
+                       'Define your project with a simple project spec, and Struct does the rest.'
+  spec.homepage      = 'https://www.github.com/lyptt/struct'
 
   spec.files         = Dir['{lib,res}/**/*'].reject { |f| f.match(%r{^(test|spec|features)/}) }
-  spec.executables   = ['xcodegen']
-  spec.name          = 'xcodegen'
+  spec.executables   = ['struct']
+  spec.name          = 'struct'
   spec.require_paths = ['lib']
-  spec.version       = Xcodegen::VERSION
+  spec.version       = StructCore::VERSION
   spec.licenses      = ['MIT']
   spec.required_ruby_version = '>= 2.2.5'
   spec.add_development_dependency 'bundler', '~> 1.12'

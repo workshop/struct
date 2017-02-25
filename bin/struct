@@ -1,0 +1,4 @@
+#/usr/bin/env ruby
+require 'struct_bin'
+
+StructCore::CLI.run

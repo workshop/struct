@@ -1,7 +1,7 @@
 require_relative 'spec_parser_1_0_X'
 require_relative 'spec_parser_1_1_X'
 
-module Xcodegen
+module StructCore
 	class Specparser
 		def initialize
 			@parsers = []
@@ -17,8 +17,8 @@ module Xcodegen
 
 		def register_defaults
 			@parsers.unshift *[
-				Xcodegen::Specparser10X.new,
-				Xcodegen::Specparser11X.new
+				StructCore::Specparser10X.new,
+				StructCore::Specparser11X.new
 			]
 		end
 
@@ -51,7 +51,7 @@ module Xcodegen
 				parser.can_parse_version(spec_version)
 			}
 
-			raise StandardError.new "Error: Invalid spec file. Project version #{spec_hash['version']} is unsupported by this version of xcodegen." unless parser != nil
+			raise StandardError.new "Error: Invalid spec file. Project version #{spec_hash['version']} is unsupported by this version of struct." unless parser != nil
 
 			raise StandardError.new "Error: Invalid spec file. No 'configurations' key was present." unless spec_hash.key? 'configurations'
 			raise StandardError.new "Error: Invalid spec file. Key 'configurations' should be a hash" unless spec_hash['configurations'].is_a?(Hash)

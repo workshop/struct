@@ -3,18 +3,18 @@ require_relative '../xcodeproj/xcodeproj_writer'
 require 'paint'
 require 'listen'
 
-module Xcodegen
+module StructCore
 	module Watcher
 		def self.rebuild(project_file, directory)
 			begin
-				spec = Xcodegen::Specfile.parse project_file
+				spec = StructCore::Specfile.parse project_file
 			rescue StandardError => err
 				puts Paint[err, :red]
 				exit -1
 			end
 
 			begin
-				Xcodegen::XcodeprojWriter.write spec, directory
+				StructCore::XcodeprojWriter.write spec, directory
 			rescue StandardError => err
 				puts Paint[err, :red]
 			end

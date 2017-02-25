@@ -1,6 +1,6 @@
 require_relative 'spec_writer_1_0_X'
 
-module Xcodegen
+module StructCore
 	class Specwriter
 		def initialize
 			@writers = []
@@ -16,11 +16,11 @@ module Xcodegen
 
 		def register_defaults
 			@writers.unshift *[
-				Xcodegen::Specwriter10X.new
+				StructCore::Specwriter10X.new
 			]
 		end
 
-		# @param spec [Xcodegen::Specfile]
+		# @param spec [StructCore::Specfile]
 		# @param path [String]
 		def write_spec(spec, path)
 			if @writers.length == 0
@@ -33,12 +33,12 @@ module Xcodegen
 				writer.can_write_version(spec.version)
 			}
 
-			raise StandardError.new "Error: Invalid spec object. Project version #{spec.version.to_s} is unsupported by this version of xcodegen." unless writer != nil
+			raise StandardError.new "Error: Invalid spec object. Project version #{spec.version.to_s} is unsupported by this version of struct." unless writer != nil
 
 			writer.write_spec(spec, path)
 		end
 
-		# @param configuration [Xcodegen::Specfile::Configuration]
+		# @param configuration [StructCore::Specfile::Configuration]
 		# @param spec_version [Semantic::Version]
 		# @param path [String]
 		def write_configuration(configuration, spec_version, path)
@@ -52,12 +52,12 @@ module Xcodegen
 				writer.can_write_version(spec_version)
 			}
 
-			raise StandardError.new "Error: Invalid spec version. Project version #{spec_version.to_s} is unsupported by this version of xcodegen." unless writer != nil
+			raise StandardError.new "Error: Invalid spec version. Project version #{spec_version.to_s} is unsupported by this version of struct." unless writer != nil
 
 			writer.write_configuration(configuration, path)
 		end
 
-		# @param target [Xcodegen::Specfile::Target]
+		# @param target [StructCore::Specfile::Target]
 		# @param spec_version [Semantic::Version]
 		# @param path [String]
 		def write_target(target, spec_version, path)
@@ -71,7 +71,7 @@ module Xcodegen
 				writer.can_write_version(spec_version)
 			}
 
-			raise StandardError.new "Error: Invalid spec version. Project version #{spec_version.to_s} is unsupported by this version of xcodegen." unless writer != nil
+			raise StandardError.new "Error: Invalid spec version. Project version #{spec_version.to_s} is unsupported by this version of struct." unless writer != nil
 
 			writer.write_target(target, path)
 		end
