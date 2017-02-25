@@ -100,16 +100,6 @@ module StructCore
 				attr_accessor :options
 			end
 
-			class FrameworkOption
-				def initialize(name, options)
-					@name = name
-					@options = options
-				end
-
-				attr_accessor :name
-				attr_accessor :options
-			end
-
 			class RunScript
 				def initialize(script_path)
 					@script_path = script_path

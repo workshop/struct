@@ -9,22 +9,7 @@ module StructCore
 
 		def parse(spec_version, spec_hash, filename)
 			valid_configuration_names = []
-			configurations = spec_hash['configurations'].map { |name, config|
-				unless config != nil and config.key? 'profiles' and config['profiles'].is_a?(Array) and config['profiles'].count > 0
-					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
-					next nil
-				end
-
-				valid_configuration_names << name
-				config = Specfile::Configuration.new(name, config['profiles'], config['overrides'] || {}, config['type'])
-
-				unless config.type != nil
-					puts Paint["Warning: Configuration with name '#{name}' was skipped as its type did not match one of: debug, release"]
-					next nil
-				end
-
-				next config
-			}.compact
+			configurations = parse_configurations spec_hash, valid_configuration_names
 			raise StandardError.new 'Error: Invalid spec file. Project should have at least one configuration' unless configurations.count > 0
 
 			project_base_dir = File.dirname filename
@@ -36,6 +21,47 @@ module StructCore
 			}.compact
 
 			Specfile.new(spec_version, targets, configurations, [], project_base_dir)
+		end
+
+		private
+		# @return Array<StructCore::Specfile::Configuration>
+		def parse_configurations(spec_hash, valid_configuration_names)
+			return [] unless spec_hash.has_key? 'configurations'
+			return [] unless spec_hash['configurations'].is_a?(Hash)
+
+			spec_hash['configurations'].map { |name, config|
+				unless config.is_a?(Hash)
+					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
+					next nil
+				end
+
+				unless config != nil and config.key? 'profiles' and config['profiles'].is_a?(Array) and config['profiles'].count > 0
+					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
+					next nil
+				end
+
+				overrides = config['overrides'] || {}
+				unless overrides.is_a?(Hash)
+					overrides = {}
+					puts Paint["Warning: Configuration with name '#{name}' had improperly formatted overrides, overrides were skipped for this configuration block"]
+				end
+
+				type = config['type']
+				unless type == nil || type.is_a?(String)
+					type = nil
+					puts Paint["Warning: Configuration with name '#{name}' had an improperly formatted type, the type was skipped for this configuration block"]
+				end
+
+				valid_configuration_names << name
+				config = Specfile::Configuration.new(name, config['profiles'], overrides || {}, type)
+
+				unless config.type != nil
+					puts Paint["Warning: Configuration with name '#{name}' was skipped as its type did not match one of: debug, release"]
+					next nil
+				end
+
+				next config
+			}.compact
 		end
 
 		# @return StructCore::Specfile::Target
@@ -72,7 +98,6 @@ module StructCore
 			# Search for platform only if profiles weren't already defined
 			if profiles == nil and target_opts.key? 'platform'
 				raw_platform = target_opts['platform']
-				# TODO: Add support for 'tvos', 'watchos'
 				unless ['ios', 'mac'].include? raw_platform
 					puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{raw_platform}'. Ignoring target...", :yellow]
 					return nil
@@ -183,16 +208,6 @@ module StructCore
 							}
 						else
 							puts Paint["Warning: Key 'files' for target #{target_name}'s options is not a hash. Ignoring...", :yellow]
-						end
-					end
-
-					if target_opts['options'].key? 'frameworks'
-						if target_opts['options']['frameworks'].is_a?(Hash)
-							options.unshift *target_opts['options']['frameworks'].map { |name, frameworkOpts|
-								Specfile::Target::FrameworkOption.new(name, frameworkOpts)
-							}
-						else
-							puts Paint["Warning: Key 'frameworks' for target #{target_name}'s options is not a hash. Ignoring...", :yellow]
 						end
 					end
 				else

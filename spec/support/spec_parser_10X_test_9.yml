@@ -1,0 +1,15 @@
+---
+version: 1.0.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+    overrides:
+    - 1
+    - 2
+    - 3
+    type:
+    - 1
+    - 2
+    - 3

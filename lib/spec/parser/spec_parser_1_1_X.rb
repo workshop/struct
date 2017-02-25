@@ -196,16 +196,6 @@ module StructCore
 							puts Paint["Warning: Key 'files' for target #{target_name}'s options is not a hash. Ignoring...", :yellow]
 						end
 					end
-
-					if target_opts['options'].key? 'frameworks'
-						if target_opts['options']['frameworks'].is_a?(Hash)
-							options.unshift *target_opts['options']['frameworks'].map { |name, frameworkOpts|
-								Specfile::Target::FrameworkOption.new(name, frameworkOpts)
-							}
-						else
-							puts Paint["Warning: Key 'frameworks' for target #{target_name}'s options is not a hash. Ignoring...", :yellow]
-						end
-					end
 				else
 					puts Paint["Warning: Key 'options' for target #{target_name} is not a hash. Ignoring...", :yellow]
 				end
@@ -373,16 +363,6 @@ module StructCore
 							}
 						else
 							puts Paint["Warning: Key 'files' for target #{target_name}'s options is not a hash. Ignoring...", :yellow]
-						end
-					end
-
-					if target_opts['options'].key? 'frameworks'
-						if target_opts['options']['frameworks'].is_a?(Hash)
-							options.unshift *target_opts['options']['frameworks'].map { |name, frameworkOpts|
-								Specfile::Target::FrameworkOption.new(name, frameworkOpts)
-							}
-						else
-							puts Paint["Warning: Key 'frameworks' for target #{target_name}'s options is not a hash. Ignoring...", :yellow]
 						end
 					end
 				else
