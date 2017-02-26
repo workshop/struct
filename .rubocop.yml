@@ -124,3 +124,11 @@ Style/MethodDefParentheses:
 # We'll try to reduce this over time
 Metrics/AbcSize:
   Max: 30
+
+# We'll try to reduce this over time
+Metrics/CyclomaticComplexity:
+  Max: 16
+
+# It's not the 80s anymore. Come on.
+Style/TrailingBlankLines:
+  Enabled: false
