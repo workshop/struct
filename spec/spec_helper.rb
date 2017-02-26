@@ -10,7 +10,7 @@ end
 RSpec.configure do |config|
 	config.color = true
 	config.tty = true
-	if ENV.key? 'CI'
+	unless ENV.key? 'CI'
 		original_stderr = $stderr
 		original_stdout = $stdout
 		config.before(:all) do
