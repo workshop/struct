@@ -10,4 +10,4 @@ configurations:
     type: debug
 targets:
   my-target:
-    sources: 'spec_parser_10X_test_12/abc'
+    sources: 'spec_parser_11X_test_12/abc'

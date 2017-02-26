@@ -10,7 +10,7 @@ module StructCore
 		def parse(spec_version, spec_hash, filename)
 			valid_configuration_names = []
 			configurations = spec_hash['configurations'].map { |name, config|
-				unless config.key? 'profiles' and config['profiles'].is_a?(Array) and config['profiles'].count > 0
+				unless config.key?('profiles') && config['profiles'].is_a?(Array) && config['profiles'].count > 0
 					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
 					next nil
 				end
@@ -32,6 +32,7 @@ module StructCore
 			raise StandardError.new "Error: Invalid spec file. Key 'targets' should be a hash" unless spec_hash['targets'].is_a?(Hash)
 
 			targets = (spec_hash['targets'] || {}).map { |target_name, target_opts|
+				next nil if target_opts.nil?
 				parse_target_data(target_name, target_opts, project_base_dir, valid_configuration_names)
 			}.compact
 
@@ -265,8 +266,9 @@ module StructCore
 					Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
 				}
 			else
-				puts Paint["Warning: Target #{target_name} has no configuration settings. Ignoring target...", :yellow]
-				return nil
+				configurations = valid_config_names.map { |name|
+					Specfile::Target::Configuration.new(name, profiles, {})
+				}
 			end
 
 			unless configurations.count == valid_config_names.count
@@ -304,8 +306,8 @@ module StructCore
 			end
 
 			# Parse excludes
-			if target_opts.key? 'excludes'
-				file_excludes = (target_opts['excludes'] || {})['files'] || []
+			if target_opts.key?('excludes') && target_opts['excludes'].is_a?(Hash)
+				file_excludes = target_opts['excludes']['files'] || []
 				unless file_excludes.is_a?(Array)
 					puts Paint["Warning: Target #{target_name}'s file excludes was not an array. Ignoring file excludes...", :yellow]
 					file_excludes = []
@@ -321,7 +323,7 @@ module StructCore
 						if raw_reference.is_a?(Hash)
 							path = raw_reference['location']
 
-							unless File.exist? File.join(project_base_dir, path)
+							unless !path.nil? && File.exist?(File.join(project_base_dir, path))
 								puts Paint["Warning: Reference #{path} could not be found. Ignoring...", :yellow]
 								next nil
 							end

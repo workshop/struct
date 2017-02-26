@@ -14,3 +14,5 @@ targets:
     sources: 'support_files/abc'
     references:
     - location: 'support_files/local_project.xcodeproj'
+      frameworks:
+      - abc

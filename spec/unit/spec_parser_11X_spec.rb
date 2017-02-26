@@ -214,7 +214,7 @@ RSpec.describe StructCore::Specparser11X do
 				expect(proj.targets[0].references.count).to eq(0)
 			end
 
-			it 'ignores a reference entry in a specfile it\'s invalid' do
+			it 'ignores a reference entry in a specfile if it\'s invalid' do
 				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_11X/spec_parser_11X_test_22.yml')
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new

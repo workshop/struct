@@ -1,3 +1,5 @@
 language: ruby
 rvm:
   - 2.3.1
+env:
+  CI=1
