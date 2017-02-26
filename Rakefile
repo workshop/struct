@@ -1,6 +1,7 @@
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
+require 'coveralls/rake/task'
 
 if ENV.key? 'CI'
 	task default: [:spec, :rubocop, :coveralls]
@@ -20,7 +21,4 @@ RuboCop::RakeTask.new(:rubocop) do |t|
 	t.options = ['--display-cop-names']
 end
 
-if ENV.key? 'CI'
-	require 'coveralls/rake/task'
-	Coveralls::RakeTask.new
-end
+Coveralls::RakeTask.new(:coveralls) if ENV.key? 'CI'
