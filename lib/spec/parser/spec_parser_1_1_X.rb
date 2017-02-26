@@ -139,8 +139,8 @@ module StructCore
 			end
 
 			# Parse excludes
-			if target_opts.key? 'excludes'
-				file_excludes = (target_opts['excludes'] || {})['files'] || []
+			if target_opts.key?('excludes') && target_opts['excludes'].is_a?(Hash)
+				file_excludes = target_opts['excludes']['files'] || []
 				unless file_excludes.is_a?(Array)
 					puts Paint["Warning: Target #{target_name}'s file excludes was not an array. Ignoring file excludes...", :yellow]
 					file_excludes = []

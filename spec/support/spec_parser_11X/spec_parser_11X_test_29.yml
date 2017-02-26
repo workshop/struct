@@ -13,4 +13,5 @@ targets:
     type: ":application"
     sources: 'support_files/abc'
 variants:
-  other-target:
+  $base:
+    other-target:
