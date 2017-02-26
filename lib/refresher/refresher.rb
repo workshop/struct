@@ -67,7 +67,7 @@ module StructCore
 		# rubocop:enable Metrics/AbcSize
 		# rubocop:enable Metrics/PerceivedComplexity
 
-		private_class_method def self.internet?
+		def self.internet?
 			dns_resolver = Resolv::DNS.new
 			begin
 				dns_resolver.getaddress('icann.org')
@@ -92,7 +92,7 @@ module StructCore
 				return
 			end
 
-			return unless out_of_date?
+			return unless out_of_date? latest_gem_version, local_gem_version
 
 			# It's now confirmed the user is not on the latest version. Yay!
 			puts Paint["\nThere's a newer version of Struct out! Why not give it a try?\n"\
