@@ -12,7 +12,7 @@ module StructCore
 			configurations = parse_configurations spec_hash, valid_configuration_names
 			raise StandardError.new 'Error: Invalid spec file. Project should have at least one configuration' unless configurations.count > 0
 
-			project_base_dir = File.dirname filename
+			project_base_dir = File.dirname(File.expand_path(filename))
 			puts Paint["Parsing with base directory: #{project_base_dir}", :yellow]
 			return Specfile.new(spec_version, [], configurations, [], project_base_dir) unless spec_hash.key? 'targets'
 			raise StandardError.new "Error: Invalid spec file. Key 'targets' should be a hash" unless spec_hash['targets'].is_a?(Hash)
