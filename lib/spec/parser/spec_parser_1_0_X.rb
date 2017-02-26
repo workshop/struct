@@ -4,7 +4,7 @@ module StructCore
 	class Specparser10X
 		# @param version [Semantic::Version]
 		def can_parse_version(version)
-			version.major == 1 && version.minor == 0
+			version.major == 1 && version.minor.zero?
 		end
 
 		def parse(spec_version, spec_hash, filename)
@@ -23,11 +23,10 @@ module StructCore
 			Specfile.new(spec_version, targets, configurations, [], project_base_dir)
 		end
 
-		private
 		# @return Array<StructCore::Specfile::Configuration>
-		def parse_configurations(spec_hash, valid_configuration_names)
-			return [] unless spec_hash.has_key? 'configurations'
-			return [] unless spec_hash['configurations'].is_a?(Hash)
+		private def parse_configurations(spec_hash, valid_configuration_names)
+			return [] unless spec_hash.key? 'configurations'
+			return [] unless spec_hash['configurations'].is_a? Hash
 
 			spec_hash['configurations'].map { |name, config|
 				unless config.is_a?(Hash)
@@ -35,27 +34,18 @@ module StructCore
 					next nil
 				end
 
-				unless config != nil and config.key? 'profiles' and config['profiles'].is_a?(Array) and config['profiles'].count > 0
+				if config.nil? || !config.key?('profiles') || !config['profiles'].is_a?(Array) || config['profiles'].empty?
 					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
 					next nil
 				end
 
-				overrides = config['overrides'] || {}
-				unless overrides.is_a?(Hash)
-					overrides = {}
-					puts Paint["Warning: Configuration with name '#{name}' had improperly formatted overrides, overrides were skipped for this configuration block"]
-				end
-
-				type = config['type']
-				unless type == nil || type.is_a?(String)
-					type = nil
-					puts Paint["Warning: Configuration with name '#{name}' had an improperly formatted type, the type was skipped for this configuration block"]
-				end
+				overrides = parse_config_overrides config, name
+				type = parse_config_type config, name
 
 				valid_configuration_names << name
 				config = Specfile::Configuration.new(name, config['profiles'], overrides || {}, type)
 
-				unless config.type != nil
+				if config.type.nil?
 					puts Paint["Warning: Configuration with name '#{name}' was skipped as its type did not match one of: debug, release"]
 					next nil
 				end
@@ -64,8 +54,29 @@ module StructCore
 			}.compact
 		end
 
+		private def parse_config_overrides(config, name)
+			overrides = config['overrides'] || {}
+
+			unless overrides.is_a?(Hash)
+				overrides = {}
+				puts Paint["Warning: Configuration with name '#{name}' had improperly formatted overrides, overrides were skipped for this configuration block"]
+			end
+
+			overrides
+		end
+
+		private def parse_config_type(config, name)
+			type = config['type']
+			unless type.nil? || type.is_a?(String)
+				type = nil
+				puts Paint["Warning: Configuration with name '#{name}' had an improperly formatted type, the type was skipped for this configuration block"]
+			end
+
+			type
+		end
+
 		# @return StructCore::Specfile::Target
-		def parse_target_data(target_name, target_opts, project_base_dir, valid_config_names)
+		private def parse_target_data(target_name, target_opts, project_base_dir, valid_config_names)
 			# Parse target type
 			unless target_opts.key? 'type'
 				puts Paint["Warning: Target #{target_name} has no target type. Ignoring target...", :yellow]
