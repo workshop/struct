@@ -16,22 +16,23 @@ module StructCore
 		end
 
 		def register_defaults
-			@parsers.unshift *[
+			@parsers.unshift(
 				StructCore::Specparser10X.new,
 				StructCore::Specparser11X.new
-			]
+			)
 		end
 
+		# There's not much sense refactoring this to be tiny methods.
+		# rubocop:disable Metrics/AbcSize
+		# rubocop:disable Metrics/PerceivedComplexity
 		# @param path [String]
 		def parse(path)
-			if @parsers.length == 0
-				register_defaults
-			end
+			register_defaults if @parsers.empty?
 
-			filename = (Pathname.new(path)).absolute? ? path : File.join(Dir.pwd, path)
+			filename = Pathname.new(path).absolute? ? path : File.join(Dir.pwd, path)
 			raise StandardError.new "Error: Spec file #{filename} does not exist" unless File.exist? filename
 
-			if filename.end_with? 'yml' or filename.end_with? 'yaml'
+			if filename.end_with?('yml', 'yaml')
 				spec_hash = YAML.load_file filename
 			elsif filename.end_with? 'json'
 				spec_hash = JSON.parse File.read(filename)
@@ -59,6 +60,7 @@ module StructCore
 
 			parser.parse(spec_version, spec_hash, filename)
 		end
-
+		# rubocop:enable Metrics/AbcSize
+		# rubocop:enable Metrics/PerceivedComplexity
 	end
 end

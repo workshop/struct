@@ -118,7 +118,7 @@ module StructCore
 			def self.query_platform(raw_type)
 				platform_idx = Ask.list 'Choose a platform, or Manual if you wish to select configuration profiles', %w(iOS macOS Manual)
 
-				if platform_idx.is_zero?
+				if platform_idx.zero?
 					platform = 'ios'
 					profiles = [raw_type, 'platform:ios']
 				elsif platform_idx == 1
