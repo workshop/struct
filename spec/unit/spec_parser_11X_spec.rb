@@ -18,7 +18,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.configurations.count).to eq(2)
 			end
@@ -28,7 +28,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file }.to raise_error(StandardError)
+				expect { parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file }.to raise_error(StandardError)
 			end
 
 			it 'can parse a specfile with only 1 configuration' do
@@ -36,7 +36,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.configurations.count).to eq(1)
 			end
@@ -46,7 +46,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file }.to raise_error(StandardError)
+				expect { parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file }.to raise_error(StandardError)
 			end
 
 			it 'raises an error if a project has an invalid configurations section' do
@@ -54,7 +54,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file }.to raise_error(StandardError)
+				expect { parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file }.to raise_error(StandardError)
 			end
 
 			it 'raises an error if a project has an invalid profiles section in a configuration block' do
@@ -62,7 +62,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file }.to raise_error(StandardError)
+				expect { parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file }.to raise_error(StandardError)
 			end
 
 			it 'raises an error if a project has a missing profiles section in a configuration block' do
@@ -70,7 +70,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file }.to raise_error(StandardError)
+				expect { parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file }.to raise_error(StandardError)
 			end
 
 			it 'can parse a specfile with invalid overrides or types' do
@@ -78,7 +78,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.configurations.count).to eq(1)
 			end
@@ -88,7 +88,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.configurations.count).to eq(1)
 				expect(proj.configurations[0].name).to eq('my-configuration')
@@ -100,7 +100,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets.count).to eq(0)
 			end
@@ -110,7 +110,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets.count).to eq(0)
 			end
@@ -120,7 +120,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].source_dir.count).to eq(1)
 				expect(proj.targets[0].source_dir[0]).to be_truthy
@@ -131,7 +131,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].res_dir.count).to eq(1)
 				expect(proj.targets[0].res_dir[0]).to be_truthy
@@ -142,7 +142,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].file_excludes.count).to eq(2)
 				expect(proj.targets[0].file_excludes[0]).to eq('a/b/c')
@@ -154,7 +154,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].file_excludes.count).to eq(0)
 			end
@@ -164,7 +164,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].file_excludes.count).to eq(0)
 			end
@@ -174,7 +174,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(1)
 				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::SystemFrameworkReference)
@@ -185,7 +185,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(1)
 				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::SystemLibraryReference)
@@ -196,7 +196,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(1)
 				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::FrameworkReference)
@@ -207,7 +207,7 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(0)
 			end
@@ -217,9 +217,54 @@ RSpec.describe StructCore::Specparser11X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser11X.new
 
-				proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(0)
+			end
+
+			it 'parses a specfile with a local framework reference' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_11X/spec_parser_11X_test_23.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser11X.new
+
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[0].references.count).to eq(1)
+				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::LocalFrameworkReference)
+			end
+
+			it 'parses a specfile with a local framework reference containing options' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_11X/spec_parser_11X_test_24.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser11X.new
+
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[0].references.count).to eq(1)
+				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::LocalFrameworkReference)
+				expect(proj.targets[0].references[0].settings['copy']).to eq(false)
+				expect(proj.targets[0].references[0].settings['codeSignOnCopy']).to eq(false)
+			end
+
+			it 'parses a specfile with a script file' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_11X/spec_parser_11X_test_25.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser11X.new
+
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[0].run_scripts.count).to eq(1)
+				expect(proj.targets[0].run_scripts[0]).to be_an_instance_of(StructCore::Specfile::Target::RunScript)
+			end
+
+			it 'ignores an invalid scripts section' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_11X/spec_parser_11X_test_26.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser11X.new
+
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[0].run_scripts.count).to eq(0)
 			end
 		end
 	end
