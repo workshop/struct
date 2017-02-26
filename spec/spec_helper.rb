@@ -2,6 +2,11 @@ require 'semantic'
 require 'tmpdir'
 require_relative '../lib/struct'
 
+if ENV.key? 'CI'
+	require 'coveralls'
+	Coveralls.wear!
+end
+
 RSpec.configure do |config|
 	config.color = true
 	config.tty = true
