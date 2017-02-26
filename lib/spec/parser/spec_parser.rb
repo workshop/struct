@@ -10,9 +10,10 @@ module StructCore
 		def register(parser)
 			if parser.respond_to?(:parse) && parser.respond_to?(:can_parse_version)
 				@parsers << parser
-			else
-				raise StandardError.new 'Unsupported parser object. Parser object must support :parse and :can_parse_version'
+				return
 			end
+
+			raise StandardError.new 'Unsupported parser object. Parser object must support :parse and :can_parse_version'
 		end
 
 		def register_defaults
@@ -40,7 +41,7 @@ module StructCore
 				raise StandardError.new 'Error: Unable to determine file format of project file'
 			end
 
-			raise StandardError.new "Error: Invalid spec file. No 'version' key was present." unless spec_hash != nil and spec_hash.key? 'version'
+			raise StandardError.new "Error: Invalid spec file. No 'version' key was present." unless !spec_hash.nil? && spec_hash.key?('version')
 
 			begin
 				spec_version = Semantic::Version.new spec_hash['version']
@@ -52,7 +53,7 @@ module StructCore
 				parser.can_parse_version(spec_version)
 			}
 
-			raise StandardError.new "Error: Invalid spec file. Project version #{spec_hash['version']} is unsupported by this version of struct." unless parser != nil
+			raise StandardError.new "Error: Invalid spec file. Project version #{spec_hash['version']} is unsupported by this version of struct." if parser.nil?
 
 			raise StandardError.new "Error: Invalid spec file. No 'configurations' key was present." unless spec_hash.key? 'configurations'
 			raise StandardError.new "Error: Invalid spec file. Key 'configurations' should be a hash" unless spec_hash['configurations'].is_a?(Hash)

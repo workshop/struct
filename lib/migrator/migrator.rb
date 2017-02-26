@@ -7,7 +7,7 @@ module StructCore
 	class Migrator
 		CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'config_profiles')
 		TARGET_CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'target_config_profiles')
-		DEBUG_SETTINGS_MERGED = ['general:debug', 'ios:debug'].map { |profile_name|
+		DEBUG_SETTINGS_MERGED = %w(general:debug ios:debug).map { |profile_name|
 			[profile_name, File.join(CONFIG_PROFILE_PATH, "#{profile_name.sub(':', '_')}.yml")]
 		}.map { |data|
 			profile_name, profile_file_name = data
@@ -20,7 +20,7 @@ module StructCore
 		}.inject({}) { |settings, next_settings|
 			settings.merge next_settings || {}
 		}
-		RELEASE_SETTINGS_MERGED = ['general:release', 'ios:release'].map { |profile_name|
+		RELEASE_SETTINGS_MERGED = %w(general:release ios:release).map { |profile_name|
 			[profile_name, File.join(CONFIG_PROFILE_PATH, "#{profile_name.sub(':', '_')}.yml")]
 		}.map { |data|
 			profile_name, profile_file_name = data
@@ -34,6 +34,12 @@ module StructCore
 			settings.merge next_settings || {}
 		}
 
+		# TODO: Improve the formatting of this method once integration tests are added
+		# rubocop:disable Metrics/MethodLength
+		# rubocop:disable Metrics/BlockLength
+		# rubocop:disable Metrics/AbcSize
+		# rubocop:disable Metrics/PerceivedComplexity
+		# rubocop:disable Style/GuardClause
 		def self.migrate(xcodeproj_file, directory)
 			xcodeproj_path = Pathname.new(xcodeproj_file).absolute? ? xcodeproj_file : File.join(Dir.pwd, xcodeproj_file)
 
@@ -102,11 +108,11 @@ module StructCore
 
 			targets_files = project.targets.map { |target|
 				target_files = target.source_build_phase.files.map { |file| file.file_ref.real_path }
-				target_files.unshift *(target.resources_build_phase.files.map { |file|
-					next nil if file.file_ref == nil
+				target_files.unshift(*target.resources_build_phase.files.map { |file|
+					next nil if file.file_ref.nil?
 					file.file_ref.real_path
 				}.compact)
-				target_files = target_files.map { |f| f.to_s }
+				target_files = target_files.map(&:to_s)
 				target_files = target_files.select { |f| !File.directory?(f) || f.end_with?('xcassets') }
 				target_glob_files = target_files.select { |f|
 					File.directory? f
@@ -114,23 +120,19 @@ module StructCore
 				target_files = target_files.select { |f|
 					!target_glob_files.include? f
 				}
-				target_files.unshift *(target_glob_files.map { |f|
+				target_files.unshift(*target_glob_files.map { |f|
 					Dir[File.join f, '**', '*']
 				}.flatten.select { |f|
 					!File.directory? f
 				})
 
 				target_res_files = target.resources_build_phase.files.select { |f|
-					f.file_ref.name != nil && (
-						f.file_ref.name.end_with?('.storyboard') ||
-						f.file_ref.name.end_with?('.strings') ||
-						f.file_ref.name.end_with?('.stringsdict')
-					)
+					!f.file_ref.name.nil? && f.file_ref.name.end_with?('.storyboard', '.strings', '.stringsdict')
 				}.map { |f|
 					f.file_ref.name
 				}
 
-				target_files.unshift *(Dir[File.join project_dir, '**', '*.lproj', '**', '*'].select { |f|
+				target_files.unshift(*Dir[File.join project_dir, '**', '*.lproj', '**', '*'].select { |f|
 					!File.directory?(f) && target_res_files.include?(File.basename(f))
 				})
 
@@ -151,15 +153,20 @@ module StructCore
 				}
 			}
 		end
+		# rubocop:enable Metrics/MethodLength
+		# rubocop:enable Metrics/BlockLength
+		# rubocop:enable Metrics/AbcSize
+		# rubocop:enable Metrics/PerceivedComplexity
+		# rubocop:enable Style/GuardClauseenable
 
 		private_class_method def self.migrate_build_configurations(project)
 			project.build_configurations.map { |config|
 				if config.type == :debug
 					overrides = config.build_settings.reject { |k, _| DEBUG_SETTINGS_MERGED.include? k }
-					next StructCore::Specfile::Configuration.new(config.name, ['general:debug', 'ios:debug'], overrides, 'debug')
+					next StructCore::Specfile::Configuration.new(config.name, %w(general:debug ios:debug), overrides, 'debug')
 				elsif config.type == :release
 					overrides = config.build_settings.reject { |k, _| RELEASE_SETTINGS_MERGED.include? k }
-					next StructCore::Specfile::Configuration.new(config.name, ['general:release', 'ios:release'], overrides, 'release')
+					next StructCore::Specfile::Configuration.new(config.name, %w(general:release ios:release), overrides, 'release')
 				else
 					raise StandardError.new "Unsupported build configuration type: #{config.type}"
 				end

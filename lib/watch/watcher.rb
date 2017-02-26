@@ -10,7 +10,7 @@ module StructCore
 				spec = StructCore::Specfile.parse project_file
 			rescue StandardError => err
 				puts Paint[err, :red]
-				exit -1
+				exit(-1)
 			end
 
 			begin
@@ -21,16 +21,14 @@ module StructCore
 		end
 
 		def self.watch(directory)
-			if File.exist? File.join(directory, 'project.yml')
-				project_file = File.join(directory, 'project.yml')
-			else
-				project_file = File.join(directory, 'project.json')
-			end
+			project_file = nil
+			project_file = File.join(directory, 'project.yml') if File.exist? File.join(directory, 'project.yml')
+			project_file = File.join(directory, 'project.json') if project_file.nil?
 
 			rebuild(project_file, directory)
 
 			listener = Listen.to(directory, ignore: /\.xcodeproj/) do |modified, added, removed|
-				if modified.include? project_file or added.length > 0 or removed.length > 0
+				if modified.include?(project_file) || !added.length.empty? || !removed.length.empty?
 					rebuild(project_file, directory)
 				end
 			end

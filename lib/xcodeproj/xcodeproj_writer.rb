@@ -4,6 +4,8 @@ require 'paint'
 require 'deep_clone'
 require_relative '../spec/spec_file'
 
+# TODO: Refactor this once we have integration tests
+# rubocop:disable all
 module StructCore
 	class XcodeprojWriter
 		CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'config_profiles')
@@ -42,11 +44,9 @@ module StructCore
 				raise StandardError.new 'Invalid spec file'
 			end
 
-			unless spec.configurations.length > 0
-				raise StandardError.new 'Spec must have at least one configuration'
-			end
+			raise StandardError.new 'Spec must have at least one configuration' if spec.configurations.empty?
 
-			if spec.variants.count == 0
+			if spec.variants.count.zero?
 				write_xcodeproj spec, File.join(destination, 'project.xcodeproj')
 				puts Paint['Generated project.xcodeproj', :green]
 			else
@@ -101,10 +101,7 @@ module StructCore
 			requested_target_refs = target.references.select { |ref| ref.is_a? StructCore::Specfile::Target::TargetReference }
 			target_references = requested_target_refs.map { |ref|
 				# If the referenced target has not been added to the project yet, skip this target for now
-				unless target_refs.has_key? ref.target_name
-					return nil
-				end
-
+				return nil unless target_refs.has_key? ref.target_name
 				next target_refs[ref.target_name]
 			}.compact
 
@@ -126,16 +123,16 @@ module StructCore
 
 					next YAML.load_file(profile_file_name)
 				}.each { |profile_data|
-					build_settings = build_settings.merge (profile_data || {})
+					build_settings = build_settings.merge profile_data || {}
 				}
 
 				build_settings = build_settings.merge config.settings
-				target_build_settings[config.name] = { :type => spec_configuration_type_map[config.name], :settings => build_settings }
+				target_build_settings[config.name] = { type: spec_configuration_type_map[config.name], settings: build_settings }
 			}
 
 			sdk = target_build_settings[target_build_settings.keys.first][:settings]['SDKROOT']
 
-			unless sdk != nil
+			if sdk.nil?
 				puts Paint["Warning: SDKROOT not found in configuration for target: '#{target.name}'. Ignoring...", :yellow]
 				return nil
 			end
@@ -166,18 +163,18 @@ module StructCore
 
 			requested_sys_framework_refs = target.references
 				.select { |ref| ref.is_a? StructCore::Specfile::Target::SystemFrameworkReference }
-				.map { |ref| ref.name }
+				.map(&:name)
 				.select { |ref| ref != 'Foundation' } # Filter out Foundation as it's already added by default
 			native_target.add_system_framework requested_sys_framework_refs
 
 			requested_sys_library_refs = target.references
 				.select { |ref| ref.is_a? StructCore::Specfile::Target::SystemLibraryReference }
-				.map { |ref| ref.name }
+				.map(&:name)
 			native_target.add_system_library requested_sys_library_refs
 
 			subproj_group = project.frameworks_group.groups.find { |g| g.display_name == '$subproj' }
 			if subproj_group == nil
-				 subproj_group = project.frameworks_group.new_group '$subproj', nil, '<group>'
+				subproj_group = project.frameworks_group.new_group '$subproj', nil, '<group>'
 			end
 			framework_group = project.frameworks_group.groups.find { |group| group.display_name == '$local' }
 			if framework_group == nil
@@ -189,9 +186,9 @@ module StructCore
 
 				f.settings['frameworks'].each { |f_opts|
 					remote_target = remote_project.targets.select { |t|
-						t.product_reference.path == f_opts['name'] and t.product_type === 'com.apple.product-type.framework' and [nil, platform].include? t.platform_name
+						t.product_reference.path == f_opts['name'] && t.product_type == 'com.apple.product-type.framework' && [nil, platform].include?(t.platform_name)
 					}.first
-					next if remote_target == nil
+					next if remote_target.nil?
 
 					framework = subproj.file_reference_proxies.select { |p| p.path == remote_target.product_reference.path }.first
 
@@ -220,13 +217,11 @@ module StructCore
 				}
 			}
 
-			return native_target
+			native_target
 		end
 
 		def self.create_group(parent_group, components)
-			if components.first == nil
-				return parent_group
-			end
+			return parent_group if components.first.nil?
 			group = parent_group[components.first]
 			unless group
 				group = parent_group.new_group(components.first)
@@ -236,8 +231,7 @@ module StructCore
 			create_group group, components.drop(1)
 		end
 
-		private
-		def self.write_xcodeproj(spec, filename)
+		private_class_method def self.write_xcodeproj(spec, filename)
 			spec_xcodeproj_type_map = {}
 			spec_xcodeproj_type_map['debug'] = :debug
 			spec_xcodeproj_type_map['release'] = :release
@@ -287,22 +281,20 @@ module StructCore
 			#
 			# If an entire cycle passes without an element being removed from remaining_targets, it is assumed we
 			# are encountering a circular reference, and in that scenario we break early.
-			while remaining_targets.length > 0
+			until remaining_targets.empty?
 				target = remaining_targets.first
-				if target == nil
-					break
-				end
+				break if target.nil?
 
 				native_target = add_target target, project, target_refs, spec_configuration_type_map
 				if native_target != nil
 					target_refs[target.name] = native_target
-					remaining_targets_removed = remaining_targets_removed + 1
+					remaining_targets_removed += 1
 					remaining_targets.shift
 				end
 
-				iterations_remaining = iterations_remaining - 1
-				if iterations_remaining == 0
-					if remaining_targets_removed == 0
+				iterations_remaining -= 1
+				if iterations_remaining.zero?
+					if remaining_targets_removed.zero?
 						raise StandardError.new 'Circular target references were found in spec, aborting'
 					else
 						iterations_remaining = remaining_targets.length
@@ -317,7 +309,7 @@ module StructCore
 			}
 
 			project.save filename
-			return nil
+			nil
 		end
 
 		# @param target [StructCore::Specfile::Target]
@@ -452,7 +444,7 @@ module StructCore
 			framework_files.map { |framework|
 				framework_group.new_file framework
 			}.each { |framework|
-				(embed_phase.add_file_reference framework).settings = { 'ATTRIBUTES' => ['CodeSignOnCopy', 'RemoveHeadersOnCopy'] }
+				(embed_phase.add_file_reference framework).settings = { 'ATTRIBUTES' => %w(CodeSignOnCopy RemoveHeadersOnCopy)}
 				native_target.frameworks_build_phase.add_file_reference framework
 			}
 
@@ -485,3 +477,4 @@ module StructCore
 		end
 	end
 end
+# rubocop:enable all

@@ -149,3 +149,7 @@ Style/MultilineBlockChain:
 # Doesn't seem particularly smart, so I'll handle this myself
 Style/FileName:
   Enabled: false
+
+# Doesn't seem particularly smart, so I'll handle this myself
+Style/MultilineMethodCallIndentation:
+  Enabled: false

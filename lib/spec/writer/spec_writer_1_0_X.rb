@@ -4,6 +4,8 @@ require 'yaml'
 require 'json'
 require_relative '../spec_file'
 
+# TODO: Refactor this once we have integration tests
+# rubocop:disable all
 module StructCore
 	class Specwriter10X
 		# @param version [Semantic::Version]
@@ -235,3 +237,4 @@ module StructCore
 		end
 	end
 end
+# rubocop:enable all
