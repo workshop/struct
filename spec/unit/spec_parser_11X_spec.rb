@@ -266,6 +266,42 @@ RSpec.describe StructCore::Specparser11X do
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].run_scripts.count).to eq(0)
 			end
+
+			it 'parses a specfile with an empty variants section' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_11X/spec_parser_11X_test_27.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser11X.new
+
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+			end
+
+			it 'parses a specfile with an invalid variants section' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_11X/spec_parser_11X_test_28.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser11X.new
+
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+			end
+
+			it 'parses a specfile with a variant not present in the targets section' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_11X/spec_parser_11X_test_29.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser11X.new
+
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+			end
+
+			it 'parses a specfile with an invalid variant in the variants section' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_11X/spec_parser_11X_test_30.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser11X.new
+
+				proj = parser.parse Semantic::Version.new('1.1.0'), test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+			end
 		end
 	end
 end

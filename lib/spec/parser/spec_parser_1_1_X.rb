@@ -59,7 +59,8 @@ module StructCore
 				if key == 'abstract'
 					abstract = true
 				else
-					targets.unshift(parse_variant_target_data(key, value, project_base_dir, valid_configuration_names))
+					variant = parse_variant_target_data(key, value, project_base_dir, valid_configuration_names)
+					targets.unshift(variant) unless variant.nil?
 				end
 			}
 
@@ -67,6 +68,8 @@ module StructCore
 		end
 
 		def parse_variant_target_data(target_name, target_opts, project_base_dir, valid_config_names)
+			return nil if target_opts.nil? || !target_opts.is_a?(Hash)
+
 			type = nil
 			raw_type = nil
 			# Parse target type
