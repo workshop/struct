@@ -1,3 +1,9 @@
+# Must remain at the top of the file to properly track coverage
+if ENV.key? 'CI'
+	require 'coveralls'
+	Coveralls.wear!
+end
+
 require 'semantic'
 require 'tmpdir'
 require 'yaml'
@@ -13,11 +19,6 @@ require_relative '../lib/spec/parser/spec_parser_1_0_X'
 require_relative '../lib/spec/parser/spec_parser_1_1_X'
 require_relative '../lib/spec/writer/spec_writer'
 require_relative '../lib/spec/writer/spec_writer_1_0_X'
-
-if ENV.key? 'CI'
-	require 'coveralls'
-	Coveralls.wear!
-end
 
 RSpec.configure do |config|
 	config.color = true
