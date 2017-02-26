@@ -13,4 +13,4 @@ targets:
     type: ":application"
     sources: 'support_files/abc'
     references:
-    - location: './support_files/local_project.xcodeproj'
+    - location: 'support_files/local_project.xcodeproj'
