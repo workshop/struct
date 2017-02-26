@@ -18,7 +18,7 @@ module StructCore
 
 			next YAML.load_file(profile_file_name)
 		}.inject({}) { |settings, next_settings|
-			settings.merge (next_settings || {})
+			settings.merge next_settings || {}
 		}
 		RELEASE_SETTINGS_MERGED = ['general:release', 'ios:release'].map { |profile_name|
 			[profile_name, File.join(CONFIG_PROFILE_PATH, "#{profile_name.sub(':', '_')}.yml")]
@@ -31,11 +31,11 @@ module StructCore
 
 			next YAML.load_file(profile_file_name)
 		}.inject({}) { |settings, next_settings|
-			settings.merge (next_settings || {})
+			settings.merge next_settings || {}
 		}
 
 		def self.migrate(xcodeproj_file, directory)
-			xcodeproj_path = (Pathname.new(xcodeproj_file)).absolute? ? xcodeproj_file : File.join(Dir.pwd, xcodeproj_file)
+			xcodeproj_path = Pathname.new(xcodeproj_file).absolute? ? xcodeproj_file : File.join(Dir.pwd, xcodeproj_file)
 
 			unless File.exist? xcodeproj_path
 				raise StandardError.new 'Invalid xcode project'
@@ -64,7 +64,7 @@ module StructCore
 
 				target_configuration_overrides = target.build_configurations.map { |config|
 					config_name = config.name
-					config_name = name.downcase if ['Debug', 'Release'].include? name
+					config_name = name.downcase if %w(Debug Release).include? name
 
 					[config_name, extract_target_config_overrides(profiles, config.build_settings)]
 				}.to_h
@@ -121,7 +121,7 @@ module StructCore
 				})
 
 				target_res_files = target.resources_build_phase.files.select { |f|
-					f.file_ref&.name && (
+					f.file_ref.name != nil && (
 						f.file_ref.name.end_with?('.storyboard') ||
 						f.file_ref.name.end_with?('.strings') ||
 						f.file_ref.name.end_with?('.stringsdict')
@@ -137,7 +137,7 @@ module StructCore
 				[target.name, target_files]
 			}
 
-			spec_file = StructCore::Specfile.new(spec_version, targets, configurations, directory)
+			spec_file = StructCore::Specfile.new(spec_version, targets, configurations, [], directory)
 			spec_file.write File.join(directory, 'project.yml')
 
 			targets_files.each { |name, files|
@@ -152,8 +152,7 @@ module StructCore
 			}
 		end
 
-		private
-		def self.migrate_build_configurations(project)
+		private_class_method def self.migrate_build_configurations(project)
 			project.build_configurations.map { |config|
 				if config.type == :debug
 					overrides = config.build_settings.reject { |k, _| DEBUG_SETTINGS_MERGED.include? k }
@@ -167,7 +166,7 @@ module StructCore
 			}
 		end
 
-		def self.extract_target_config_overrides(profiles, build_settings)
+		private_class_method def self.extract_target_config_overrides(profiles, build_settings)
 			default_settings = profiles.map { |profile_name|
 				[profile_name, File.join(TARGET_CONFIG_PROFILE_PATH, "#{profile_name.sub(':', '_')}.yml")]
 			}.map { |data|
@@ -179,7 +178,7 @@ module StructCore
 
 				next YAML.load_file(profile_file_name)
 			}.inject({}) { |settings, next_settings|
-				settings.merge (next_settings || {})
+				settings.merge next_settings || {}
 			}
 
 			build_settings.reject { |k, _| default_settings.include? k }

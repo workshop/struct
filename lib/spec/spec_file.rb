@@ -6,7 +6,7 @@ require_relative 'writer/spec_writer'
 module StructCore
 	class Specfile
 		class Configuration
-			def initialize(name, profiles, overrides, type=nil)
+			def initialize(name, profiles, overrides, type = nil)
 				@name = name
 				@profiles = profiles
 				@overrides = overrides
@@ -24,10 +24,7 @@ module StructCore
 				end
 			end
 
-			def type=(value)
-				@type = value
-			end
-
+			attr_writer :type
 			attr_accessor :name
 			attr_accessor :profiles
 			attr_accessor :overrides
@@ -35,7 +32,7 @@ module StructCore
 
 		class Target
 			class Configuration
-				def initialize(name, settings, profiles=nil)
+				def initialize(name, settings, profiles = nil)
 					@name = name
 					@settings = settings
 					@profiles = profiles || []
@@ -117,27 +114,20 @@ module StructCore
 			# @param res_dir [Array<String>]
 			# @param file_excludes [Array<String>]
 			# @param run_scripts [Array<StructCore::Specfile::Target::RunScript>]
-			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes, run_scripts=[])
+			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes, run_scripts = [])
 				@name = target_name
 				@type = target_type
-				if source_dir != nil
-					if source_dir.is_a? Array
-						@source_dir = [].unshift *source_dir
-					else
-						@source_dir = [source_dir]
-					end
-				else
-					@source_dir = []
+				@source_dir = []
+				if source_dir.nil?
+					@source_dir = [source_dir]
+					@source_dir = [].unshift(*source_dir) if source_dir.is_a? Array
 				end
 				@configurations = configurations
 				@references = references
 				@options = options
-				if res_dir != nil
-					if res_dir.is_a? Array
-						@res_dir = [].unshift *res_dir
-					else
-						@res_dir = [res_dir]
-					end
+				if !res_dir.nil?
+					@res_dir = [res_dir]
+					@res_dir = [].unshift(*res_dir) if res_dir.is_a? Array
 				else
 					@res_dir = @source_dir
 				end
@@ -211,19 +201,13 @@ module StructCore
 
 		# @return StructCore::Specfile
 		def self.parse(path, parser = nil)
-			if parser == nil
-				return Specparser.new.parse(path)
-			else
-				return parser.parse(path)
-			end
+			return Specparser.new.parse(path) if parser.nil?
+			parser.parse(path)
 		end
 
 		def write(path, writer = nil)
-			if writer == nil
-				Specwriter.new.write_spec(self, path)
-			else
-				writer.write_spec(self, path)
-			end
+			return Specwriter.new.write_spec(self, path) if writer.nil?
+			writer.write_spec(self, path)
 		end
 
 		attr_accessor :version

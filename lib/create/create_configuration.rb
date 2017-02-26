@@ -7,7 +7,6 @@ require 'inquirer'
 module StructCore
 	module Create
 		class Configuration
-
 			PROFILE_NAMES = Dir[File.join(__dir__, '..', '..', 'res', 'config_profiles', '*.yml')].map { |name|
 				File.basename(name).sub('_', ':').sub('.yml', '')
 			}.freeze
@@ -60,13 +59,13 @@ module StructCore
 			end
 
 			def self.run(project_file, configuration)
-				unless configuration != nil && configuration.is_a?(StructCore::Specfile::Configuration)
+				unless !configuration.nil? && configuration.is_a?(StructCore::Specfile::Configuration)
 					raise StandardError.new 'Invalid configuration object'
 				end
 
 				spec = StructCore::Specfile.parse project_file
 
-				unless spec.configurations.find { |existing_config| existing_config.name == configuration.name } == nil
+				unless spec.configurations.find { |existing_config| existing_config.name == configuration.name }.nil?
 					raise StandardError.new "A configuration with the name #{configuration.name} already exists in this spec"
 				end
 

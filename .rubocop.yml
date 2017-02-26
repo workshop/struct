@@ -129,6 +129,19 @@ Metrics/AbcSize:
 Metrics/CyclomaticComplexity:
   Max: 16
 
+# We'll try to reduce this over time
+Metrics/PerceivedComplexity:
+  Max: 10
+
+# TODO: To avoid breaking the existing API this is disabled. To be reviewed when the next API revision occurs.
+Metrics/ParameterLists:
+  Enabled: false
+
 # It's not the 80s anymore. Come on.
 Style/TrailingBlankLines:
+  Enabled: false
+
+# I don't agree with this one, combining functional map/filter/select's makes
+# your intentions much clearer with complex processing logic.
+Style/MultilineBlockChain:
   Enabled: false

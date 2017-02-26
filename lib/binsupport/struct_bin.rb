@@ -85,7 +85,7 @@ module StructCore
 			project_file = File.join(directory, 'project.yml') if File.exist? File.join(directory, 'project.yml')
 			project_file = File.join(directory, 'project.json') if File.exist? File.join(directory, 'project.json')
 
-			if project_file == nil
+			if project_file.nil?
 				puts Paint['Could not find project.yml or project.json in the current directory', :red]
 				quit(-1)
 			end
