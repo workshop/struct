@@ -118,7 +118,7 @@ module StructCore
 				@name = target_name
 				@type = target_type
 				@source_dir = []
-				if source_dir.nil?
+				unless source_dir.nil?
 					@source_dir = [source_dir]
 					@source_dir = [].unshift(*source_dir) if source_dir.is_a? Array
 				end

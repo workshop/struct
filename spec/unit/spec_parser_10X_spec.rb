@@ -15,76 +15,106 @@ RSpec.describe StructCore::Specparser10X do
 
 	describe '#parse' do
 		it 'can parse a specfile with only configurations' do
-			test_hash = YAML.load_file File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_2.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_2.yml')
+			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
-			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, 'spec_parser_10X_test_2.yml'
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
 			expect(proj).to be_an StructCore::Specfile
-			expect(proj.configurations.count).to equal(2)
+			expect(proj.configurations.count).to eq(2)
 		end
 
 		it 'raises an error if a project doesn\'t contain configurations' do
-			test_hash = YAML.load_file File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_3.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_3.yml')
+			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
-			expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, 'spec_parser_10X_test_3.yml' }.to raise_error(StandardError)
+			expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file }.to raise_error(StandardError)
 		end
 
 		it 'can parse a specfile with only 1 configuration' do
-			test_hash = YAML.load_file File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_4.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_4.yml')
+			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
-			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, 'spec_parser_10X_test_4.yml'
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
 			expect(proj).to be_an StructCore::Specfile
-			expect(proj.configurations.count).to equal(1)
+			expect(proj.configurations.count).to eq(1)
 		end
 
 		it 'raises an error if a project has an invalid targets section' do
-			test_hash = YAML.load_file File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_5.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_5.yml')
+			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
-			expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, 'spec_parser_10X_test_5.yml' }.to raise_error(StandardError)
+			expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file }.to raise_error(StandardError)
 		end
 
 		it 'raises an error if a project has an invalid configurations section' do
-			test_hash = YAML.load_file File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_6.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_6.yml')
+			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
-			expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, 'spec_parser_10X_test_6.yml' }.to raise_error(StandardError)
+			expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file }.to raise_error(StandardError)
 		end
 
 		it 'raises an error if a project has an invalid profiles section in a configuration block' do
-			test_hash = YAML.load_file File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_7.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_7.yml')
+			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
-			expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, 'spec_parser_10X_test_7.yml' }.to raise_error(StandardError)
+			expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file }.to raise_error(StandardError)
 		end
 
 		it 'raises an error if a project has a missing profiles section in a configuration block' do
-			test_hash = YAML.load_file File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_8.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_8.yml')
+			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
-			expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, 'spec_parser_10X_test_8.yml' }.to raise_error(StandardError)
+			expect { parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file }.to raise_error(StandardError)
 		end
 
 		it 'can parse a specfile with invalid overrides or types' do
-			test_hash = YAML.load_file File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_9.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_9.yml')
+			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
-			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, 'spec_parser_10X_test_9.yml'
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
 			expect(proj).to be_an StructCore::Specfile
-			expect(proj.configurations.count).to equal(1)
+			expect(proj.configurations.count).to eq(1)
 		end
 
 		it 'can parse a specfile with overrides and types' do
-			test_hash = YAML.load_file File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_10.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_10.yml')
+			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
-			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, 'spec_parser_10X_test_10.yml'
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
 			expect(proj).to be_an StructCore::Specfile
-			expect(proj.configurations.count).to equal(1)
+			expect(proj.configurations.count).to eq(1)
 			expect(proj.configurations[0].name).to eq('my-configuration')
 			expect(proj.configurations[0].type).to eq('debug')
+		end
+
+		it 'skips targets within a specfile that contain no configuration' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_11.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets.count).to eq(0)
+		end
+
+		it 'can parse a specfile with a string sources entry' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_12.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets[0].source_dir.count).to eq(1)
+			expect(proj.targets[0].source_dir[0]).to be_truthy
 		end
 	end
 end

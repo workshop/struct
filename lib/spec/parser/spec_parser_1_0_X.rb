@@ -17,6 +17,7 @@ module StructCore
 			raise StandardError.new "Error: Invalid spec file. Key 'targets' should be a hash" unless spec_hash['targets'].is_a?(Hash)
 
 			targets = (spec_hash['targets'] || {}).map { |target_name, target_opts|
+				next nil if target_opts.nil?
 				parse_target_data(target_name, target_opts, project_base_dir, valid_configuration_names)
 			}.compact
 
@@ -128,15 +129,16 @@ module StructCore
 						puts Paint["Warning: Config name #{config_name} for target #{target_name} was not defined in this spec. Ignoring target...", :yellow]
 						return nil
 					end
-					Specfile::Target::Configuration.new(config_name, config, profiles)
+					Specfile::Target::Configuration.new(config_name, profiles, overrides)
 				end
 			elsif target_opts.key? 'configuration'
 				configurations = valid_config_names.map { |name|
-					Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
+					Specfile::Target::Configuration.new(name, profiles, target_opts['configuration'])
 				}
 			else
-				puts Paint["Warning: Target #{target_name} has no configuration settings. Ignoring target...", :yellow]
-				return nil
+				configurations = valid_config_names.map { |name|
+					Specfile::Target::Configuration.new(name, profiles, {})
+				}
 			end
 
 			unless configurations.count == valid_config_names.count
