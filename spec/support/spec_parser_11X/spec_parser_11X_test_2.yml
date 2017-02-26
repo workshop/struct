@@ -1,0 +1,11 @@
+---
+version: 1.1.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+  release:
+    profiles:
+    - general:release
+    - ios:release
