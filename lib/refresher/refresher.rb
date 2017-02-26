@@ -9,27 +9,21 @@ require_relative '../version'
 
 module StructCore
 	class Refresher
-		GIT_CONTENT_REPOSITORY_BASE = 'https://raw.githubusercontent.com/lyptt/xcodegen/master'
+		GIT_CONTENT_REPOSITORY_BASE = 'https://raw.githubusercontent.com/lyptt/xcodegen/master'.freeze
 
+		# There's not much sense refactoring this to be tiny methods.
+		# rubocop:disable Metrics/AbcSize
+		# rubocop:disable Metrics/PerceivedComplexity
 		def self.run
 			# Silently fail whenever possible and try not to wait too long. Don't want to bug the users!
-			unless Refresher.has_internet?
-				return
-			end
+			return unless Refresher.internet?
 
 			begin
 				local_gem_version = Semantic::Version.new StructCore::VERSION
+				struct_cache_dir = File.join Dir.tmpdir, 'struct-cache'
+				Dir.mkdir struct_cache_dir unless File.exist? struct_cache_dir
 			rescue StandardError => _
 				return
-			end
-
-			struct_cache_dir = File.join Dir.tmpdir, 'struct-cache'
-			unless File.exist? struct_cache_dir
-				begin
-				Dir.mkdir struct_cache_dir
-				rescue StandardError => _
-					return
-				end
 			end
 
 			cached_changelog_path = File.join struct_cache_dir, 'changelog.yml'
@@ -40,17 +34,13 @@ module StructCore
 					return
 				end
 
-				if changelog == nil || changelog['updated'] == nil
-					return
-				end
+				return if changelog.nil? || changelog['updated'].nil?
 
 				changed_date = Time.at(changelog['updated']).to_date
-				if changed_date == nil
-					return
-				end
+				return if changed_date.nil?
 
 				if changed_date == Time.now.to_date
-					print changelog, local_gem_version, struct_cache_dir
+					print changelog, local_gem_version
 					return
 				end
 			end
@@ -58,21 +48,13 @@ module StructCore
 			# Keep the timeout super-short. This is a fairly big assumption and needs fine-tuning, but most devs
 			# have awesome internet connections, so this should be fine for the most part. Don't want to keep
 			# the UI stalling for too long!
-			changelog_res = Excon.get("#{GIT_CONTENT_REPOSITORY_BASE}/changelog.yml", :connect_timeout => 5)
+			changelog_res = Excon.get("#{GIT_CONTENT_REPOSITORY_BASE}/changelog.yml", connect_timeout: 5)
 
-			unless changelog_res.status == 200 && changelog_res.body != nil
-				return
-			end
+			return unless changelog_res.status == 200 && !changelog_res.body.nil?
 
 			begin
-				changelog = YAML.load changelog_res.body
-			rescue StandardError => _
-				return
-			end
-
-			changelog['updated'] = Time.now.to_i
-
-			begin
+				changelog = YAML.safe_load changelog_res.body
+				changelog['updated'] = Time.now.to_i
 				FileUtils.mkdir_p struct_cache_dir
 				FileUtils.rm_rf cached_changelog_path
 				File.write cached_changelog_path, changelog.to_yaml
@@ -82,9 +64,10 @@ module StructCore
 
 			print changelog, local_gem_version, struct_cache_dir
 		end
+		# rubocop:enable Metrics/AbcSize
+		# rubocop:enable Metrics/PerceivedComplexity
 
-		private
-		def self.has_internet?
+		private_class_method def self.internet?
 			dns_resolver = Resolv::DNS.new
 			begin
 				dns_resolver.getaddress('icann.org')
@@ -94,10 +77,14 @@ module StructCore
 			end
 		end
 
-		def self.print(changelog, local_gem_version, struct_cache_dir)
-			if changelog == nil || changelog['latest'] == nil
-				return
-			end
+		private_class_method def self.out_of_date?(latest_gem_version, local_gem_version)
+			latest_gem_version.major > local_gem_version.major ||
+				(latest_gem_version.major == local_gem_version.major && latest_gem_version.minor > local_gem_version.minor) ||
+				(latest_gem_version.major == local_gem_version.major && latest_gem_version.minor == local_gem_version.minor && latest_gem_version.patch > local_gem_version.patch)
+		end
+
+		private_class_method def self.print(changelog, local_gem_version)
+			return if changelog.nil? || changelog['latest'].nil?
 
 			begin
 				latest_gem_version = Semantic::Version.new changelog['latest']
@@ -105,29 +92,19 @@ module StructCore
 				return
 			end
 
-			unless latest_gem_version.major > local_gem_version.major ||
-				(latest_gem_version.major == local_gem_version.major && latest_gem_version.minor > local_gem_version.minor) ||
-				(latest_gem_version.major == local_gem_version.major && latest_gem_version.minor == local_gem_version.minor && latest_gem_version.patch > local_gem_version.patch)
-				return
-			end
+			return unless out_of_date?
 
 			# It's now confirmed the user is not on the latest version. Yay!
 			puts Paint["\nThere's a newer version of Struct out! Why not give it a try?\n"\
-						  "You're on #{local_gem_version.to_s}, and the latest is #{latest_gem_version.to_s}.\n\n"\
+						  "You're on #{local_gem_version}, and the latest is #{latest_gem_version}.\n\n"\
 						  "I'd love to get your feedback on Struct. Feel free to ping me\n"\
 						  "on Twitter @lyptt, or file a github issue if there's something that\n"\
 						  "can be improved at https://github.com/lyptt/xcodegen/issues.\n", :green]
 
-			if changelog['versions'] == nil
-				return
-			end
-
-			if changelog['versions'][latest_gem_version.to_s] == nil
-				return
-			end
+			return if changelog['versions'].nil? || changelog['versions'][latest_gem_version.to_s].nil?
 
 			puts Paint["What's new:\n-----------", :yellow]
-			puts Paint[changelog['versions'][latest_gem_version.to_s].map{ |str| " -  #{str}" }.join("\n"), :yellow]
+			puts Paint[changelog['versions'][latest_gem_version.to_s].map { |str| " -  #{str}" }.join("\n"), :yellow]
 		end
 	end
 end

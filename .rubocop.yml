@@ -145,3 +145,7 @@ Style/TrailingBlankLines:
 # your intentions much clearer with complex processing logic.
 Style/MultilineBlockChain:
   Enabled: false
+
+# Doesn't seem particularly smart, so I'll handle this myself
+Style/FileName:
+  Enabled: false

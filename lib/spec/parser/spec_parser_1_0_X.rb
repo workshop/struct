@@ -76,18 +76,12 @@ module StructCore
 			type
 		end
 
-		# @return StructCore::Specfile::Target
-		private def parse_target_data(target_name, target_opts, project_base_dir, valid_config_names)
+		private def parse_target_type(target_opts)
 			# Parse target type
-			unless target_opts.key? 'type'
-				puts Paint["Warning: Target #{target_name} has no target type. Ignoring target...", :yellow]
-				return nil
-			end
+			return nil unless target_opts.key? 'type'
 
 			type = target_opts['type']
-			if type.is_a?(Symbol)
-				type = type.to_s
-			end
+			type = type.to_s if type.is_a?(Symbol)
 			# : at the start of the type is shorthand for 'com.apple.product-type.'
 			if type.start_with? ':'
 				type[0] = ''
@@ -97,6 +91,10 @@ module StructCore
 				raw_type = type
 			end
 
+			[raw_type, type]
+		end
+
+		private def parse_target_profiles_platform(target_opts, raw_type, target_name)
 			# Parse target platform/type/profiles into a profiles list
 			profiles = nil
 			if target_opts.key? 'profiles'
@@ -108,9 +106,9 @@ module StructCore
 			end
 
 			# Search for platform only if profiles weren't already defined
-			if profiles == nil and target_opts.key? 'platform'
+			if profiles.nil? && target_opts.key?('platform')
 				raw_platform = target_opts['platform']
-				unless ['ios', 'mac'].include? raw_platform
+				unless %w(ios mac).include? raw_platform
 					puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{raw_platform}'. Ignoring target...", :yellow]
 					return nil
 				end
@@ -118,13 +116,17 @@ module StructCore
 				profiles = [raw_type, "platform:#{raw_platform}"]
 			end
 
+			profiles
+		end
+
+		private def parse_target_configurations(target_opts, valid_config_names, profiles, target_name)
 			# Parse target configurations
 			if target_opts.key? 'configurations'
 				unless target_opts['configurations'].is_a?(Hash)
 					puts Paint["Warning: Key 'configurations' for target #{target_name} is not a hash. Ignoring target...", :yellow]
 					return nil
 				end
-				configurations = target_opts['configurations'].map do |config_name, config|
+				configurations = target_opts['configurations'].map do |config_name, overrides|
 					unless valid_config_names.include? config_name
 						puts Paint["Warning: Config name #{config_name} for target #{target_name} was not defined in this spec. Ignoring target...", :yellow]
 						return nil
@@ -141,11 +143,10 @@ module StructCore
 				}
 			end
 
-			unless configurations.count == valid_config_names.count
-				puts Paint["Warning: Missing configurations for target #{target_name}. Expected #{valid_config_names.count}, found: #{configurations.count}. Ignoring target...", :yellow]
-				return nil
-			end
+			configurations
+		end
 
+		private def parse_target_sources_dir(target_opts, project_base_dir, target_name)
 			# Parse target sources
 			unless target_opts.key? 'sources'
 				puts Paint["Warning: Target #{target_name} has no sources directory. Ignoring target...", :yellow]
@@ -158,13 +159,21 @@ module StructCore
 				return nil
 			end
 
+			target_sources_dir
+		end
+
+		private def parse_target_resources_dir(target_opts, project_base_dir, target_sources_dir)
 			# Parse target resources
+			target_resources_dir = target_sources_dir
+
 			if target_opts.key? 'i18n-resources'
 				target_resources_dir = File.join(project_base_dir, target_opts['i18n-resources'])
-			else
-				target_resources_dir = target_sources_dir
 			end
 
+			target_resources_dir
+		end
+
+		private def parse_target_excludes(target_opts, target_name)
 			# Parse excludes
 			if target_opts.key?('excludes') && !target_opts['excludes'].nil? && target_opts['excludes'].is_a?(Hash)
 				file_excludes = target_opts['excludes']['files'] || []
@@ -176,45 +185,71 @@ module StructCore
 				file_excludes = []
 			end
 
-			if target_opts.key? 'references'
-				raw_references = target_opts['references']
-				if raw_references.is_a?(Array)
-					references = raw_references.map { |raw_reference|
-						if raw_reference.is_a?(Hash)
-							unless raw_reference.key?('location')
-								puts Paint["Warning: Invalid project reference detected. Ignoring...", :yellow]
-								next nil
-							end
+			file_excludes
+		end
 
-							project_path = raw_reference['location']
+		private def parse_target_references(target_opts, project_base_dir, target_name)
+			return [] unless target_opts.key?('references')
+			raw_references = target_opts['references']
 
-							unless File.exist? File.join(project_base_dir, project_path)
-								puts Paint["Warning: Project reference #{project_path} could not be found. Ignoring...", :yellow]
-								next nil
-							end
-
-							next Specfile::Target::FrameworkReference.new(project_path, raw_reference)
-						else
-							# De-symbolise :sdkroot:-prefixed entries
-							ref = raw_reference.to_s
-							if ref.start_with? 'sdkroot:'
-								if ref.end_with? '.framework'
-									next Specfile::Target::SystemFrameworkReference.new(raw_reference.sub('sdkroot:', '').sub('.framework', ''))
-								else
-									next Specfile::Target::SystemLibraryReference.new(raw_reference.sub('sdkroot:', ''))
-								end
-							else
-								next Specfile::Target::TargetReference.new(raw_reference)
-							end
-						end
-					}.compact
-				else
-					puts Paint["Warning: Key 'references' for target #{target_name} is not an array. Ignoring...", :yellow]
-					references = []
-				end
-			else
-				references = []
+			unless raw_references.is_a?(Array)
+				puts Paint["Warning: Key 'references' for target #{target_name} is not an array. Ignoring...", :yellow]
+				return []
 			end
+
+			raw_references.map { |raw_reference|
+				if raw_reference.is_a?(Hash)
+					unless raw_reference.key?('location')
+						puts Paint['Warning: Invalid project reference detected. Ignoring...', :yellow]
+						next nil
+					end
+
+					project_path = raw_reference['location']
+
+					unless File.exist? File.join(project_base_dir, project_path)
+						puts Paint["Warning: Project reference #{project_path} could not be found. Ignoring...", :yellow]
+						next nil
+					end
+
+					next Specfile::Target::FrameworkReference.new(project_path, raw_reference)
+				else
+					# De-symbolise :sdkroot:-prefixed entries
+					ref = raw_reference.to_s
+
+					next Specfile::Target::TargetReference.new(raw_reference) unless ref.start_with? 'sdkroot:'
+
+					next Specfile::Target::SystemFrameworkReference.new(raw_reference.sub('sdkroot:', '').sub('.framework', '')) if ref.end_with? '.framework'
+					next Specfile::Target::SystemLibraryReference.new(raw_reference.sub('sdkroot:', ''))
+				end
+			}.compact
+		end
+
+		# @return StructCore::Specfile::Target
+		private def parse_target_data(target_name, target_opts, project_base_dir, valid_config_names)
+			type, raw_type = parse_target_type target_opts
+			if type.nil?
+				puts Paint["Warning: Target #{target_name} has no target type. Ignoring target...", :yellow]
+				return nil
+			end
+
+			profiles = parse_target_profiles_platform target_opts, raw_type, target_name
+
+			configurations = parse_target_configurations target_opts, valid_config_names, profiles, target_name
+			return nil if configurations.nil?
+
+			unless configurations.count == valid_config_names.count
+				puts Paint["Warning: Missing configurations for target #{target_name}. Expected #{valid_config_names.count}, found: #{configurations.count}. Ignoring target...", :yellow]
+				return nil
+			end
+
+			target_sources_dir = parse_target_sources_dir target_opts, project_base_dir, target_name
+			return nil if target_sources_dir.nil?
+
+			target_resources_dir = parse_target_resources_dir target_opts, project_base_dir, target_sources_dir
+			return nil if target_resources_dir.nil?
+
+			file_excludes = parse_target_excludes target_opts, target_name
+			references = parse_target_references target_opts, project_base_dir, target_name
 
 			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes
 		end
