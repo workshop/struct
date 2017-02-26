@@ -1,6 +1,4 @@
-require 'yaml'
 require_relative '../spec_helper'
-require_relative '../../lib/spec/spec_file'
 
 RSpec.describe StructCore::Specparser10X do
 	describe '#can_parse_version' do
