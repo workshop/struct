@@ -166,8 +166,8 @@ module StructCore
 			end
 
 			# Parse excludes
-			if target_opts.key? 'excludes'
-				file_excludes = (target_opts['excludes'] || {})['files'] || []
+			if target_opts.key?('excludes') && !target_opts['excludes'].nil? && target_opts['excludes'].is_a?(Hash)
+				file_excludes = target_opts['excludes']['files'] || []
 				unless file_excludes.is_a?(Array)
 					puts Paint["Warning: Target #{target_name}'s file excludes was not an array. Ignoring file excludes...", :yellow]
 					file_excludes = []
@@ -181,10 +181,15 @@ module StructCore
 				if raw_references.is_a?(Array)
 					references = raw_references.map { |raw_reference|
 						if raw_reference.is_a?(Hash)
+							unless raw_reference.key?('location')
+								puts Paint["Warning: Invalid project reference detected. Ignoring...", :yellow]
+								next nil
+							end
+
 							project_path = raw_reference['location']
 
 							unless File.exist? File.join(project_base_dir, project_path)
-								puts Paint["Warning: Project reference #{project_path} could not be found. Ignoring project...", :yellow]
+								puts Paint["Warning: Project reference #{project_path} could not be found. Ignoring...", :yellow]
 								next nil
 							end
 
@@ -211,24 +216,7 @@ module StructCore
 				references = []
 			end
 
-			options = []
-			if target_opts.key? 'options'
-				if target_opts['options'].is_a?(Hash)
-					if target_opts['options'].key? 'files'
-						if target_opts['options']['files'].is_a?(Hash)
-							options.unshift *target_opts['options']['files'].map { |glob, fileOpts|
-								Specfile::Target::FileOption.new(glob, fileOpts)
-							}
-						else
-							puts Paint["Warning: Key 'files' for target #{target_name}'s options is not a hash. Ignoring...", :yellow]
-						end
-					end
-				else
-					puts Paint["Warning: Key 'options' for target #{target_name} is not a hash. Ignoring...", :yellow]
-				end
-			end
-
-			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, options, target_resources_dir, file_excludes
+			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes
 		end
 	end
 end

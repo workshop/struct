@@ -1,5 +1,6 @@
 require 'yaml'
 require_relative '../spec_helper'
+require_relative '../../lib/spec/spec_file'
 
 RSpec.describe StructCore::Specparser10X do
 	describe '#can_parse_version' do
@@ -148,6 +149,79 @@ RSpec.describe StructCore::Specparser10X do
 			expect(proj.targets[0].file_excludes.count).to eq(2)
 			expect(proj.targets[0].file_excludes[0]).to eq('a/b/c')
 			expect(proj.targets[0].file_excludes[1]).to eq('d/e/f')
+		end
+
+		it 'ignores excludes in a specfile with an invalid excludes block' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_16.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets[0].file_excludes.count).to eq(0)
+		end
+
+		it 'ignores excludes in a specfile with an invalid excludes files block' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_17.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets[0].file_excludes.count).to eq(0)
+		end
+
+		it 'parses a specfile with an sdkroot framework reference' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_18.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets[0].references.count).to eq(1)
+			expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::SystemFrameworkReference)
+		end
+
+		it 'parses a specfile with an sdkroot library reference' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_19.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets[0].references.count).to eq(1)
+			expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::SystemLibraryReference)
+		end
+
+		it 'parses a specfile with a local project framework reference' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_20.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets[0].references.count).to eq(1)
+			expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::FrameworkReference)
+		end
+
+		it 'ignores a references group in a specfile with an invalid references block' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_21.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets[0].references.count).to eq(0)
+		end
+
+		it 'ignores a reference entry in a specfile it\'s invalid' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_22.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets[0].references.count).to eq(0)
 		end
 	end
 end
