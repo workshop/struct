@@ -21,6 +21,6 @@ RuboCop::RakeTask.new(:rubocop) do |t|
 end
 
 if ENV.key? 'CI'
-	require 'coveralls'
-	Coveralls.wear!
+	require 'coveralls/rake/task'
+	Coveralls::RakeTask.new
 end
