@@ -10,4 +10,9 @@ configurations:
     type: debug
 targets:
   my-target:
-    sources: 'spec_parser_10X_test_12/abc'
+    type: ":application"
+    sources: 'spec_parser_10X/abc'
+    excludes:
+      files:
+      - a/b/c
+      - d/e/f

@@ -106,8 +106,18 @@ RSpec.describe StructCore::Specparser10X do
 			expect(proj.targets.count).to eq(0)
 		end
 
-		it 'can parse a specfile with a string sources entry' do
+		it 'skips targets within a specfile that contain no type' do
 			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_12.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets.count).to eq(0)
+		end
+
+		it 'can parse a specfile with a string sources entry' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_13.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -115,6 +125,29 @@ RSpec.describe StructCore::Specparser10X do
 			expect(proj).to be_an StructCore::Specfile
 			expect(proj.targets[0].source_dir.count).to eq(1)
 			expect(proj.targets[0].source_dir[0]).to be_truthy
+		end
+
+		it 'can parse a specfile with a i18n-resources entry' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_14.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets[0].res_dir.count).to eq(1)
+			expect(proj.targets[0].res_dir[0]).to be_truthy
+		end
+
+		it 'can parse a specfile with excludes entries' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_15.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser10X.new
+
+			proj = parser.parse Semantic::Version.new('1.0.0'), test_hash, project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.targets[0].file_excludes.count).to eq(2)
+			expect(proj.targets[0].file_excludes[0]).to eq('a/b/c')
+			expect(proj.targets[0].file_excludes[1]).to eq('d/e/f')
 		end
 	end
 end
