@@ -131,15 +131,15 @@ module StructCore
 						puts Paint["Warning: Config name #{config_name} for target #{target_name} was not defined in this spec. Ignoring target...", :yellow]
 						return nil
 					end
-					Specfile::Target::Configuration.new(config_name, profiles, overrides)
+					Specfile::Target::Configuration.new(config_name, overrides, profiles)
 				end
 			elsif target_opts.key? 'configuration'
 				configurations = valid_config_names.map { |name|
-					Specfile::Target::Configuration.new(name, profiles, target_opts['configuration'])
+					Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
 				}
 			else
 				configurations = valid_config_names.map { |name|
-					Specfile::Target::Configuration.new(name, profiles, {})
+					Specfile::Target::Configuration.new(name, {}, profiles)
 				}
 			end
 
