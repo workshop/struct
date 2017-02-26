@@ -16,7 +16,7 @@ RSpec.describe StructCore::Specparser10X do
 
 	describe '#parse' do
 		it 'can parse a specfile with only configurations' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_2.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_2.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -26,7 +26,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'raises an error if a project doesn\'t contain configurations' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_3.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_3.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -34,7 +34,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'can parse a specfile with only 1 configuration' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_4.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_4.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -44,7 +44,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'raises an error if a project has an invalid targets section' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_5.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_5.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -52,7 +52,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'raises an error if a project has an invalid configurations section' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_6.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_6.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -60,7 +60,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'raises an error if a project has an invalid profiles section in a configuration block' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_7.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_7.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -68,7 +68,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'raises an error if a project has a missing profiles section in a configuration block' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_8.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_8.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -76,7 +76,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'can parse a specfile with invalid overrides or types' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_9.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_9.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -86,7 +86,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'can parse a specfile with overrides and types' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_10.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_10.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -98,7 +98,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'skips targets within a specfile that contain no configuration' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_11.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_11.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -108,7 +108,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'skips targets within a specfile that contain no type' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_12.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_12.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -118,7 +118,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'can parse a specfile with a string sources entry' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_13.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_13.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -129,7 +129,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'can parse a specfile with a i18n-resources entry' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_14.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_14.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -140,7 +140,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'can parse a specfile with excludes entries' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_15.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_15.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -152,7 +152,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'ignores excludes in a specfile with an invalid excludes block' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_16.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_16.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -162,7 +162,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'ignores excludes in a specfile with an invalid excludes files block' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_17.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_17.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -172,7 +172,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'parses a specfile with an sdkroot framework reference' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_18.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_18.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -183,7 +183,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'parses a specfile with an sdkroot library reference' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_19.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_19.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -194,7 +194,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'parses a specfile with a local project framework reference' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_20.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_20.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -205,7 +205,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'ignores a references group in a specfile with an invalid references block' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_21.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_21.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 
@@ -215,7 +215,7 @@ RSpec.describe StructCore::Specparser10X do
 		end
 
 		it 'ignores a reference entry in a specfile it\'s invalid' do
-			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X_test_22.yml')
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_10X/spec_parser_10X_test_22.yml')
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser10X.new
 

@@ -11,8 +11,6 @@ configurations:
 targets:
   my-target:
     type: ":application"
-    sources: 'spec_parser_10X/abc'
-    excludes:
-      - a
-      - b
-      - c
+    sources: 'support_files/abc'
+    references:
+      a: b

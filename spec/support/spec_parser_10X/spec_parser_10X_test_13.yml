@@ -11,5 +11,4 @@ configurations:
 targets:
   my-target:
     type: ":application"
-    sources: 'spec_parser_10X_test_14/abc'
-    i18n-resources: 'spec_parser_10X_test_14/abc'
+    sources: 'support_files/spec_parser_10X_test_12/abc'

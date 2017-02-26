@@ -11,4 +11,6 @@ configurations:
 targets:
   my-target:
     type: ":application"
-    sources: 'spec_parser_10X_test_12/abc'
+    sources: 'support_files/abc'
+    references:
+    - location: 'support_files/local_project.xcodeproj'

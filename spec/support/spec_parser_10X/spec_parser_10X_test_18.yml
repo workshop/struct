@@ -11,8 +11,6 @@ configurations:
 targets:
   my-target:
     type: ":application"
-    sources: 'spec_parser_10X/abc'
-    excludes:
-      files:
-        a: 123
-        b: 234
+    sources: 'support_files/abc'
+    references:
+    - sdkroot:UIKit.framework

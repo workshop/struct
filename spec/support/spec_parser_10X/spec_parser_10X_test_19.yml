@@ -11,6 +11,6 @@ configurations:
 targets:
   my-target:
     type: ":application"
-    sources: 'spec_parser_10X/abc'
+    sources: 'support_files/abc'
     references:
-      a: b
+    - sdkroot:z
