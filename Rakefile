@@ -21,4 +21,4 @@ RuboCop::RakeTask.new(:rubocop) do |t|
 	t.options = ['--display-cop-names']
 end
 
-Coveralls::RakeTask.new(:coveralls) if ENV.key? 'CI'
+Coveralls::RakeTask.new(:coveralls)
