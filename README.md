@@ -9,7 +9,7 @@
 
 Ever lamented over your unorganised project files? `struct` solves that by _making your filesystem be your project structure_. How it is on disk is how it is in your project. Simple.
 
-Need to have multiple variants of a project depending on how you're sending to your customers? `struct`'s got you covered with target variants. Now you get a project for each variant, with the ability to add additional source files and resources. Great for whitelabelling and multiple distribution channels!
+Need to have multiple variants of a project depending on how you're distributing to your customers? `struct`'s got you covered with target variants. Now you get a project for each variant, with the ability to add additional source files and resources. Great for whitelabelling and multiple distribution channels!
 
 `struct` makes working with Xcode easy. You get simple, predictable project files that any developer can understand. Just treat your Xcode projects as a build artifact and feel the weight lift off your shoulders.
 
