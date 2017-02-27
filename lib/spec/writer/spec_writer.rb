@@ -1,4 +1,5 @@
 require_relative 'spec_writer_1_0_X'
+require_relative 'spec_writer_1_1_X'
 
 module StructCore
 	class Specwriter
@@ -17,14 +18,15 @@ module StructCore
 
 		def register_defaults
 			@writers.unshift(
-				StructCore::Specwriter10X.new
+				StructCore::Specwriter10X.new,
+				StructCore::Specwriter11X.new
 			)
 		end
 
 		# @param spec [StructCore::Specfile]
 		# @param path [String]
 		def write_spec(spec, path)
-			register_defaults if @writers.length.empty?
+			register_defaults if @writers.empty?
 			raise StandardError.new 'Error: Invalid spec object. Spec object was nil.' if spec.nil?
 
 			writer = @writers.find { |writer|

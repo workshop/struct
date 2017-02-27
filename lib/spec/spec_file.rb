@@ -10,17 +10,17 @@ module StructCore
 				@name = name
 				@profiles = profiles
 				@overrides = overrides
-				@type = type
+				@raw_type = type
 			end
 
 			# @return [String]
 			def type
-				if name == 'debug'
+				if @name == 'debug'
 					'debug'
-				elsif name == 'release'
+				elsif @name == 'release'
 					'release'
 				else
-					@type
+					@raw_type
 				end
 			end
 
@@ -28,6 +28,7 @@ module StructCore
 			attr_accessor :name
 			attr_accessor :profiles
 			attr_accessor :overrides
+			attr_accessor :raw_type
 		end
 
 		class Target

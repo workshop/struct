@@ -62,7 +62,7 @@ module StructCore
 				return
 			end
 
-			print changelog, local_gem_version, struct_cache_dir
+			print changelog, local_gem_version
 		end
 		# rubocop:enable Metrics/AbcSize
 		# rubocop:enable Metrics/PerceivedComplexity

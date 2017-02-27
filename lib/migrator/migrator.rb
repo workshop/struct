@@ -40,8 +40,9 @@ module StructCore
 		# rubocop:disable Metrics/AbcSize
 		# rubocop:disable Metrics/PerceivedComplexity
 		# rubocop:disable Style/GuardClause
-		def self.migrate(xcodeproj_file, directory)
-			xcodeproj_path = Pathname.new(xcodeproj_file).absolute? ? xcodeproj_file : File.join(Dir.pwd, xcodeproj_file)
+		def self.migrate(xcodeproj_file, dir)
+			xcodeproj_path = Pathname.new(xcodeproj_file).absolute? ? xcodeproj_file : File.expand_path(File.join(Dir.pwd, xcodeproj_file))
+			directory = File.expand_path(Pathname.new(File.expand_path(dir)).absolute? ? dir : File.join(Dir.pwd, dir))
 
 			unless File.exist? xcodeproj_path
 				raise StandardError.new 'Invalid xcode project'
@@ -50,7 +51,7 @@ module StructCore
 			project = Xcodeproj::Project.open(xcodeproj_path)
 			project_dir = File.dirname(xcodeproj_path)
 
-			spec_version = Semantic::Version.new('1.0.0')
+			spec_version = Semantic::Version.new('1.1.0')
 			configurations = migrate_build_configurations project
 
 			targets = project.targets.map { |target|
@@ -76,17 +77,16 @@ module StructCore
 				}.to_h
 
 				target_references = target.frameworks_build_phase.files.map { |f|
-					if f.file_ref.source_tree == 'SDKROOT'
-						if f.file_ref.path.start_with? 'System/Library/Frameworks'
-							StructCore::Specfile::Target::SystemFrameworkReference.new(f.file_ref.path.sub('System/Library/Frameworks/', '').sub('.framework', ''))
-						elsif f.file_ref.path.start_with? 'usr/lib'
-							StructCore::Specfile::Target::SystemLibraryReference.new(f.file_ref.path.sub('usr/lib/', ''))
+					if f.file_ref.source_tree == 'SDKROOT' || f.file_ref.source_tree == 'DEVELOPER_DIR'
+						if f.file_ref.path.include? 'System/Library/Frameworks'
+							StructCore::Specfile::Target::SystemFrameworkReference.new(f.file_ref.path.split('/').last.sub('.framework', ''))
+						elsif f.file_ref.path.include? 'usr/lib'
+							StructCore::Specfile::Target::SystemLibraryReference.new(f.file_ref.path.split('/').last)
 						else
 							next nil
 						end
 					else
-						# TODO: Support migrating local frameworks
-						next nil
+						StructCore::Specfile::Target::LocalFrameworkReference.new(f.file_ref.path, nil)
 					end
 				}.compact
 
