@@ -1,21 +1,23 @@
+![Struct logo](https://s3.eu-central-1.amazonaws.com/struct.tools/images/StructLogo_Colour_Headline.png)
+
 # Struct
 [![Latest Gem Release](https://img.shields.io/gem/v/struct.svg)](https://rubygems.org/gems/struct) 
 [![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/1.0.0) 
 [![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/1.0.0.svg)](https://github.com/lyptt/struct/commits/master)
 
-Struct comes in two parts - a file watcher that auto-generates
-a project based on a simple project specification written in YAML or JSON, and options to assist in adding 
-new files and targets to your dynamic project.
+`struct` is a tool for iOS and Mac developers to automate the creation and management of Xcode projects.
 
-Project files are automatically included into the project from a source directory,
-with Swift files going into the compilation phase, and everything else going to the
-resource phase, so there's no IDE fiddling necessary.
+Ever lamented over your unorganised project files? `struct` solves that by _making your filesystem be your project structure_. How it is on disk is how it is in your project. Simple.
 
-Struct can take a project spec like this:
+Need to have multiple variants of a project depending on how you're sending to your customers? `struct`'s got you covered with target variants. Now you get a project for each variant, with the ability to add additional source files and resources. Great for whitelabelling and multiple distribution channels!
+
+`struct` makes working with Xcode easy. You get simple, predictable project files that any developer can understand. Just treat your Xcode projects as a build artifact and feel the weight lift off your shoulders.
+
+Use a spec file to define your project:
 
 ```yaml
 ---
-version: 1.0.0
+version: 1.1.0
 configurations:
   debug:
     profiles:
@@ -37,25 +39,23 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
 ```
 
-And transform it into a fully formed Xcode project.
+Then just run `struct --generate` and `struct` will do the rest.
 
-You can find a documented example of the project specification in the examples folder.
+You can find documented examples of the project specification in the examples folder.
 
 ## Installation
 
-To install from a checked out version of this gem, run:
-
-    $ bundle install
-
-Then run:
-
-    $ rake install && gem install --local pkg/path-to-gem.gem
-    
-Or install it directly from rubygems by running:
+Install `struct` from Rubygems:
 
     $ gem install struct
-    
-## Usage
+
+## Quick Start
+
+Get started with adding `struct` to your app:
+
+[Create your first spec file](https://github.com/lyptt/xcodegen/wiki/Quick-Start)
+
+## Available Commands
 
 To generate an Xcode project from your spec file, run the following from your project directory:
 
@@ -67,13 +67,9 @@ To start the file watcher, run the following from your project directory:
     
 The project will be automatically regenerated whenever the project or any source files change.
 
-![usage example](https://github.com/lyptt/struct/raw/master/readme_files/usage_example.gif)
+Other commands can be discovered by viewing help:
 
-## To do
-
-Struct is still under development, so it's not yet feature complete. Notable features missing include:
-- Project generation support for subproject dependencies
-- Project generation support for subproject linking
+    $ struct --help
 
 ## Contributing
 
