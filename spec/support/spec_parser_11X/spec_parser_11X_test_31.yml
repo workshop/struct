@@ -24,3 +24,5 @@ variants:
       - sdkroot:CoreData.framework
       configuration:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_BASE
+      scripts:
+      - support_files/script.sh

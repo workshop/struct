@@ -319,6 +319,7 @@ RSpec.describe StructCore::Specparser11X do
 				expect(proj.variants[0].targets[0].configurations[0].settings.key?('SWIFT_ACTIVE_COMPILATION_CONDITIONS')).to eq(true)
 				expect(proj.variants[0].targets[0].references.count).to eq(1)
 				expect(proj.variants[0].targets[0].file_excludes.count).to eq(1)
+				expect(proj.variants[0].targets[0].run_scripts.count).to eq(1)
 			end
 
 			it 'parses a specfile with an invalid variant' do

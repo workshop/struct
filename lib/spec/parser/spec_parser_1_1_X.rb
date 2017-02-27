@@ -205,6 +205,17 @@ module StructCore
 			}.compact
 		end
 
+		def parse_variant_target_scripts(target_opts, project_base_dir)
+			# Parse target run scripts
+			return [] unless target_opts.key?('scripts') && target_opts['scripts'].is_a?(Array)
+
+			target_opts['scripts'].map { |s|
+				next nil if s.start_with? '/' # Script file should be relative to project
+				next nil unless File.exist? File.join(project_base_dir, s)
+				Specfile::Target::RunScript.new s
+			}.compact
+		end
+
 		private def parse_variant_target_data(target_name, target_opts, project_base_dir, valid_config_names)
 			return nil if target_opts.nil? || !target_opts.is_a?(Hash)
 			raw_type, type = parse_variant_target_type target_opts
@@ -214,8 +225,9 @@ module StructCore
 			target_resources_dir = parse_variant_target_resources target_opts, project_base_dir
 			file_excludes = parse_variant_target_file_excludes target_opts, target_name
 			references = parse_variant_target_references target_opts, target_name, project_base_dir
+			run_scripts = parse_variant_target_scripts target_opts, project_base_dir
 
-			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes
+			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes, run_scripts
 		end
 
 		def parse_target_type(target_opts)
