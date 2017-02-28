@@ -240,6 +240,16 @@ module StructCore
 				target_hash['excludes'] = excludes
 			end
 
+			unless target.run_scripts.length == 0
+				run_scripts = target.run_scripts.map { |s|
+					local_path = s.script_path.sub(project_directory, '')
+					local_path[0] = '' if local_path.start_with? '/'
+					local_path
+				}
+
+				target_hash['scripts'] = run_scripts
+			end
+
 			target_hash
 		end
 	end

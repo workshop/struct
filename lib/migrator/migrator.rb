@@ -39,7 +39,7 @@ module StructCore
 		# rubocop:disable Metrics/BlockLength
 		# rubocop:disable Metrics/AbcSize
 		# rubocop:disable Metrics/PerceivedComplexity
-		# rubocop:disable Style/GuardClause
+		# rubocop:disable Metrics/CyclomaticComplexity
 		def self.migrate(xcodeproj_file, dir)
 			xcodeproj_path = Pathname.new(xcodeproj_file).absolute? ? xcodeproj_file : File.expand_path(File.join(Dir.pwd, xcodeproj_file))
 			directory = File.expand_path(Pathname.new(File.expand_path(dir)).absolute? ? dir : File.join(Dir.pwd, dir))
@@ -90,6 +90,15 @@ module StructCore
 					end
 				}.compact
 
+				target_scripts = target.build_phases.select { |f| f.isa == 'PBXShellScriptBuildPhase' }.map { |f|
+					destination_dir = File.join directory, 'scripts'
+					FileUtils.mkdir_p destination_dir
+					destination_path = File.join(destination_dir, "#{name}_#{f.name.sub('.', '').sub('sh', '').sub('/', '')}.sh")
+
+					File.write destination_path, f.shell_script
+					StructCore::Specfile::Target::RunScript.new(destination_path)
+				}
+
 				StructCore::Specfile::Target.new(
 					name,
 					type,
@@ -102,7 +111,8 @@ module StructCore
 					target_references,
 					[],
 					nil,
-					[]
+					[],
+					target_scripts
 				)
 			}
 
@@ -157,7 +167,7 @@ module StructCore
 		# rubocop:enable Metrics/BlockLength
 		# rubocop:enable Metrics/AbcSize
 		# rubocop:enable Metrics/PerceivedComplexity
-		# rubocop:enable Style/GuardClauseenable
+		# rubocop:enable Metrics/CyclomaticComplexity
 
 		private_class_method def self.migrate_build_configurations(project)
 			project.build_configurations.map { |config|
