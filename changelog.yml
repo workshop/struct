@@ -34,4 +34,6 @@ versions:
     how they're copied and code signed
   - Added more detailed console output when generating variant projects
   1.0.0:
-  - Fixed issues with writing local references to an xcodeproj file
+  - Huge stability improvements to parsers for the 1.0.0 and 1.1.0 spec formats
+  - Laid the groundwork for spec 1.2.0
+  - Xcodegen is now known as struct, install it with gem install struct!
