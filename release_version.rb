@@ -26,40 +26,40 @@ content[ver_idx_s...ver_idx_e] = new_version.to_s
 File.write 'lib/version.rb', content
 
 load 'lib/version.rb'
-puts "Updated gem version to #{Xcodegen::VERSION}"
+puts "Updated gem version to #{StructCore::VERSION}"
 
 changelog_content = YAML.load_file 'changelog.yml'
-changelog_content['latest'] = Xcodegen::VERSION
+changelog_content['latest'] = StructCore::VERSION
 File.write 'changelog.yml', changelog_content.to_yaml
 
-unless changelog_content['versions'].key? Xcodegen::VERSION
+unless changelog_content['versions'].key? StructCore::VERSION
 	puts 'No changelog content available for this version, aborting.'
 	puts `git reset --hard HEAD`
 	exit -1
 end
 
-commit_message = "Version #{Xcodegen::VERSION}\n\n"
-commit_message += changelog_content['versions'][Xcodegen::VERSION].map{ |str| " -  #{str}" }.join("\n")
+commit_message = "Version #{StructCore::VERSION}\n\n"
+commit_message += changelog_content['versions'][StructCore::VERSION].map{ |str| " -  #{str}" }.join("\n")
 
 puts `git add -A; git commit -m "#{commit_message}"`
-puts `git tag #{Xcodegen::VERSION}`
+puts `git tag #{StructCore::VERSION}`
 puts `git push`
-puts `git push origin #{Xcodegen::VERSION}`
+puts `git push origin #{StructCore::VERSION}`
 
 return if ENV['GITHUB_API_KEY'] == nil
 
 begin
-puts Excon.post('https://api.github.com/repos/lyptt/xcodegen/releases',
+puts Excon.post('https://api.github.com/repos/lyptt/struct/releases',
 	:connect_timeout => 30,
 	:body => {
-		:tag_name => Xcodegen::VERSION,
-		:name => "Version #{Xcodegen::VERSION}",
-		:body => changelog_content['versions'][Xcodegen::VERSION].map{ |str| " -  #{str}" }.join("\n")
+		:tag_name => StructCore::VERSION,
+		:name => "Version #{StructCore::VERSION}",
+		:body => changelog_content['versions'][StructCore::VERSION].map{ |str| " -  #{str}" }.join("\n")
 	}.to_json,
 	:headers => {
 		'Content-Type' => 'application/json',
 		'Authorization' => "Bearer #{ENV['GITHUB_API_KEY']}",
-		'User-Agent' => 'xcodegen releaser'
+		'User-Agent' => 'struct releaser'
 	}
 ).body
 rescue StandardError => err

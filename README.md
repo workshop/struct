@@ -1,21 +1,23 @@
-# Xcodegen
-[![Latest Gem Release](https://img.shields.io/gem/v/xcodegen.svg)](https://rubygems.org/gems/xcodegen) 
-[![Git Version](https://img.shields.io/github/tag/lyptt/xcodegen.svg)](https://github.com/lyptt/xcodegen/releases/tag/0.4.1) 
-[![Git Version](https://img.shields.io/github/commits-since/lyptt/xcodegen/0.4.1.svg)](https://github.com/lyptt/xcodegen/commits/master)
+![Struct logo](https://s3.eu-central-1.amazonaws.com/struct.tools/images/StructLogo_Colour_Headline.png)
 
-Xcodegen comes in two parts - a file watcher that auto-generates
-a project based on a simple project specification written in YAML or JSON, and options to assist in adding 
-new files and targets to your dynamic project.
+# Struct
+[![Latest Gem Release](https://img.shields.io/gem/v/struct.svg)](https://rubygems.org/gems/struct) 
+[![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/1.0.0) 
+[![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/1.0.0.svg)](https://github.com/lyptt/struct/commits/master)
 
-Project files are automatically included into the project from a source directory,
-with Swift files going into the compilation phase, and everything else going to the
-resource phase, so there's no IDE fiddling necessary.
+`struct` is a tool for iOS and Mac developers to automate the creation and management of Xcode projects.
 
-Xcodegen can take a project spec like this:
+Ever lamented over your unorganised project files? `struct` solves that by _making your filesystem be your project structure_. How it is on disk is how it is in your project. Simple.
+
+Need to have multiple variants of a project depending on how you're distributing to your customers? `struct`'s got you covered with target variants. Now you get a project for each variant, with the ability to add additional source files and resources. Great for whitelabelling and multiple distribution channels!
+
+`struct` makes working with Xcode easy. You get simple, predictable project files that any developer can understand. Just treat your Xcode projects as a build artifact and feel the weight lift off your shoulders.
+
+Use a spec file to define your project:
 
 ```yaml
 ---
-version: 1.0.0
+version: 1.1.0
 configurations:
   debug:
     profiles:
@@ -37,44 +39,38 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
 ```
 
-And transform it into a fully formed Xcode project.
+Then just run `struct --generate` and `struct` will do the rest.
 
-You can find a documented example of the project specification in the examples folder.
+You can find documented examples of the project specification in the examples folder.
 
 ## Installation
 
-To install from a checked out version of this gem, run:
+Install `struct` from Rubygems:
 
-    $ bundle install
+    $ gem install struct
 
-Then run:
+## Quick Start
 
-    $ rake install && gem install --local pkg/path-to-gem.gem
-    
-Or install it directly from rubygems by running:
+Get started with adding `struct` to your app:
 
-    $ gem install xcodegen
-    
-## Usage
+[Create your first spec file](https://github.com/lyptt/xcodegen/wiki/Quick-Start)
+
+## Available Commands
 
 To generate an Xcode project from your spec file, run the following from your project directory:
 
-    $ xcodegen --generate
+    $ struct --generate
 
 To start the file watcher, run the following from your project directory:
 
-    $ xcodegen --watch
+    $ struct --watch
     
 The project will be automatically regenerated whenever the project or any source files change.
 
-![usage example](https://github.com/lyptt/xcodegen/raw/master/readme_files/usage_example.gif)
+Other commands can be discovered by viewing help:
 
-## To do
-
-Xcodegen is still under development, so it's not yet feature complete. Notable features missing include:
-- Project generation support for subproject dependencies
-- Project generation support for subproject linking
+    $ struct --help
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/lyptt/xcodegen.
+Bug reports and pull requests are welcome on GitHub at https://github.com/lyptt/struct.

@@ -1,0 +1,28 @@
+---
+version: 1.1.0
+configurations:
+  my-configuration:
+    profiles:
+    - general:debug
+    - ios:debug
+    overrides:
+      OVERRIDE: 1
+    type: debug
+targets:
+  my-target:
+    type: ":application"
+    sources: support_files/abc
+variants:
+  $base:
+    my-target:
+      sources: support_files/def
+      i18n-resources: support_files/abc
+      excludes:
+        files:
+        - "**/*.md"
+      references:
+      - sdkroot:CoreData.framework
+      configuration:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_BASE
+      scripts:
+      - support_files/script.sh

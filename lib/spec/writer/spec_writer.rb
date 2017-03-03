@@ -1,6 +1,7 @@
 require_relative 'spec_writer_1_0_X'
+require_relative 'spec_writer_1_1_X'
 
-module Xcodegen
+module StructCore
 	class Specwriter
 		def initialize
 			@writers = []
@@ -9,69 +10,62 @@ module Xcodegen
 		def register(writer)
 			if writer.respond_to?(:write_spec) && writer.respond_to?(:can_write_version) && writer.respond_to?(:write_target)
 				@writers << writer
-			else
-				raise StandardError.new 'Unsupported writer object. Writer object must support :write and :can_write_version'
+				return
 			end
+
+			raise StandardError.new 'Unsupported writer object. Writer object must support :write and :can_write_version'
 		end
 
 		def register_defaults
-			@writers.unshift *[
-				Xcodegen::Specwriter10X.new
-			]
+			@writers.unshift(
+				StructCore::Specwriter10X.new,
+				StructCore::Specwriter11X.new
+			)
 		end
 
-		# @param spec [Xcodegen::Specfile]
+		# @param spec [StructCore::Specfile]
 		# @param path [String]
 		def write_spec(spec, path)
-			if @writers.length == 0
-				register_defaults
-			end
-
-			raise StandardError.new 'Error: Invalid spec object. Spec object was nil.' unless spec != nil
+			register_defaults if @writers.empty?
+			raise StandardError.new 'Error: Invalid spec object. Spec object was nil.' if spec.nil?
 
 			writer = @writers.find { |writer|
 				writer.can_write_version(spec.version)
 			}
 
-			raise StandardError.new "Error: Invalid spec object. Project version #{spec.version.to_s} is unsupported by this version of xcodegen." unless writer != nil
+			raise StandardError.new "Error: Invalid spec object. Project version #{spec.version} is unsupported by this version of struct." if writer.nil?
 
 			writer.write_spec(spec, path)
 		end
 
-		# @param configuration [Xcodegen::Specfile::Configuration]
+		# @param configuration [StructCore::Specfile::Configuration]
 		# @param spec_version [Semantic::Version]
 		# @param path [String]
 		def write_configuration(configuration, spec_version, path)
-			if @writers.length == 0
-				register_defaults
-			end
-
-			raise StandardError.new 'Error: Invalid configuration object. Configuration object was nil.' unless configuration != nil
+			register_defaults if @writers.empty
+			raise StandardError.new 'Error: Invalid configuration object. Configuration object was nil.' if configuration.nil?
 
 			writer = @writers.find { |writer|
 				writer.can_write_version(spec_version)
 			}
 
-			raise StandardError.new "Error: Invalid spec version. Project version #{spec_version.to_s} is unsupported by this version of xcodegen." unless writer != nil
+			raise StandardError.new "Error: Invalid spec version. Project version #{spec_version} is unsupported by this version of struct." if writer.nil?
 
 			writer.write_configuration(configuration, path)
 		end
 
-		# @param target [Xcodegen::Specfile::Target]
+		# @param target [StructCore::Specfile::Target]
 		# @param spec_version [Semantic::Version]
 		# @param path [String]
 		def write_target(target, spec_version, path)
-			if @writers.length == 0
-				register_defaults
-			end
-
-			raise StandardError.new 'Error: Invalid target object. Target object was nil.' unless target != nil
+			register_defaults if @writers.empty?
+			raise StandardError.new 'Error: Invalid target object. Target object was nil.' if target.nil?
 
 			writer = @writers.find { |writer|
 				writer.can_write_version(spec_version)
 			}
 
-			raise StandardError.new "Error: Invalid spec version. Project version #{spec_version.to_s} is unsupported by this version of xcodegen." unless writer != nil
+			raise StandardError.new "Error: Invalid spec version. Project version #{spec_version} is unsupported by this version of struct." if writer.nil?
 
 			writer.write_target(target, path)
 		end

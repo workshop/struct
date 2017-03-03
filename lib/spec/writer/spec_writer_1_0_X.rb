@@ -4,17 +4,19 @@ require 'yaml'
 require 'json'
 require_relative '../spec_file'
 
-module Xcodegen
+# TODO: Refactor this once we have integration tests
+# rubocop:disable all
+module StructCore
 	class Specwriter10X
 		# @param version [Semantic::Version]
 		def can_write_version(version)
 			version.major == 1 && version.minor == 0
 		end
 
-		# @param spec [Xcodegen::Specfile]
+		# @param spec [StructCore::Specfile]
 		# @param path [String]
 		def write_spec(spec, path)
-			unless spec != nil && spec.is_a?(Xcodegen::Specfile)
+			unless spec != nil && spec.is_a?(StructCore::Specfile)
 				raise StandardError.new 'Invalid configuration object'
 			end
 
@@ -54,10 +56,10 @@ module Xcodegen
 			end
 		end
 
-		# @param configuration [Xcodegen::Specfile::Configuration]
+		# @param configuration [StructCore::Specfile::Configuration]
 		# @param path [String]
 		def write_configuration(configuration, path)
-			unless configuration != nil && configuration.is_a?(Xcodegen::Specfile::Configuration)
+			unless configuration != nil && configuration.is_a?(StructCore::Specfile::Configuration)
 				raise StandardError.new 'Invalid configuration object'
 			end
 
@@ -86,10 +88,10 @@ module Xcodegen
 			end
 		end
 
-		# @param target [Xcodegen::Specfile::Target]
+		# @param target [StructCore::Specfile::Target]
 		# @param path [String]
 		def write_target(target, path)
-			unless target != nil && target.is_a?(Xcodegen::Specfile::Target)
+			unless target != nil && target.is_a?(StructCore::Specfile::Target)
 				raise StandardError.new 'Invalid target object'
 			end
 
@@ -131,7 +133,7 @@ module Xcodegen
 		end
 
 		private
-		# @param configuration [Xcodegen::Specfile::Configuration]
+		# @param configuration [StructCore::Specfile::Configuration]
 		def configuration_to_hash(configuration)
 			config_hash = {}
 			config_hash['profiles'] = configuration.profiles
@@ -147,7 +149,7 @@ module Xcodegen
 			config_hash
 		end
 
-		# @param target [Xcodegen::Specfile::Target]
+		# @param target [StructCore::Specfile::Target]
 		def target_to_hash(target, project_directory)
 			target_hash = {}
 
@@ -205,15 +207,15 @@ module Xcodegen
 			end
 
 			references = target.references.map { |ref|
-				if ref.is_a? Xcodegen::Specfile::Target::SystemFrameworkReference
+				if ref.is_a? StructCore::Specfile::Target::SystemFrameworkReference
 					"sdkroot:#{ref.name}.framework"
-				elsif ref.is_a? Xcodegen::Specfile::Target::SystemLibraryReference
+				elsif ref.is_a? StructCore::Specfile::Target::SystemLibraryReference
 					"sdkroot:#{ref.name}"
-				elsif ref.is_a? Xcodegen::Specfile::Target::FrameworkReference
+				elsif ref.is_a? StructCore::Specfile::Target::FrameworkReference
 					obj = {}
 					obj.merge! ref.settings
 					obj['location'] = ref.project_path
-				elsif ref.is_a? Xcodegen::Specfile::Target::TargetReference
+				elsif ref.is_a? StructCore::Specfile::Target::TargetReference
 					ref.target_name
 				else
 					nil
@@ -235,3 +237,4 @@ module Xcodegen
 		end
 	end
 end
+# rubocop:enable all

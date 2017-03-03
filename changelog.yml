@@ -1,12 +1,12 @@
 ---
-latest: 0.4.1
+latest: 1.0.0
 versions:
   0.1.4:
   - Added parse command to easily see spec parsing output
   - Added support for linking to framework files in your source directory
   - Added support for excluding files based on exclude globs
   - Updated example project spec based on new functionality
-  - Updated the xcodegen API to support per-version parsing
+  - Updated the struct API to support per-version parsing
   - Added message indicating that the watcher's actually doing something
   - Updated project sample to correct schema & syntax
   - Added class, struct and target generators, target serialisation
@@ -33,5 +33,5 @@ versions:
   - Added support for adding local frameworks in the references section to customise
     how they're copied and code signed
   - Added more detailed console output when generating variant projects
-  0.4.1:
+  1.0.0:
   - Fixed issues with writing local references to an xcodeproj file

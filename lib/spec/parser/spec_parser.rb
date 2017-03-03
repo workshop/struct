@@ -1,7 +1,7 @@
 require_relative 'spec_parser_1_0_X'
 require_relative 'spec_parser_1_1_X'
 
-module Xcodegen
+module StructCore
 	class Specparser
 		def initialize
 			@parsers = []
@@ -10,28 +10,30 @@ module Xcodegen
 		def register(parser)
 			if parser.respond_to?(:parse) && parser.respond_to?(:can_parse_version)
 				@parsers << parser
-			else
-				raise StandardError.new 'Unsupported parser object. Parser object must support :parse and :can_parse_version'
+				return
 			end
+
+			raise StandardError.new 'Unsupported parser object. Parser object must support :parse and :can_parse_version'
 		end
 
 		def register_defaults
-			@parsers.unshift *[
-				Xcodegen::Specparser10X.new,
-				Xcodegen::Specparser11X.new
-			]
+			@parsers.unshift(
+				StructCore::Specparser10X.new,
+				StructCore::Specparser11X.new
+			)
 		end
 
+		# There's not much sense refactoring this to be tiny methods.
+		# rubocop:disable Metrics/AbcSize
+		# rubocop:disable Metrics/PerceivedComplexity
 		# @param path [String]
 		def parse(path)
-			if @parsers.length == 0
-				register_defaults
-			end
+			register_defaults if @parsers.empty?
 
-			filename = (Pathname.new(path)).absolute? ? path : File.join(Dir.pwd, path)
+			filename = Pathname.new(path).absolute? ? path : File.join(Dir.pwd, path)
 			raise StandardError.new "Error: Spec file #{filename} does not exist" unless File.exist? filename
 
-			if filename.end_with? 'yml' or filename.end_with? 'yaml'
+			if filename.end_with?('yml', 'yaml')
 				spec_hash = YAML.load_file filename
 			elsif filename.end_with? 'json'
 				spec_hash = JSON.parse File.read(filename)
@@ -39,7 +41,7 @@ module Xcodegen
 				raise StandardError.new 'Error: Unable to determine file format of project file'
 			end
 
-			raise StandardError.new "Error: Invalid spec file. No 'version' key was present." unless spec_hash != nil and spec_hash.key? 'version'
+			raise StandardError.new "Error: Invalid spec file. No 'version' key was present." unless !spec_hash.nil? && spec_hash.key?('version')
 
 			begin
 				spec_version = Semantic::Version.new spec_hash['version']
@@ -51,7 +53,7 @@ module Xcodegen
 				parser.can_parse_version(spec_version)
 			}
 
-			raise StandardError.new "Error: Invalid spec file. Project version #{spec_hash['version']} is unsupported by this version of xcodegen." unless parser != nil
+			raise StandardError.new "Error: Invalid spec file. Project version #{spec_hash['version']} is unsupported by this version of struct." if parser.nil?
 
 			raise StandardError.new "Error: Invalid spec file. No 'configurations' key was present." unless spec_hash.key? 'configurations'
 			raise StandardError.new "Error: Invalid spec file. Key 'configurations' should be a hash" unless spec_hash['configurations'].is_a?(Hash)
@@ -59,6 +61,7 @@ module Xcodegen
 
 			parser.parse(spec_version, spec_hash, filename)
 		end
-
+		# rubocop:enable Metrics/AbcSize
+		# rubocop:enable Metrics/PerceivedComplexity
 	end
 end

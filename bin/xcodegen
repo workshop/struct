@@ -1,4 +1,0 @@
-#/usr/bin/env ruby
-require 'xcodegen_bin'
-
-Xcodegen::XcodegenBin.run
