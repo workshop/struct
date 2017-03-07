@@ -153,3 +153,7 @@ Style/FileName:
 # Doesn't seem particularly smart, so I'll handle this myself
 Style/MultilineMethodCallIndentation:
   Enabled: false
+
+# Buggy, as it enforces whichever style is not used
+Style/RegexpLiteral:
+  Enabled: false

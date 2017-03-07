@@ -48,6 +48,8 @@ module StructCore
 				raise StandardError.new 'Invalid xcode project'
 			end
 
+			FileUtils.mkdir_p directory
+
 			project = Xcodeproj::Project.open(xcodeproj_path)
 			project_dir = File.dirname(xcodeproj_path)
 
@@ -56,24 +58,36 @@ module StructCore
 
 			targets = project.targets.map { |target|
 				name = target.name
+				raise StandardError.new "Target: #{name} has no configurations" if target.build_configurations.empty?
+
 				type = target.product_type.sub 'com.apple.product-type.', ':'
-				if target.sdk.include? 'iphoneos'
-					profiles = ['platform:ios', type.sub(':', '')]
-				elsif target.sdk.include? 'macosx'
-					profiles = ['platform:mac', type.sub(':', '')]
-				elsif target.sdk.include? 'appletvos'
-					profiles = ['platform:tvos', type.sub(':', '')]
-				elsif target.sdk.include? 'watchos'
-					profiles = ['platform:watchos', type.sub(':', '')]
-				else
-					raise StandardError.new "Unrecognised SDK #{target.sdk} for target: #{name}"
-				end
+				profiles = nil
+				target_sdk = nil
 
 				target_configuration_overrides = target.build_configurations.map { |config|
 					config_name = config.name
 					config_name = name.downcase if %w(Debug Release).include? name
+					config_xcconfig_overrides = extract_target_xcconfig_overrides config.base_configuration_reference, project_dir
 
-					[config_name, extract_target_config_overrides(profiles, config.build_settings)]
+					if profiles.nil?
+						target_sdk = target.sdk
+						target_sdk = config_xcconfig_overrides['SDKROOT'] unless config_xcconfig_overrides['SDKROOT'].nil?
+
+						if target_sdk.include? 'iphoneos'
+							profiles = ['platform:ios', type.sub(':', '')]
+						elsif target_sdk.include? 'macosx'
+							profiles = ['platform:mac', type.sub(':', '')]
+						elsif target_sdk.include? 'appletvos'
+							profiles = ['platform:tvos', type.sub(':', '')]
+						elsif target_sdk.include? 'watchos'
+							profiles = ['platform:watchos', type.sub(':', '')]
+						end
+					end
+
+					merged_config_settings = extract_target_config_overrides(profiles, config.build_settings)
+					merged_config_settings.merge! config_xcconfig_overrides
+
+					[config_name, merged_config_settings]
 				}.to_h
 
 				target_references = target.frameworks_build_phase.files.map { |f|
@@ -89,6 +103,8 @@ module StructCore
 						StructCore::Specfile::Target::LocalFrameworkReference.new(f.file_ref.path, nil)
 					end
 				}.compact
+
+				raise StandardError.new "Unrecognised SDK #{target.sdk} for target: #{name}" if target_sdk.empty?
 
 				target_scripts = target.build_phases.select { |f| f.isa == 'PBXShellScriptBuildPhase' }.map { |f|
 					destination_dir = File.join directory, 'scripts'
@@ -199,6 +215,28 @@ module StructCore
 			}
 
 			build_settings.reject { |k, _| default_settings.include? k }
+		end
+
+		private_class_method def self.extract_target_xcconfig_overrides(xcconfig_file_ref, project_dir)
+			return {} if xcconfig_file_ref.nil?
+
+			xcconfig_file = xcconfig_file_ref.hierarchy_path || ''
+			xcconfig_file[0] = '' if xcconfig_file .start_with? '/'
+			abs_xcconfig_file = xcconfig_file
+			abs_xcconfig_file = File.join(project_dir, xcconfig_file) unless Pathname.new(xcconfig_file).absolute?
+			return {} if xcconfig_file.nil? || !File.exist?(abs_xcconfig_file)
+
+			config_str = File.read abs_xcconfig_file
+			config_str = config_str.gsub(/^\/\/.*\n/, '').sub("\n\n", "\n").gsub(/\s*=\s*/, '=')
+
+			config = {}
+			config_str.split("\n").each { |entry|
+				pair = entry.split('=')
+				next unless pair.length == 2
+				config[pair[0]] = pair[1]
+			}
+
+			config
 		end
 	end
 end
