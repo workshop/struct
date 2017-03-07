@@ -2,8 +2,8 @@
 
 # Struct
 [![Latest Gem Release](https://img.shields.io/gem/v/struct.svg)](https://rubygems.org/gems/struct) 
-[![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/1.0.0) 
-[![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/1.0.0.svg)](https://github.com/lyptt/struct/commits/master)
+[![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/1.0.1) 
+[![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/1.0.1.svg)](https://github.com/lyptt/struct/commits/master)
 
 `struct` is a tool for iOS and Mac developers to automate the creation and management of Xcode projects.
 
