@@ -1,0 +1,10 @@
+//:configuration = Release
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks
+INFOPLIST_FILE = Xcconfig/Info.plist
+PRODUCT_BUNDLE_IDENTIFIER = uk.lyptt.Xcconfig
+PRODUCT_NAME = $(TARGET_NAME)
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
+SWIFT_VERSION = 3.0
+
+//:completeSettings = some
+SDKROOT = iphoneos

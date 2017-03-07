@@ -40,7 +40,7 @@ module StructCore
 		# rubocop:disable Metrics/AbcSize
 		# rubocop:disable Metrics/PerceivedComplexity
 		# rubocop:disable Metrics/CyclomaticComplexity
-		def self.migrate(xcodeproj_file, dir)
+		def self.migrate(xcodeproj_file, dir, return_instead_of_write = false)
 			xcodeproj_path = Pathname.new(xcodeproj_file).absolute? ? xcodeproj_file : File.expand_path(File.join(Dir.pwd, xcodeproj_file))
 			directory = File.expand_path(Pathname.new(File.expand_path(dir)).absolute? ? dir : File.join(Dir.pwd, dir))
 
@@ -48,7 +48,7 @@ module StructCore
 				raise StandardError.new 'Invalid xcode project'
 			end
 
-			FileUtils.mkdir_p directory
+			FileUtils.mkdir_p directory unless return_instead_of_write
 
 			project = Xcodeproj::Project.open(xcodeproj_path)
 			project_dir = File.dirname(xcodeproj_path)
@@ -166,6 +166,8 @@ module StructCore
 			}
 
 			spec_file = StructCore::Specfile.new(spec_version, targets, configurations, [], directory)
+			return spec_file if return_instead_of_write
+
 			spec_file.write File.join(directory, 'project.yml')
 
 			targets_files.each { |name, files|
