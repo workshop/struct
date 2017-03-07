@@ -8,6 +8,9 @@ RSpec.describe StructCore::Migrator do
 
 			expect { spec = StructCore::Migrator.migrate xcodeproj_file, Dir.tmpdir, true }.not_to raise_error
 			expect(spec).to_not be_nil
+			expect(spec.targets.length).to eq(1)
+			expect(spec.targets[0].configurations.length).to eq(2)
+			expect(spec.targets[0].configurations[0].settings.keys.length).to eq(7)
 		end
 	end
 end
