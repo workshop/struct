@@ -9,7 +9,7 @@ require_relative '../version'
 
 module StructCore
 	class Refresher
-		GIT_CONTENT_REPOSITORY_BASE = 'https://raw.githubusercontent.com/lyptt/xcodegen/master'.freeze
+		GIT_CONTENT_REPOSITORY_BASE = 'https://raw.githubusercontent.com/lyptt/struct/master'.freeze
 
 		# There's not much sense refactoring this to be tiny methods.
 		# rubocop:disable Metrics/AbcSize
@@ -99,7 +99,7 @@ module StructCore
 						  "You're on #{local_gem_version}, and the latest is #{latest_gem_version}.\n\n"\
 						  "I'd love to get your feedback on Struct. Feel free to ping me\n"\
 						  "on Twitter @lyptt, or file a github issue if there's something that\n"\
-						  "can be improved at https://github.com/lyptt/xcodegen/issues.\n", :green]
+						  "can be improved at https://github.com/lyptt/struct/issues.\n", :green]
 
 			return if changelog['versions'].nil? || changelog['versions'][latest_gem_version.to_s].nil?
 
