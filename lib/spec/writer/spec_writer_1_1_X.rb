@@ -50,9 +50,17 @@ module StructCore
 			spec_hash['targets'] = targets
 
 			if format == :yml
-				File.open(path, 'w+') {|f| f.write spec_hash.to_yaml }
+				if File.exist? path
+					File.open(path, 'w+') {|f| f.write spec_hash.to_yaml }
+				else
+					File.write path, spec_hash.to_yaml
+				end
 			elsif format == :json
-				File.open(path, 'w+') {|f| f.write spec_hash.to_json }
+				if File.exist? path
+					File.open(path, 'w+') {|f| f.write spec_hash.to_json }
+				else
+					File.write path, spec_hash.to_json
+				end
 			end
 		end
 
