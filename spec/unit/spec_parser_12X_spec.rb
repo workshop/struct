@@ -343,7 +343,7 @@ RSpec.describe StructCore::Specparser12X do
 				expect(proj.configurations.count).to eq(3)
 			end
 
-			it 'can parse a specfile with xcconfig-based target configurations' do
+			it 'can parse a specfile with xcconfig-based target configuration' do
 				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_12X/spec_parser_12X_test_34.yml')
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
@@ -351,6 +351,18 @@ RSpec.describe StructCore::Specparser12X do
 				proj = parser.parse SPEC_VERSION_12X, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets.count).to eq(1)
+				expect(proj.targets[0].configurations.count).to eq(2)
+			end
+
+			it 'can parse a specfile with xcconfig-based target configurations' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_12X/spec_parser_12X_test_35.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser12X.new
+
+				proj = parser.parse SPEC_VERSION_12X, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets.count).to eq(1)
+				expect(proj.targets[0].configurations.count).to eq(2)
 			end
 		end
 	end

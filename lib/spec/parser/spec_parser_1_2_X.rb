@@ -282,19 +282,18 @@ module StructCore
 			profiles
 		end
 
+		# rubocop:disable Style/ConditionalAssignment
 		def parse_target_configurations(target_opts, target_name, profiles, valid_config_names)
 			# Parse target configurations
-			if target_opts.key? 'configurations'
-				unless target_opts['configurations'].is_a?(Hash)
-					puts Paint["Warning: Key 'configurations' for target #{target_name} is not a hash. Ignoring target...", :yellow]
-					return nil
-				end
+			if target_opts.key?('configurations') && target_opts['configurations'].is_a?(Hash)
 				configurations = target_opts['configurations'].map do |config_name, config|
 					unless valid_config_names.include? config_name
 						puts Paint["Warning: Config name #{config_name} for target #{target_name} was not defined in this spec. Ignoring target...", :yellow]
 						return nil
 					end
-					Specfile::Target::Configuration.new(config_name, config, profiles)
+
+					next Specfile::Target::Configuration.new(config_name, {}, profiles, config) if config.is_a?(String)
+					next Specfile::Target::Configuration.new(config_name, config, profiles)
 				end
 			elsif target_opts.key?('configuration') && target_opts['configuration'].is_a?(String)
 				configurations = valid_config_names.map { |name|
@@ -312,6 +311,7 @@ module StructCore
 
 			configurations
 		end
+		# rubocop:enable Style/ConditionalAssignment
 
 		def parse_target_sources(target_opts, target_name, project_base_dir)
 			# Parse target sources
