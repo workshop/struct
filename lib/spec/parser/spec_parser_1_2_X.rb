@@ -215,15 +215,33 @@ module StructCore
 			}.compact
 		end
 
-		def parse_variant_target_scripts(target_opts, project_base_dir)
-			# Parse target run scripts
-			return [] unless target_opts.key?('scripts') && target_opts['scripts'].is_a?(Array)
-
-			target_opts['scripts'].map { |s|
+		def parse_run_scripts_list(scripts, project_base_dir)
+			scripts.map { |s|
 				next nil if s.start_with? '/' # Script file should be relative to project
 				next nil unless File.exist? File.join(project_base_dir, s)
 				Specfile::Target::RunScript.new s
 			}.compact
+		end
+
+		def parse_variant_target_scripts(target_opts, project_base_dir)
+			# Parse target run scripts
+			return { prebuild_run_scripts: [], postbuild_run_scripts: [] } unless target_opts.key?('scripts')
+
+			if target_opts['scripts'].is_a?(Array)
+				{ prebuild_run_scripts: [], postbuild_run_scripts: parse_run_scripts_list(target_opts['scripts'], project_base_dir) }
+			elsif target_opts['scripts'].is_a?(Hash)
+				prebuild_run_scripts = []
+				if target_opts['scripts']['prebuild'].is_a?(Array)
+					prebuild_run_scripts = parse_run_scripts_list target_opts['scripts']['prebuild'], project_base_dir
+				end
+
+				postbuild_run_scripts = []
+				if target_opts['scripts']['postbuild'].is_a?(Array)
+					postbuild_run_scripts = parse_run_scripts_list target_opts['scripts']['postbuild'], project_base_dir
+				end
+
+				{ prebuild_run_scripts: prebuild_run_scripts, postbuild_run_scripts: postbuild_run_scripts }
+			end
 		end
 
 		private def parse_variant_target_data(target_name, target_opts, project_base_dir, valid_config_names)
@@ -237,7 +255,10 @@ module StructCore
 			references = parse_variant_target_references target_opts, target_name, project_base_dir
 			run_scripts = parse_variant_target_scripts target_opts, project_base_dir
 
-			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes, run_scripts
+			Specfile::Target.new(
+				target_name, type, target_sources_dir, configurations, references, [], target_resources_dir,
+				file_excludes, run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
+			)
 		end
 
 		def parse_target_type(target_opts)
@@ -388,13 +409,23 @@ module StructCore
 
 		def parse_target_scripts(target_opts, project_base_dir)
 			# Parse target run scripts
-			return [] unless target_opts.key?('scripts') && target_opts['scripts'].is_a?(Array)
+			return { prebuild_run_scripts: [], postbuild_run_scripts: [] } unless target_opts.key?('scripts')
 
-			target_opts['scripts'].map { |s|
-				next nil if s.start_with? '/' # Script file should be relative to project
-				next nil unless File.exist? File.join(project_base_dir, s)
-				Specfile::Target::RunScript.new s
-			}.compact
+			if target_opts['scripts'].is_a?(Array)
+				{ prebuild_run_scripts: [], postbuild_run_scripts: parse_run_scripts_list(target_opts['scripts'], project_base_dir) }
+			elsif target_opts['scripts'].is_a?(Hash)
+				prebuild_run_scripts = []
+				if target_opts['scripts']['prebuild'].is_a?(Array)
+					prebuild_run_scripts = parse_run_scripts_list target_opts['scripts']['prebuild'], project_base_dir
+				end
+
+				postbuild_run_scripts = []
+				if target_opts['scripts']['postbuild'].is_a?(Array)
+					postbuild_run_scripts = parse_run_scripts_list target_opts['scripts']['postbuild'], project_base_dir
+				end
+
+				{ prebuild_run_scripts: prebuild_run_scripts, postbuild_run_scripts: postbuild_run_scripts }
+			end
 		end
 
 		# @return StructCore::Specfile::Target
@@ -424,7 +455,10 @@ module StructCore
 			references = parse_target_references target_opts, target_name, project_base_dir
 			run_scripts = parse_target_scripts target_opts, project_base_dir
 
-			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes, run_scripts
+			Specfile::Target.new(
+				target_name, type, target_sources_dir, configurations, references, [], target_resources_dir,
+				file_excludes, run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
+			)
 		end
 	end
 end
