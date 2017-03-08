@@ -17,8 +17,11 @@ require_relative '../lib/refresher/refresher'
 require_relative '../lib/spec/parser/spec_parser'
 require_relative '../lib/spec/parser/spec_parser_1_0_X'
 require_relative '../lib/spec/parser/spec_parser_1_1_X'
+require_relative '../lib/spec/parser/spec_parser_1_2_X'
 require_relative '../lib/spec/writer/spec_writer'
 require_relative '../lib/spec/writer/spec_writer_1_0_X'
+require_relative '../lib/spec/writer/spec_writer_1_1_X'
+require_relative '../lib/spec/writer/spec_writer_1_2_X'
 
 RSpec.configure do |config|
 	config.color = true

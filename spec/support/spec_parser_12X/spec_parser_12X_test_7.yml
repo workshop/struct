@@ -1,0 +1,7 @@
+---
+version: 1.2.0
+configurations:
+  debug:
+    - profiles
+    - general:debug
+    - ios:debug
