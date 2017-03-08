@@ -119,7 +119,7 @@ module StructCore
 			# @param res_dir [Array<String>]
 			# @param file_excludes [Array<String>]
 			# @param run_scripts [Array<StructCore::Specfile::Target::RunScript>]
-			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes, run_scripts = [])
+			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes, postbuild_run_scripts = [], prebuild_run_scripts = [])
 				@name = target_name
 				@type = target_type
 				@source_dir = []
@@ -137,7 +137,8 @@ module StructCore
 					@res_dir = @source_dir
 				end
 				@file_excludes = file_excludes || []
-				@run_scripts = run_scripts || []
+				@postbuild_run_scripts = postbuild_run_scripts || []
+				@prebuild_run_scripts = prebuild_run_scripts || []
 			end
 
 			attr_accessor :name
@@ -148,7 +149,15 @@ module StructCore
 			attr_accessor :options
 			attr_accessor :res_dir
 			attr_accessor :file_excludes
-			attr_accessor :run_scripts
+			attr_accessor :prebuild_run_scripts
+			attr_accessor :postbuild_run_scripts
+
+			def run_scripts=(s)
+				@postbuild_run_scripts = s
+			end
+			def run_scripts
+				@postbuild_run_scripts
+			end
 		end
 
 		class Variant

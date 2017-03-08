@@ -175,3 +175,4 @@ modules.xml
 .idea
 *.ipr
 examples/**/*.xcodeproj
+spec/integration/support_files/fastlane/report.xml
