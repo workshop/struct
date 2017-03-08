@@ -25,6 +25,7 @@ module StructCore
 			valid_configuration_names = []
 			configurations = spec_hash['configurations'].map { |name, config|
 				unless config['source'].nil?
+					valid_configuration_names << name
 					next Specfile::Configuration.new(name, [], {}, config['type'], config['source'])
 				end
 
@@ -133,7 +134,11 @@ module StructCore
 						Specfile::Target::Configuration.new(config_name, config, profiles)
 					}.compact
 				end
-			elsif target_opts.key? 'configuration'
+			elsif target_opts.key?('configuration') && target_opts['configuration'].is_a?(String)
+				configurations = valid_config_names.map { |name|
+					Specfile::Target::Configuration.new(name, {}, profiles, nil, target_opts['configuration'])
+				}
+			elsif target_opts.key?('configuration')
 				configurations = valid_config_names.map { |name|
 					Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
 				}
@@ -291,7 +296,11 @@ module StructCore
 					end
 					Specfile::Target::Configuration.new(config_name, config, profiles)
 				end
-			elsif target_opts.key? 'configuration'
+			elsif target_opts.key?('configuration') && target_opts['configuration'].is_a?(String)
+				configurations = valid_config_names.map { |name|
+					Specfile::Target::Configuration.new(name, {}, profiles, target_opts['configuration'])
+				}
+			elsif target_opts.key?('configuration')
 				configurations = valid_config_names.map { |name|
 					Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
 				}
