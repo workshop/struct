@@ -256,8 +256,8 @@ RSpec.describe StructCore::Specparser12X do
 
 				proj = parser.parse SPEC_VERSION_12X, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
-				expect(proj.targets[0].run_scripts.count).to eq(1)
-				expect(proj.targets[0].run_scripts[0]).to be_an_instance_of(StructCore::Specfile::Target::RunScript)
+				expect(proj.targets[0].postbuild_run_scripts.count).to eq(1)
+				expect(proj.targets[0].postbuild_run_scripts[0]).to be_an_instance_of(StructCore::Specfile::Target::RunScript)
 			end
 
 			it 'ignores an invalid scripts section' do
@@ -267,7 +267,7 @@ RSpec.describe StructCore::Specparser12X do
 
 				proj = parser.parse SPEC_VERSION_12X, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
-				expect(proj.targets[0].run_scripts.count).to eq(0)
+				expect(proj.targets[0].postbuild_run_scripts.count).to eq(0)
 			end
 
 			it 'parses a specfile with an empty variants section' do
@@ -320,7 +320,7 @@ RSpec.describe StructCore::Specparser12X do
 				expect(proj.variants[0].targets[0].configurations[0].settings.key?('SWIFT_ACTIVE_COMPILATION_CONDITIONS')).to eq(true)
 				expect(proj.variants[0].targets[0].references.count).to eq(1)
 				expect(proj.variants[0].targets[0].file_excludes.count).to eq(1)
-				expect(proj.variants[0].targets[0].run_scripts.count).to eq(1)
+				expect(proj.variants[0].targets[0].postbuild_run_scripts.count).to eq(1)
 			end
 
 			it 'parses a specfile with an invalid variant' do
@@ -388,6 +388,17 @@ RSpec.describe StructCore::Specparser12X do
 				expect(proj.variants.count).to be(2)
 				expect(proj.variants[0].targets.count).to eq(1)
 				expect(proj.variants[0].targets[0].configurations.count).to eq(2)
+			end
+
+			it 'parses a specfile with prebuild & postbuild run scripts' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_12X/spec_parser_12X_test_38.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser12X.new
+
+				proj = parser.parse SPEC_VERSION_12X, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.variants[0].targets[0].prebuild_run_scripts.count).to eq(1)
+				expect(proj.targets[0].postbuild_run_scripts.count).to eq(1)
 			end
 		end
 	end

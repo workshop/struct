@@ -76,6 +76,8 @@ module StructCore
 						spec_target.file_excludes = [].unshift(*spec_target.file_excludes).unshift(*target.file_excludes)
 						spec_target.options = [].unshift(*spec_target.options).unshift(*target.options)
 						spec_target.references = [].unshift(*spec_target.references).unshift(*target.references)
+						spec_target.prebuild_run_scripts = [].unshift(*spec_target.prebuild_run_scripts).unshift(*target.prebuild_run_scripts)
+						spec_target.postbuild_run_scripts = [].unshift(*spec_target.postbuild_run_scripts).unshift(*target.postbuild_run_scripts)
 					}
 
 					[variant.name, StructCore::Specfile.new(spec.version, spec_targets, spec.configurations, [], spec.base_dir)]
