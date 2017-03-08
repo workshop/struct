@@ -128,15 +128,15 @@ module StructCore
 			# Parse target configurations
 			configurations = nil
 			if target_opts.key? 'configurations'
-				if target_opts['configurations'].is_a?(Hash)
-					configurations = target_opts['configurations'].map { |config_name, config|
-						next nil if valid_config_names.include? config_name
-						Specfile::Target::Configuration.new(config_name, config, profiles)
-					}.compact
-				end
+				configurations = target_opts['configurations'].map { |config_name, config|
+					next nil unless valid_config_names.include? config_name
+
+					next Specfile::Target::Configuration.new(config_name, {}, profiles, config) if config.is_a?(String)
+					next Specfile::Target::Configuration.new(config_name, config, profiles)
+				}.compact
 			elsif target_opts.key?('configuration') && target_opts['configuration'].is_a?(String)
 				configurations = valid_config_names.map { |name|
-					Specfile::Target::Configuration.new(name, {}, profiles, nil, target_opts['configuration'])
+					Specfile::Target::Configuration.new(name, {}, profiles, target_opts['configuration'])
 				}
 			elsif target_opts.key?('configuration')
 				configurations = valid_config_names.map { |name|
