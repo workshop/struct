@@ -255,7 +255,10 @@ module StructCore
 			references = parse_variant_target_references target_opts, target_name, project_base_dir
 			run_scripts = parse_variant_target_scripts target_opts, project_base_dir
 
-			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes, run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
+			Specfile::Target.new(
+				target_name, type, target_sources_dir, configurations, references, [], target_resources_dir,
+				file_excludes, run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
+			)
 		end
 
 		def parse_target_type(target_opts)
@@ -452,7 +455,10 @@ module StructCore
 			references = parse_target_references target_opts, target_name, project_base_dir
 			run_scripts = parse_target_scripts target_opts, project_base_dir
 
-			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes,  run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
+			Specfile::Target.new(
+				target_name, type, target_sources_dir, configurations, references, [], target_resources_dir,
+				file_excludes, run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
+			)
 		end
 	end
 end

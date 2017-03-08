@@ -156,6 +156,7 @@ module StructCore
 			def run_scripts=(s)
 				@postbuild_run_scripts = s
 			end
+
 			def run_scripts
 				@postbuild_run_scripts
 			end
