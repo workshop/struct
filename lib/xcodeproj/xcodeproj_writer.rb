@@ -66,7 +66,7 @@ module StructCore
 						spec_target.res_dir = spec_target.res_dir.unshift(*target.res_dir).uniq
 						spec_target.file_excludes = [].unshift(*spec_target.file_excludes).unshift(*target.file_excludes).uniq
 
-						target.configurations.each { |configuration|
+						(target.configurations || []).each { |configuration|
 							spec_config = spec_target.configurations.find { |sc| sc.name == configuration.name }
 							spec_config.settings.merge! configuration.settings
 							spec_config.profiles = [].unshift(*configuration.profiles).unshift(*spec_config.profiles).uniq
@@ -489,7 +489,19 @@ module StructCore
 				end
 			}
 
-			target.run_scripts.each { |script|
+			target.prebuild_run_scripts.map { |script|
+				script_name = script.script_path
+				script = File.read(File.join(project_directory, script.script_path))
+
+				script_phase = project.new(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
+				script_phase.name = script_name
+				script_phase.shell_script = script
+				script_phase
+			}.reverse.each { |script|
+				native_target.build_phases.unshift script
+			}
+
+			target.postbuild_run_scripts.each { |script|
 				script_name = script.script_path
 				script = File.read(File.join(project_directory, script.script_path))
 
