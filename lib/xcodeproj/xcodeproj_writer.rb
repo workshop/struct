@@ -3,6 +3,7 @@ require 'yaml'
 require 'paint'
 require 'deep_clone'
 require_relative '../spec/spec_file'
+require_relative '../utils/xcconfig_parser'
 
 # TODO: Refactor this once we have integration tests
 # rubocop:disable all
@@ -47,7 +48,7 @@ module StructCore
 			raise StandardError.new 'Spec must have at least one configuration' if spec.configurations.empty?
 
 			if spec.variants.count.zero?
-				write_xcodeproj spec, File.join(destination, 'project.xcodeproj')
+				write_xcodeproj spec, File.join(destination, 'project.xcodeproj'), destination
 				puts Paint['Generated project.xcodeproj', :green]
 			else
 				# Generate a derived spec for each variant and write out the variants
@@ -69,6 +70,7 @@ module StructCore
 							spec_config = spec_target.configurations.find { |sc| sc.name == configuration.name }
 							spec_config.settings.merge! configuration.settings
 							spec_config.profiles = [].unshift(*configuration.profiles).unshift(*spec_config.profiles).uniq
+							spec_config.source = configuration.source
 						}
 
 						spec_target.file_excludes = [].unshift(*spec_target.file_excludes).unshift(*target.file_excludes)
@@ -81,11 +83,11 @@ module StructCore
 
 				specs.each { |name, variant_spec|
 					if name == '$base'
-						write_xcodeproj variant_spec, File.join(destination, 'project.xcodeproj')
+						write_xcodeproj variant_spec, File.join(destination, 'project.xcodeproj'), destination
 						puts Paint['Generated project.xcodeproj', :green]
 					else
 						project_name = name.downcase.gsub(/[^0-9a-z]/, '')
-						write_xcodeproj variant_spec, File.join(destination, "#{project_name}.xcodeproj")
+						write_xcodeproj variant_spec, File.join(destination, "#{project_name}.xcodeproj"), destination
 						puts Paint["Generated #{project_name}.xcodeproj", :green]
 					end
 				}
@@ -96,8 +98,9 @@ module StructCore
 		# @param project [Xcodeproj::Project]
 		# @param target_refs [Hash<String, Xcodeproj::PBXNativeTarget>]
 		# @param spec_configuration_type_map [Hash<String, String>]
+		# @param base_dir [String]
 		# @return [Xcodeproj::PBXNativeTarget]
-		def self.add_target(target, project, target_refs, spec_configuration_type_map)
+		def self.add_target(target, project, target_refs, spec_configuration_type_map, base_dir)
 			requested_target_refs = target.references.select { |ref| ref.is_a? StructCore::Specfile::Target::TargetReference }
 			target_references = requested_target_refs.map { |ref|
 				# If the referenced target has not been added to the project yet, skip this target for now
@@ -127,10 +130,15 @@ module StructCore
 				}
 
 				build_settings = build_settings.merge config.settings
-				target_build_settings[config.name] = { type: spec_configuration_type_map[config.name], settings: build_settings }
+				target_build_settings[config.name] = { type: spec_configuration_type_map[config.name], settings: build_settings, source: config.source }
 			}
 
 			sdk = target_build_settings[target_build_settings.keys.first][:settings]['SDKROOT']
+
+			if sdk.nil? && !target_build_settings[target_build_settings.keys.first][:source].nil?
+				config = XcconfigParser.parse target_build_settings[target_build_settings.keys.first][:source], base_dir
+				sdk = config['SDKROOT'] unless config.nil?
+			end
 
 			if sdk.nil?
 				puts Paint["Warning: SDKROOT not found in configuration for target: '#{target.name}'. Ignoring...", :yellow]
@@ -155,6 +163,18 @@ module StructCore
 			target_build_settings.each { |name, data|
 				config = native_target.add_build_configuration(name, data[:type])
 				config.build_settings = data[:settings]
+
+				unless data[:source].nil?
+						if File.exist?(File.join(base_dir, data[:source]))
+						config_group = project.groups.find { |g| g.display_name == '$config' }
+						if config_group == nil
+							config_group = project.new_group '$config', nil, '<group>'
+						end
+						config.base_configuration_reference = config_group.new_file data[:source]
+					else
+						puts Paint["Warning: Configuration #{name} source file #{data[:source]} was not found. The specified xcconfig file will be ignored for this configuration", :yellow]
+					end
+				end
 			}
 
 			target_references.each { |native_ref|
@@ -231,7 +251,7 @@ module StructCore
 			create_group group, components.drop(1)
 		end
 
-		private_class_method def self.write_xcodeproj(spec, filename)
+		private_class_method def self.write_xcodeproj(spec, filename, base_dir)
 			spec_xcodeproj_type_map = {}
 			spec_xcodeproj_type_map['debug'] = :debug
 			spec_xcodeproj_type_map['release'] = :release
@@ -285,7 +305,7 @@ module StructCore
 				target = remaining_targets.first
 				break if target.nil?
 
-				native_target = add_target target, project, target_refs, spec_configuration_type_map
+				native_target = add_target target, project, target_refs, spec_configuration_type_map, base_dir
 				if native_target != nil
 					target_refs[target.name] = native_target
 					remaining_targets_removed += 1
@@ -295,7 +315,7 @@ module StructCore
 				iterations_remaining -= 1
 				if iterations_remaining.zero?
 					if remaining_targets_removed.zero?
-						raise StandardError.new 'Circular target references were found in spec, aborting'
+						raise StandardError.new 'Unable to genenerate all targets. Please make sure there are no circular target references and that your spec configuration is valid. Aborting.'
 					else
 						iterations_remaining = remaining_targets.length
 						remaining_targets_removed = 0

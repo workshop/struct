@@ -1,0 +1,10 @@
+---
+version: 1.2.0
+configurations:
+  debug:
+    source: support_files/config.xcconfig
+  release:
+    source: support_files/config-release.xcconfig
+  app store:
+    source: support_files/config-release.xcconfig
+    type: release

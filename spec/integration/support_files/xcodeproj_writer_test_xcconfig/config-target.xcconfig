@@ -1,0 +1,3 @@
+SDKROOT = iphoneos
+INFOPLIST_FILE = Info.plist
+PRODUCT_NAME = My app
