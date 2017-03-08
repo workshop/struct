@@ -6,11 +6,12 @@ require_relative 'writer/spec_writer'
 module StructCore
 	class Specfile
 		class Configuration
-			def initialize(name, profiles, overrides, type = nil)
+			def initialize(name, profiles, overrides, type = nil, source = nil)
 				@name = name
 				@profiles = profiles
 				@overrides = overrides
 				@raw_type = type
+				@source = source
 			end
 
 			# @return [String]
@@ -29,19 +30,22 @@ module StructCore
 			attr_accessor :profiles
 			attr_accessor :overrides
 			attr_accessor :raw_type
+			attr_accessor :source
 		end
 
 		class Target
 			class Configuration
-				def initialize(name, settings, profiles = nil)
+				def initialize(name, settings, profiles = nil, source = nil)
 					@name = name
 					@settings = settings
 					@profiles = profiles || []
+					@source = source
 				end
 
 				attr_accessor :name
 				attr_accessor :settings
 				attr_accessor :profiles
+				attr_accessor :source
 			end
 
 			class TargetReference

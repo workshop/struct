@@ -123,7 +123,7 @@ Style/MethodDefParentheses:
 
 # We'll try to reduce this over time
 Metrics/AbcSize:
-  Max: 30
+  Max: 32
 
 # We'll try to reduce this over time
 Metrics/CyclomaticComplexity:

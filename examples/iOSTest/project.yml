@@ -22,15 +22,15 @@ configurations:
     # defaults for code signing for example.
     overrides:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+    # Instead of profiles and overrides, you can also specify the location of an xcconfig
+    # file. This will be used to configure the project instead.
+    # source: config/debug.xcconfig
   release:
     profiles:
     - general:release
     - ios:release
     overrides:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
-  app store:
-    source: configs/app-store.xcconfig
-    type: release
 # Build targets. Currently any kind of target should be supported, however only common
 # types have been tested.
 targets:

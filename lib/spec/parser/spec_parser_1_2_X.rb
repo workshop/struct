@@ -11,7 +11,7 @@ module StructCore
 		def parse(spec_version, spec_hash, filename)
 			project_base_dir = File.dirname filename
 
-			valid_configuration_names, configurations = parse_configurations spec_hash, project_base_dir
+			valid_configuration_names, configurations = parse_configurations spec_hash
 			return Specfile.new(spec_version, [], configurations, [], project_base_dir) unless spec_hash.key? 'targets'
 			raise StandardError.new "Error: Invalid spec file. Key 'targets' should be a hash" unless spec_hash['targets'].is_a?(Hash)
 
@@ -21,12 +21,11 @@ module StructCore
 			Specfile.new(spec_version, targets, configurations, variants, project_base_dir)
 		end
 
-		private def parse_configurations(spec_hash, project_base_dir)
+		private def parse_configurations(spec_hash)
 			valid_configuration_names = []
 			configurations = spec_hash['configurations'].map { |name, config|
 				unless config['source'].nil?
-					overrides = XcconfigParser.parse config['source'], project_base_dir
-					next Specfile::Configuration.new(name, [], overrides, config['type'])
+					next Specfile::Configuration.new(name, [], {}, config['type'], config['source'])
 				end
 
 				unless config.key?('profiles') && config['profiles'].is_a?(Array) && config['profiles'].count > 0
@@ -42,7 +41,7 @@ module StructCore
 					next nil
 				end
 
-				next config
+				config
 			}.compact
 			raise StandardError.new 'Error: Invalid spec file. Project should have at least one configuration' unless configurations.count > 0
 
