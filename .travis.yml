@@ -3,3 +3,7 @@ rvm:
   - 2.3.1
 env:
   CI=1
+os:
+  - linux
+  - osx
+osx_image: xcode8.2

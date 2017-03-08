@@ -22,6 +22,16 @@ require_relative '../lib/spec/writer/spec_writer'
 require_relative '../lib/spec/writer/spec_writer_1_0_X'
 require_relative '../lib/spec/writer/spec_writer_1_1_X'
 require_relative '../lib/spec/writer/spec_writer_1_2_X'
+require_relative '../lib/xcodeproj/xcodeproj_writer'
+
+def copy_support_files(source_dir, dest_dir)
+	FileUtils.cp_r Dir.glob("#{source_dir}/**/*"), dest_dir
+	FileUtils.cp_r Dir.glob("#{source_dir}/**/.*"), dest_dir
+end
+
+def should_stub_tests_on_incompatible_os
+	!ENV['TRAVIS_OS_NAME'].nil? && ENV['TRAVIS_OS_NAME'] != 'osx'
+end
 
 RSpec.configure do |config|
 	config.color = true

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: recreate_schemes" time="0.057522">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: xcodebuild" time="4.418989">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

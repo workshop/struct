@@ -3,6 +3,7 @@ require 'yaml'
 require 'paint'
 require 'deep_clone'
 require_relative '../spec/spec_file'
+require_relative '../utils/xcconfig_parser'
 
 # TODO: Refactor this once we have integration tests
 # rubocop:disable all
@@ -133,6 +134,11 @@ module StructCore
 			}
 
 			sdk = target_build_settings[target_build_settings.keys.first][:settings]['SDKROOT']
+
+			if sdk.nil? && !target_build_settings[target_build_settings.keys.first][:source].nil?
+				config = XcconfigParser.parse target_build_settings[target_build_settings.keys.first][:source], base_dir
+				sdk = config['SDKROOT'] unless config.nil?
+			end
 
 			if sdk.nil?
 				puts Paint["Warning: SDKROOT not found in configuration for target: '#{target.name}'. Ignoring...", :yellow]
@@ -309,7 +315,7 @@ module StructCore
 				iterations_remaining -= 1
 				if iterations_remaining.zero?
 					if remaining_targets_removed.zero?
-						raise StandardError.new 'Circular target references were found in spec, aborting'
+						raise StandardError.new 'Unable to genenerate all targets. Please make sure there are no circular target references and that your spec configuration is valid. Aborting.'
 					else
 						iterations_remaining = remaining_targets.length
 						remaining_targets_removed = 0

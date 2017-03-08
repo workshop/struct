@@ -1,0 +1,20 @@
+---
+version: 1.2.0
+configurations:
+  debug:
+    source: config.xcconfig
+  release:
+    source: config-release.xcconfig
+targets:
+  My app:
+    type: ":application"
+    sources: sources
+    configurations:
+      debug: config-target.xcconfig
+      release: config-target-release.xcconfig
+variants:
+  beta:
+    My app:
+      configurations:
+        debug: config-target-beta.xcconfig
+        release: config-target-beta-release.xcconfig
