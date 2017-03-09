@@ -10,7 +10,7 @@ RSpec.describe StructCore::Migrator do
 			expect(spec).to_not be_nil
 			expect(spec.targets.length).to eq(1)
 			expect(spec.targets[0].configurations.length).to eq(2)
-			expect(spec.targets[0].configurations[0].settings.keys.length).to eq(7)
+			expect(spec.targets[0].configurations[0].source).to_not be_nil
 		end
 	end
 end
