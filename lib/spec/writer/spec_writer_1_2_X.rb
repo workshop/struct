@@ -15,7 +15,7 @@ module StructCore
 
 		# @param spec [StructCore::Specfile]
 		# @param path [String]
-		def write_spec(spec, path)
+		def write_spec(spec, path, return_instead_of_write = false)
 			unless spec != nil && spec.is_a?(StructCore::Specfile)
 				raise StandardError.new 'Invalid configuration object'
 			end
@@ -33,7 +33,7 @@ module StructCore
 			project_directory = File.dirname(path)
 
 			spec_hash = {}
-			spec_hash['version'] = '1.1.0'
+			spec_hash['version'] = '1.2.0'
 
 			configurations = {}
 			spec.configurations.each { |config|
@@ -49,13 +49,38 @@ module StructCore
 
 			spec_hash['targets'] = targets
 
+			unless spec.variants.empty?
+				variants = {}
+				spec.variants.each { |variant|
+					variant_hash = {}
+					if variant.abstract
+						variant_hash['abstract'] = true
+						variants[variant.name] = variant_hash
+						next
+					end
+
+					variant.targets.each { |target|
+						target_hash = target_to_hash target, project_directory
+						variant_hash[target.name] = target_hash unless target_hash.nil?
+					}.compact
+
+					variants[variant.name] = variant_hash
+				}
+
+				spec_hash['variants'] = variants unless variants.empty?
+			end
+
 			if format == :yml
+				return spec_hash.to_yaml if return_instead_of_write
+
 				if File.exist? path
 					File.open(path, 'w+') {|f| f.write spec_hash.to_yaml }
 				else
 					File.write path, spec_hash.to_yaml
 				end
 			elsif format == :json
+				return spec_hash.to_json if return_instead_of_write
+
 				if File.exist? path
 					File.open(path, 'w+') {|f| f.write spec_hash.to_json }
 				else
@@ -144,32 +169,41 @@ module StructCore
 		# @param configuration [StructCore::Specfile::Configuration]
 		def configuration_to_hash(configuration)
 			config_hash = {}
-			config_hash['profiles'] = configuration.profiles
 
-			unless configuration.overrides == nil || configuration.overrides.keys.length == 0
-				config_hash['overrides'] = configuration.overrides
-			end
+			if configuration.source.nil?
+				config_hash['profiles'] = configuration.profiles
 
-			unless configuration.raw_type == nil
-				config_hash['type'] = configuration.raw_type
+				unless configuration.overrides == nil || configuration.overrides.keys.length == 0
+					config_hash['overrides'] = configuration.overrides
+				end
+
+				unless configuration.raw_type == nil
+					config_hash['type'] = configuration.raw_type
+				end
+			else
+				config_hash['source'] = configuration.source
 			end
 
 			config_hash
 		end
 
-		# @param target [StructCore::Specfile::Target]
+		# @param target [StructCore::Specfile::Target,StructCore::Specfile::Variant::Target]
 		def target_to_hash(target, project_directory)
 			target_hash = {}
 
 			unless target.source_dir == nil || target.source_dir.length == 0
-				target_hash['sources'] = target.source_dir.map { |dir| dir.sub("#{project_directory}/", '') }
+				sources = target.source_dir.map { |dir| dir.sub("#{project_directory}/", '') }
+				target_hash['sources'] = sources[0] if sources.length == 1
+				target_hash['sources'] = sources if sources.length > 1
 			end
 
-			unless target.res_dir == nil || target.res_dir.length == 0
-				target_hash['i18n-resources'] = target.res_dir.map { |dir| dir.sub("#{project_directory}/", '') }
+			unless target.res_dir == nil || target.res_dir.length == 0 || target.res_dir == target.source_dir
+				resources = target.res_dir.map { |dir| dir.sub("#{project_directory}/", '') }
+				target_hash['i18n-resources'] = resources[0] if resources.length == 1
+				target_hash['i18n-resources'] = resources if resources.length > 1
 			end
 
-			target_hash['type'] = target.type.sub('com.apple.product-type.', ':')
+			target_hash['type'] = target.type.sub('com.apple.product-type.', ':') unless target.type.nil?
 
 			# Try to reconcile configuration blocks into shorthand first.
 			# We determine if we should write shorthand with the following rules:
@@ -182,7 +216,7 @@ module StructCore
 				profile.start_with? 'platform:'
 			}
 
-			expected_profile = target.type.sub('com.apple.product-type.', '')
+			expected_profile = (target.type || '').sub('com.apple.product-type.', '')
 			type_profile = profiles.find { |profile|
 				profile == expected_profile
 			}
@@ -190,7 +224,7 @@ module StructCore
 			if profiles.length == 2 && platform_profile != nil && type_profile != nil
 				# If using shorthand, specify the platform
 				target_hash['platform'] = platform_profile.sub('platform:', '')
-			else
+			elsif profiles.length > 0
 				# Otherwise, specify the full list of configuration profiles
 				target_hash['profiles'] = profiles
 			end
@@ -198,17 +232,25 @@ module StructCore
 			# When outputting configuration settings, first determine if every configuration's settings
 			# are identical. If this is the case output the singular 'configuration' block, otherwise
 			# output the full per-build configuration 'configurations' block.
-			settings = target.configurations.map { |config|
-				config.settings
+			settings = target.configurations
+			settings_match = settings.all? { |override|
+				override.settings == settings[0].settings && override.source == settings[0].source
 			}
-			settings_match = settings.all? { |override| override == settings[0] }
 
 			if settings_match
-				target_hash['configuration'] = settings[0]
+				if settings[0].source.nil?
+					target_hash['configuration'] = settings[0].settings
+				else
+					target_hash['configuration'] = settings[0].source
+				end
 			else
 				configurations = {}
 				target.configurations.each { |config|
-					configurations[config.name] = config.settings
+					if config.source.nil?
+						configurations[config.name] = config.settings
+					else
+						configurations[config.name] = config.source
+					end
 				}
 
 				target_hash['configurations'] = configurations
@@ -248,14 +290,26 @@ module StructCore
 				target_hash['excludes'] = excludes
 			end
 
-			unless target.run_scripts.length == 0
-				run_scripts = target.run_scripts.map { |s|
+			unless target.prebuild_run_scripts.length == 0
+				run_scripts = target.prebuild_run_scripts.map { |s|
 					local_path = s.script_path.sub(project_directory, '')
 					local_path[0] = '' if local_path.start_with? '/'
 					local_path
 				}
 
-				target_hash['scripts'] = run_scripts
+				target_hash['scripts'] = {} if target_hash['scripts'].nil?
+				target_hash['scripts']['prebuild'] = run_scripts
+			end
+
+			unless target.postbuild_run_scripts.length == 0
+				run_scripts = target.postbuild_run_scripts.map { |s|
+					local_path = s.script_path.sub(project_directory, '')
+					local_path[0] = '' if local_path.start_with? '/'
+					local_path
+				}
+
+				target_hash['scripts'] = {} if target_hash['scripts'].nil?
+				target_hash['scripts']['postbuild'] = run_scripts
 			end
 
 			target_hash

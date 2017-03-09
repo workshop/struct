@@ -163,36 +163,6 @@ module StructCore
 		end
 
 		class Variant
-			class Target
-				# @param target_name [String]
-				# @param target_type [String]
-				# @param source_dir [String]
-				# @param configurations [Array<StructCore::Specfile::Target::Configuration>]
-				# @param references [Array<StructCore::Specfile::Target::FrameworkReference>]
-				# @param options [Array<StructCore::Specfile::Target::FileOption, StructCore::Specfile::Target::FrameworkOption>]
-				# @param res_dir [String]
-				# @param file_excludes [String]
-				def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes)
-					@name = target_name
-					@type = target_type
-					@source_dir = source_dir
-					@configurations = configurations
-					@references = references
-					@options = options
-					@res_dir = res_dir || source_dir
-					@file_excludes = file_excludes || []
-				end
-
-				attr_accessor :name
-				attr_accessor :type
-				attr_accessor :source_dir
-				attr_accessor :configurations
-				attr_accessor :references
-				attr_accessor :options
-				attr_accessor :res_dir
-				attr_accessor :file_excludes
-			end
-
 			def initialize(variant_name, targets, abstract)
 				@name = variant_name
 				@targets = targets
@@ -207,6 +177,7 @@ module StructCore
 		# @param version [Semantic::Version]
 		# @param targets [Array<StructCore::Specfile::Target>]
 		# @param configurations [Array<StructCore::Specfile::Configuration>]
+		# @param variants [Array<StructCore::Specfile::Variant>]
 		def initialize(version, targets, configurations, variants, base_dir)
 			@version = version
 			@targets = targets
