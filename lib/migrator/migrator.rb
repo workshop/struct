@@ -54,7 +54,7 @@ module StructCore
 			project = Xcodeproj::Project.open(xcodeproj_path)
 			project_dir = File.dirname(xcodeproj_path)
 
-			spec_version = Semantic::Version.new('1.1.0')
+			spec_version = Semantic::Version.new('1.2.0')
 			configurations = migrate_build_configurations project
 
 			targets = project.targets.map { |target|
@@ -65,7 +65,9 @@ module StructCore
 				profiles = nil
 				target_sdk = nil
 
-				target_configuration_overrides = target.build_configurations.map { |config|
+				target_configuration_overrides = {}
+				target_configuration_sources = {}
+				target.build_configurations.each { |config|
 					config_name = config.name
 					config_name = name.downcase if %w(Debug Release).include? name
 					config_xcconfig_overrides = extract_target_xcconfig_overrides config.base_configuration_reference, project_dir
@@ -86,10 +88,21 @@ module StructCore
 					end
 
 					merged_config_settings = extract_target_config_overrides(profiles, config.build_settings)
-					merged_config_settings.merge! config_xcconfig_overrides
 
-					[config_name, merged_config_settings]
-				}.to_h
+					target_configuration_overrides[config_name] = merged_config_settings
+
+					next if config.base_configuration_reference.nil?
+
+					path = config.base_configuration_reference.hierarchy_path
+					path[0] = '' if path.start_with? '/'
+					target_configuration_sources[config_name] = path
+
+					destination_dir = File.join(directory, File.dirname(path))
+					FileUtils.mkdir_p destination_dir
+					destination_path = File.join(destination_dir, File.basename(path))
+
+					FileUtils.cp(File.join(project_dir, path), destination_path)
+				}
 
 				target_references = target.frameworks_build_phase.files.map { |f|
 					if f.file_ref.source_tree == 'SDKROOT' || f.file_ref.source_tree == 'DEVELOPER_DIR'
@@ -122,7 +135,10 @@ module StructCore
 					"src-#{name.downcase.sub(' ', '_')}",
 					target.build_configurations.map { |config|
 						StructCore::Specfile::Target::Configuration.new(
-							config.name, target_configuration_overrides[config.name], profiles
+							config.name,
+							target_configuration_overrides[config.name],
+							profiles,
+							target_configuration_sources[config.name]
 						)
 					},
 					target_references,

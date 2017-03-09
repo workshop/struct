@@ -15,7 +15,7 @@ module StructCore
 
 		# @param spec [StructCore::Specfile]
 		# @param path [String]
-		def write_spec(spec, path)
+		def write_spec(spec, path, return_instead_of_write = false)
 			unless spec != nil && spec.is_a?(StructCore::Specfile)
 				raise StandardError.new 'Invalid configuration object'
 			end

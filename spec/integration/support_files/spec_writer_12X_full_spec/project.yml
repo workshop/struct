@@ -1,0 +1,41 @@
+---
+version: 1.2.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+  release:
+    source: 'config-release.xcconfig'
+targets:
+  My app:
+    sources: sources
+    excludes:
+      files:
+      - "**/*.md"
+    references:
+    - sdkroot:UIKit.framework
+    platform: ios
+    type: ":application"
+    configuration: "config-target.xcconfig"
+    scripts:
+      prebuild:
+      - scripts/sample.sh
+      postbuild:
+      - scripts/sample.sh
+variants:
+  $base:
+    abstract: true
+  dev:
+    My app:
+      configuration:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_DEV
+  beta:
+    My app:
+      sources: sources_beta
+      references:
+      - sdkroot:CoreData.framework
+      configuration:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_BETA

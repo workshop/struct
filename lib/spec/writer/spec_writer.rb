@@ -27,7 +27,7 @@ module StructCore
 
 		# @param spec [StructCore::Specfile]
 		# @param path [String]
-		def write_spec(spec, path)
+		def write_spec(spec, path, return_instead_of_write = false)
 			register_defaults if @writers.empty?
 			raise StandardError.new 'Error: Invalid spec object. Spec object was nil.' if spec.nil?
 
@@ -37,7 +37,7 @@ module StructCore
 
 			raise StandardError.new "Error: Invalid spec object. Project version #{spec.version} is unsupported by this version of struct." if writer.nil?
 
-			writer.write_spec(spec, path)
+			writer.write_spec(spec, path, return_instead_of_write)
 		end
 
 		# @param configuration [StructCore::Specfile::Configuration]
