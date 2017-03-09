@@ -91,17 +91,17 @@ module StructCore
 
 					target_configuration_overrides[config_name] = merged_config_settings
 
-					unless config.base_configuration_reference.nil?
-						path = config.base_configuration_reference.hierarchy_path
-						path[0] = '' if path.start_with? '/'
-						target_configuration_sources[config_name] = path
+					next if config.base_configuration_reference.nil?
 
-						destination_dir = File.join(directory, File.dirname(path))
-						FileUtils.mkdir_p destination_dir
-						destination_path = File.join(destination_dir, File.basename(path))
+					path = config.base_configuration_reference.hierarchy_path
+					path[0] = '' if path.start_with? '/'
+					target_configuration_sources[config_name] = path
 
-						FileUtils.cp(File.join(project_dir, path), destination_path)
-					end
+					destination_dir = File.join(directory, File.dirname(path))
+					FileUtils.mkdir_p destination_dir
+					destination_path = File.join(destination_dir, File.basename(path))
+
+					FileUtils.cp(File.join(project_dir, path), destination_path)
 				}
 
 				target_references = target.frameworks_build_phase.files.map { |f|
