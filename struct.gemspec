@@ -5,7 +5,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Rhys Cox']
   spec.email         = ['contact@struct.io']
   spec.summary       = 'Xcode projects - simplified'
-  spec.description   = 'Struct provides structure and predictability for Xcode projects.\n' +
+  spec.description   = "Struct provides structure and predictability for Xcode projects.\n" +
                        'Define your project with a simple project spec, and Struct does the rest.'
   spec.homepage      = 'https://www.github.com/lyptt/struct'
 

@@ -39,3 +39,8 @@ versions:
   - Xcodegen is now known as struct, install it with gem install struct!
   1.0.1:
   - Fixes for xcconfig-based projects with no configuration settings
+  1.1.0:
+  - Spec 1.2.0 is here! Spec 1.2.0 supports including xcconfig files to externally
+    manage project and target configuration, and the ability to place run scripts
+    before or after your build phases
+  - Numerous bug fixes to migration, writing projects, and parsing specs

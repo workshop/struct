@@ -37,7 +37,7 @@ module StructCore
 				o.on '-m', '--migrate', 'migrates an Xcode project and its files to a specfile (beta)' do
 					return do_migrate o
 				end
-				o.on '--version', 'print the version' do
+				o.on '-v', '--version', 'print the version' do
 					puts StructCore::VERSION
 					quit(0)
 				end
