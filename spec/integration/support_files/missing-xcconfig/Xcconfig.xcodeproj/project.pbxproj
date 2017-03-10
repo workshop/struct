@@ -1,0 +1,202 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		985473971E6F44BA00C36AEB /* Xcconfig-target-release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 985473961E6F44BA00C36AEB /* Xcconfig-target-release.xcconfig */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		9854737C1E6F3C9900C36AEB /* Xcconfig.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Xcconfig.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9854738D1E6F3C9900C36AEB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		985473941E6F3D6E00C36AEB /* Xcconfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Xcconfig.xcconfig; sourceTree = "<group>"; };
+		985473951E6F446B00C36AEB /* Xcconfig-target-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Xcconfig-target-debug.xcconfig"; sourceTree = "<group>"; };
+		985473961E6F44BA00C36AEB /* Xcconfig-target-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Xcconfig-target-release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		985473791E6F3C9900C36AEB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		985473731E6F3C9900C36AEB = {
+			isa = PBXGroup;
+			children = (
+				9854737E1E6F3C9900C36AEB /* Xcconfig */,
+				9854737D1E6F3C9900C36AEB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9854737D1E6F3C9900C36AEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9854737C1E6F3C9900C36AEB /* Xcconfig.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9854737E1E6F3C9900C36AEB /* Xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				985473931E6F3CC500C36AEB /* Config */,
+				9854738D1E6F3C9900C36AEB /* Info.plist */,
+			);
+			path = Xcconfig;
+			sourceTree = "<group>";
+		};
+		985473931E6F3CC500C36AEB /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				985473941E6F3D6E00C36AEB /* Xcconfig.xcconfig */,
+				985473951E6F446B00C36AEB /* Xcconfig-target-debug.xcconfig */,
+				985473961E6F44BA00C36AEB /* Xcconfig-target-release.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9854737B1E6F3C9900C36AEB /* Xcconfig */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 985473901E6F3C9900C36AEB /* Build configuration list for PBXNativeTarget "Xcconfig" */;
+			buildPhases = (
+				985473781E6F3C9900C36AEB /* Sources */,
+				985473791E6F3C9900C36AEB /* Frameworks */,
+				9854737A1E6F3C9900C36AEB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Xcconfig;
+			productName = Xcconfig;
+			productReference = 9854737C1E6F3C9900C36AEB /* Xcconfig.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		985473741E6F3C9900C36AEB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0810;
+				LastUpgradeCheck = 0810;
+				ORGANIZATIONNAME = "Rhys Cox";
+				TargetAttributes = {
+					9854737B1E6F3C9900C36AEB = {
+						CreatedOnToolsVersion = 8.1;
+						LastSwiftMigration = 0820;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 985473771E6F3C9900C36AEB /* Build configuration list for PBXProject "Xcconfig" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 985473731E6F3C9900C36AEB;
+			productRefGroup = 9854737D1E6F3C9900C36AEB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9854737B1E6F3C9900C36AEB /* Xcconfig */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9854737A1E6F3C9900C36AEB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				985473971E6F44BA00C36AEB /* Xcconfig-target-release.xcconfig in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		985473781E6F3C9900C36AEB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		9854738E1E6F3C9900C36AEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 985473941E6F3D6E00C36AEB /* Xcconfig.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		9854738F1E6F3C9900C36AEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 985473941E6F3D6E00C36AEB /* Xcconfig.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		985473911E6F3C9900C36AEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 985473951E6F446B00C36AEB /* Xcconfig-target-debug.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = Xcconfig/Info.plist;
+				PRODUCT_NAME = Xcconfig;
+				SDKROOT = iphoneos10.2;
+			};
+			name = Debug;
+		};
+		985473921E6F3C9900C36AEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 985473961E6F44BA00C36AEB /* Xcconfig-target-release.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = Xcconfig/Info.plist;
+				PRODUCT_NAME = Xcconfig;
+				SDKROOT = iphoneos10.2;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		985473771E6F3C9900C36AEB /* Build configuration list for PBXProject "Xcconfig" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9854738E1E6F3C9900C36AEB /* Debug */,
+				9854738F1E6F3C9900C36AEB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		985473901E6F3C9900C36AEB /* Build configuration list for PBXNativeTarget "Xcconfig" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				985473911E6F3C9900C36AEB /* Debug */,
+				985473921E6F3C9900C36AEB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 985473741E6F3C9900C36AEB /* Project object */;
+}

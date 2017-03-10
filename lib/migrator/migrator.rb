@@ -55,7 +55,7 @@ module StructCore
 			project_dir = File.dirname(xcodeproj_path)
 
 			spec_version = Semantic::Version.new('1.2.0')
-			configurations = migrate_build_configurations project
+			configurations = migrate_build_configurations project, project_dir, directory
 
 			targets = project.targets.map { |target|
 				name = target.name
@@ -88,20 +88,14 @@ module StructCore
 					end
 
 					merged_config_settings = extract_target_config_overrides(profiles, config.build_settings)
-
 					target_configuration_overrides[config_name] = merged_config_settings
 
 					next if config.base_configuration_reference.nil?
 
-					path = config.base_configuration_reference.hierarchy_path
-					path[0] = '' if path.start_with? '/'
+					path = extract_xcconfig_path config.base_configuration_reference, project_dir, directory
+					next if path.nil?
+
 					target_configuration_sources[config_name] = path
-
-					destination_dir = File.join(directory, File.dirname(path))
-					FileUtils.mkdir_p destination_dir
-					destination_path = File.join(destination_dir, File.basename(path))
-
-					FileUtils.cp(File.join(project_dir, path), destination_path)
 				}
 
 				target_references = target.frameworks_build_phase.files.map { |f|
@@ -204,18 +198,43 @@ module StructCore
 		# rubocop:enable Metrics/PerceivedComplexity
 		# rubocop:enable Metrics/CyclomaticComplexity
 
-		private_class_method def self.migrate_build_configurations(project)
+		private_class_method def self.migrate_build_configurations(project, project_dir, directory)
 			project.build_configurations.map { |config|
+				source = nil
+
+				unless config.base_configuration_reference.nil?
+					source = extract_xcconfig_path config.base_configuration_reference, project_dir, directory
+				end
+
 				if config.type == :debug
 					overrides = config.build_settings.reject { |k, _| DEBUG_SETTINGS_MERGED.include? k }
-					next StructCore::Specfile::Configuration.new(config.name, %w(general:debug ios:debug), overrides, 'debug')
+					next StructCore::Specfile::Configuration.new(config.name, %w(general:debug ios:debug), overrides, 'debug', source)
 				elsif config.type == :release
 					overrides = config.build_settings.reject { |k, _| RELEASE_SETTINGS_MERGED.include? k }
-					next StructCore::Specfile::Configuration.new(config.name, %w(general:release ios:release), overrides, 'release')
+					next StructCore::Specfile::Configuration.new(config.name, %w(general:release ios:release), overrides, 'release', source)
 				else
 					raise StandardError.new "Unsupported build configuration type: #{config.type}"
 				end
 			}
+		end
+
+		private_class_method def self.extract_xcconfig_path(base_configuration_reference, project_dir, directory)
+			path = base_configuration_reference.hierarchy_path
+			path[0] = '' if path.start_with? '/'
+
+			source_path = File.join(project_dir, path)
+			destination_dir = File.join(directory, File.dirname(path))
+			destination_path = File.join(destination_dir, File.basename(path))
+
+			unless File.exist? source_path
+				puts Paint["Warning: Unable to locate xcconfig file in target: #{name} at: #{source_path}. Xcconfig reference will be ignored."]
+				return nil
+			end
+
+			FileUtils.mkdir_p destination_dir
+			FileUtils.cp(source_path, destination_path)
+
+			path
 		end
 
 		private_class_method def self.extract_target_config_overrides(profiles, build_settings)
