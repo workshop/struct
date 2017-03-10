@@ -46,6 +46,9 @@ You can find documented examples of the project specification in the examples fo
 
 ## Installation
 
+`struct` requires a minimum of Ruby 2.2.5, however macOS 10.12 ships with 2.0.0.
+You can install a higher version of Ruby with [RVM](https://rvm.io/).
+
 Install `struct` from Rubygems:
 
     $ gem install struct
