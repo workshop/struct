@@ -1,5 +1,5 @@
 ---
-latest: 1.1.0
+latest: 1.1.1
 versions:
   0.1.4:
   - Added parse command to easily see spec parsing output
@@ -44,3 +44,5 @@ versions:
     manage project and target configuration, and the ability to place run scripts
     before or after your build phases
   - Numerous bug fixes to migration, writing projects, and parsing specs
+  1.1.1:
+  - Fixed issues with migrating projects that reference missing xcconfig files.
