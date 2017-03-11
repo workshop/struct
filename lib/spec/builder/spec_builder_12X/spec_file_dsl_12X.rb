@@ -1,3 +1,5 @@
+require_relative 'spec_configuration_dsl_12X'
+
 module StructCore
 	class SpecFileDSL12X
 		def initialize
@@ -9,5 +11,13 @@ module StructCore
 		end
 
 		attr_accessor :spec_file
+
+		def configuration(name, &block)
+			dsl = StructCore::SpecConfigurationDSL12X.new
+			dsl.configuration = StructCore::Specfile::Configuration.new(name, [], {}, nil, nil)
+			dsl.instance_eval(&block)
+
+			@spec_file.configurations << dsl.configuration
+		end
 	end
 end

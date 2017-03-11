@@ -54,6 +54,7 @@ module StructCore
 			project_file = nil
 			project_file = File.join(directory, 'project.yml') if File.exist? File.join(directory, 'project.yml')
 			project_file = File.join(directory, 'project.json') if File.exist? File.join(directory, 'project.json')
+			project_file = File.join(directory, 'Specfile') if File.exist? File.join(directory, 'Specfile')
 
 			if project_file.nil?
 				puts Paint['Could not find project.yml or project.json in the current directory', :red]
@@ -61,7 +62,9 @@ module StructCore
 			end
 
 			begin
-				spec = StructCore::Specfile.parse project_file
+				spec = nil
+				spec = StructCore::Specfile.parse project_file unless project_file.end_with?('Specfile')
+				spec = StructCore::SpecBuilder.build project_file if project_file.end_with?('Specfile')
 			rescue StandardError => err
 				puts Paint[err, :red]
 				quit(-1)

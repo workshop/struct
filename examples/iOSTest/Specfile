@@ -1,0 +1,12 @@
+spec('1.2.0') do
+  configuration('debug') do
+    profile 'general:debug'
+    profile 'ios:debug'
+    override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+  end
+  configuration('release') do
+    profile 'general:release'
+    profile 'ios:release'
+    override  'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+  end
+end
