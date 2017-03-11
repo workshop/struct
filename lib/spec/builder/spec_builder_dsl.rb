@@ -6,9 +6,12 @@ module StructCore
 		def initialize(spec_file, file_dsls = [])
 			@spec_file = spec_file
 			@file_dsls = file_dsls
+			@project_base_dir = nil
 
 			register_defaults if @file_dsls.empty?
 		end
+
+		attr_accessor :project_base_dir
 
 		def register(dsl)
 			if dsl.respond_to?(:supports_version)
@@ -44,6 +47,7 @@ module StructCore
 
 			@spec_file.version = spec_version
 			dsl.spec_file = @spec_file
+			dsl.project_base_dir = @project_base_dir
 			dsl.instance_eval(&block)
 		end
 	end

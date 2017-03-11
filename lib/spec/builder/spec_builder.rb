@@ -9,6 +9,7 @@ module StructCore
 			raise StandardError.new "Error: Spec file #{filename} does not exist" unless File.exist? filename
 
 			builder_dsl = StructCore::SpecBuilderDsl.new(StructCore::Specfile.new(nil, [], [], [], File.dirname(filename)))
+			builder_dsl.project_base_dir = File.dirname filename
 			builder_dsl.instance_eval(File.read(filename))
 			builder_dsl.build
 		end
