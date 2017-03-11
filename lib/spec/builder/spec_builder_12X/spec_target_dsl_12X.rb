@@ -47,8 +47,9 @@ module StructCore
 		end
 
 		def configuration(name = nil, &block)
+			dsl = StructCore::SpecTargetConfigurationDSL12X.new
+
 			if name.nil?
-				dsl = StructCore::SpecTargetConfigurationDSL12X.new
 				dsl.configuration = StructCore::Specfile::Target::Configuration.new nil, {}, []
 				dsl.instance_eval(&block)
 
@@ -60,7 +61,6 @@ module StructCore
 					target_config
 				}
 			else
-				dsl = StructCore::SpecTargetConfigurationDSL12X.new
 				dsl.configuration = StructCore::Specfile::Target::Configuration.new name, {}, []
 				dsl.instance_eval(&block)
 
@@ -80,11 +80,8 @@ module StructCore
 		end
 
 		def system_reference(reference)
-			if reference.end_with? '.framework'
-				@target.references << StructCore::Specfile::Target::SystemFrameworkReference.new(reference.sub('.framework', ''))
-			else
-				@target.references << StructCore::Specfile::Target::SystemLibraryReference.new(reference)
-			end
+			@target.references << StructCore::Specfile::Target::SystemFrameworkReference.new(reference.sub('.framework', '')) if reference.end_with? '.framework'
+			@target.references << StructCore::Specfile::Target::SystemLibraryReference.new(reference) unless reference.end_with? '.framework'
 		end
 
 		def target_reference(reference)
@@ -95,9 +92,7 @@ module StructCore
 			@target.references << StructCore::Specfile::Target::LocalFrameworkReference.new(reference, settings)
 		end
 
-		def project_framework_reference(&block)
-
-		end
+		def project_framework_reference(&block) end
 
 		def respond_to_missing?(_, _)
 			true
