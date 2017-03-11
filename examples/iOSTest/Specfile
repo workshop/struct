@@ -4,9 +4,59 @@ spec('1.2.0') do
     profile 'ios:debug'
     override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
   end
+
   configuration('release') do
     profile 'general:release'
     profile 'ios:release'
     override  'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+  end
+
+  target('iOSTest') do
+    platform 'ios'
+    type ':application'
+
+    source 'iOSTest'
+    i18n_resource 'iOSTest/lproj'
+    exclude_files_matching '**/*.md'
+
+    reference 'sdkroot:UIKit.framework'
+
+    configuration do
+      override 'ASSETCATALOG_COMPILER_APPICON_NAME', 'AppIcon'
+      override 'INFOPLIST_FILE', 'iOSTest/Info.plist'
+      override 'PRODUCT_BUNDLE_IDENTIFIER', 'uk.lyptt.iOSTest'
+      override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+    end
+
+    script 'scripts/sample.sh'
+  end
+
+  target('iOSTestTests') do
+    type ':bundle.unit-test'
+    profile 'platform:ios'
+    profile 'bundle.unit-test'
+    source 'iOSTestTests'
+    reference 'iOSTest'
+
+    configuration do
+      override 'TEST_HOST', '$(BUILT_PRODUCTS_DIR)/iOSTest.app/iOSTest'
+      override 'INFOPLIST_FILE', 'iOSTestTests/Info.plist'
+      override 'PRODUCT_BUNDLE_IDENTIFIER', 'uk.lyptt.iOSTestTests'
+      override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+    end
+  end
+
+  target('iOSTestUITests') do
+    platform 'ios'
+    type ':bundle.ui-testing'
+    source 'iOSTestUITests'
+    reference 'iOSTest'
+
+    configuration do
+      override 'INFOPLIST_FILE', 'iOSTestUITests/Info.plist'
+      override 'PRODUCT_BUNDLE_IDENTIFIER', 'uk.lyptt.iOSTestUITests'
+      override 'TEST_TARGET_NAME', 'iOSTest'
+      override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+    end
   end
 end

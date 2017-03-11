@@ -19,5 +19,9 @@ module StructCore
 
 			@spec_file.configurations << dsl.configuration
 		end
+
+		def method_missing(name, *values)
+			# Do nothing if a method is missing
+		end
 	end
 end

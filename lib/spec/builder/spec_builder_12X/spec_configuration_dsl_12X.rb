@@ -21,5 +21,9 @@ module StructCore
 		def source(source)
 			@configuration.source = source
 		end
+
+		def method_missing(name, *values)
+			# Do nothing if a method is missing
+		end
 	end
 end
