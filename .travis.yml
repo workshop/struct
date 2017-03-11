@@ -5,5 +5,5 @@ env:
   CI=1
 os:
   - linux
-#  - osx
+  - osx
 osx_image: xcode8.2
