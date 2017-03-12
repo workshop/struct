@@ -157,3 +157,7 @@ Style/MultilineMethodCallIndentation:
 # Buggy, as it enforces whichever style is not used
 Style/RegexpLiteral:
   Enabled: false
+
+# Buggy, as it enforces whichever style is not used
+Style/MultilineIfModifier:
+  Enabled: false
