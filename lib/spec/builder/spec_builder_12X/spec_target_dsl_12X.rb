@@ -58,7 +58,7 @@ module StructCore
 				dsl.instance_eval(&block)
 
 				config = dsl.configuration
-				config.profiles = @profiles
+				config.profiles = @profiles if config.source.nil? || config.source.empty?
 				@target.configurations = @project_configurations.map { |project_config|
 					target_config = DeepClone.clone config
 					target_config.name = project_config.name
@@ -69,9 +69,8 @@ module StructCore
 				dsl.instance_eval(&block)
 
 				config = dsl.configuration
-				return if config.profiles.empty? && (config.source.nil? || config.source.empty?)
+				config.profiles = @profiles if config.source.nil? || config.source.empty?
 
-				config.profiles = @profiles
 				@target.configurations << config
 			end
 		end
