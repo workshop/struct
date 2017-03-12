@@ -84,6 +84,8 @@ module StructCore
 		end
 
 		private_class_method def self.do_generate(_)
+			selected_variants = ARGV.select { |item| item != '-g' && item != '--generate' }
+
 			directory = Dir.pwd
 			project_file = nil
 			project_file = File.join(directory, 'project.yml') if File.exist? File.join(directory, 'project.yml')
@@ -99,7 +101,7 @@ module StructCore
 				spec = nil
 				spec = StructCore::Specfile.parse project_file unless project_file.end_with?('Specfile')
 				spec = StructCore::SpecBuilder.build project_file if project_file.end_with?('Specfile')
-				StructCore::XcodeprojWriter.write spec, directory unless spec.nil?
+				StructCore::XcodeprojWriter.write spec, directory, selected_variants unless spec.nil?
 			rescue StandardError => err
 				puts Paint[err, :red]
 				quit(-1)

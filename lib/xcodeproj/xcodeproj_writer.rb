@@ -36,7 +36,7 @@ module StructCore
 
 		# @param spec [StructCore::Specfile]
 		# @param destination [String]
-		def self.write(source_spec, destination)
+		def self.write(source_spec, destination, selected_variants=[])
 			# Create a clone of the spec to avoid affecting the original referenced object
 			# noinspection RubyResolve
 			spec = Marshal.load(Marshal.dump(source_spec))
@@ -52,7 +52,9 @@ module StructCore
 				puts Paint['Generated project.xcodeproj', :green]
 			else
 				# Generate a derived spec for each variant and write out the variants
-				specs = spec.variants.map { |variant|
+				variants = spec.variants
+				variants = variants.select { |v| selected_variants.include? v.name } unless selected_variants.empty?
+				specs = variants.map { |variant|
 					next nil if variant.abstract
 
 					variant_targets = DeepClone.clone variant.targets
