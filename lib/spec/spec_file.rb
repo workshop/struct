@@ -92,6 +92,14 @@ module StructCore
 				attr_accessor :settings
 			end
 
+			class PodReference
+				def initialize(name)
+					@name = name
+				end
+
+				attr_accessor :name
+			end
+
 			class FileOption
 				def initialize(glob, options)
 					@glob = glob
@@ -178,12 +186,14 @@ module StructCore
 		# @param targets [Array<StructCore::Specfile::Target>]
 		# @param configurations [Array<StructCore::Specfile::Configuration>]
 		# @param variants [Array<StructCore::Specfile::Variant>]
-		def initialize(version, targets, configurations, variants, base_dir)
+		# @param includes_pods [Boolean]
+		def initialize(version, targets, configurations, variants, base_dir, includes_pods = false)
 			@version = version
 			@targets = targets
 			@variants = variants
 			@configurations = configurations
 			@base_dir = base_dir
+			@includes_pods = includes_pods
 		end
 
 		# @return StructCore::Specfile
@@ -202,5 +212,6 @@ module StructCore
 		attr_accessor :variants
 		attr_accessor :configurations
 		attr_accessor :base_dir
+		attr_accessor :includes_pods
 	end
 end

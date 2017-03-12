@@ -31,6 +31,7 @@ module StructCore
 			dsl.project_configurations = @spec_file.configurations
 			dsl.project_base_dir = @project_base_dir
 			dsl.target = StructCore::Specfile::Target.new(name, nil, [], [], [], [], [], [], [], [])
+			dsl.project = @spec_file
 			dsl.instance_eval(&block)
 
 			@spec_file.targets << dsl.target
@@ -43,6 +44,7 @@ module StructCore
 			dsl.project_base_dir = @project_base_dir
 			dsl.project_target_names = @spec_file.targets.map(&:name)
 			dsl.variant = StructCore::Specfile::Variant.new(name, [], abstract)
+			dsl.project = @spec_file
 			dsl.instance_eval(&block)
 
 			@spec_file.variants << dsl.variant

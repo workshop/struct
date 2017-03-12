@@ -7,12 +7,14 @@ module StructCore
 			@project_configurations = []
 			@project_base_dir = nil
 			@project_target_names = []
+			@project = nil
 		end
 
 		attr_accessor :variant
 		attr_accessor :project_configurations
 		attr_accessor :project_base_dir
 		attr_accessor :project_target_names
+		attr_accessor :project
 
 		def abstract
 			@variant.abstract = true
@@ -24,6 +26,7 @@ module StructCore
 			dsl.project_configurations = @project_configurations
 			dsl.project_base_dir = @project_base_dir
 			dsl.target = StructCore::Specfile::Target.new(name, nil, [], [], [], [], [], [], [], [])
+			dsl.project = @project
 			dsl.instance_eval(&block)
 
 			@variant.targets << dsl.target

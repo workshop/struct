@@ -4,6 +4,7 @@ require 'paint'
 require 'deep_clone'
 require_relative '../spec/spec_file'
 require_relative '../utils/xcconfig_parser'
+require_relative '../cocoapods/cocoapods_installer'
 
 # TODO: Refactor this once we have integration tests
 # rubocop:disable all
@@ -46,6 +47,8 @@ module StructCore
 			end
 
 			raise StandardError.new 'Spec must have at least one configuration' if spec.configurations.empty?
+
+			StructCore::CocoapodsInstaller.install_if_needed spec, destination
 
 			if spec.variants.count.zero?
 				write_xcodeproj spec, File.join(destination, 'project.xcodeproj'), destination

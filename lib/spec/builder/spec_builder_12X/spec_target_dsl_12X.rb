@@ -11,11 +11,13 @@ module StructCore
 			@profiles = []
 			@project_configurations = []
 			@project_base_dir = nil
+			@project = nil
 		end
 
 		attr_accessor :project_configurations
 		attr_accessor :project_base_dir
 		attr_accessor :target
+		attr_accessor :project
 
 		def type(type)
 			@type = type
@@ -118,6 +120,13 @@ module StructCore
 			dsl.instance_eval(&block)
 
 			@target.references << dsl.reference unless dsl.reference.nil? || dsl.reference.settings['frameworks'].empty?
+		end
+
+		def pod_reference(reference)
+			return unless reference.is_a?(String) && !reference.empty?
+			reference = StructCore::Specfile::Target::PodReference.new(reference)
+			@target.references << reference
+			@project.includes_pods = true
 		end
 
 		def exclude_files_matching(glob)
