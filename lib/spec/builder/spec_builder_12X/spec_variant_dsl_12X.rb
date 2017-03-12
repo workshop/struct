@@ -14,6 +14,10 @@ module StructCore
 		attr_accessor :project_base_dir
 		attr_accessor :project_target_names
 
+		def abstract
+			@variant.abstract = true
+		end
+
 		def target(name, &block)
 			return unless name.is_a?(String) && !name.empty? && !block.nil? && @project_target_names.include?(name)
 			dsl = StructCore::SpecTargetDSL12X.new

@@ -285,7 +285,7 @@ RSpec.describe StructCore::SpecBuilder do
 
 			proj = StructCore::SpecBuilder.build project_file
 			expect(proj).to be_an StructCore::Specfile
-			expect(proj.variants.count).to be(2)
+			expect(proj.variants.count).to eq(2)
 			expect(proj.variants[0].targets.count).to eq(1)
 			expect(proj.variants[0].targets[0].configurations.count).to eq(2)
 		end
@@ -297,6 +297,15 @@ RSpec.describe StructCore::SpecBuilder do
 			expect(proj).to be_an StructCore::Specfile
 			expect(proj.variants[0].targets[0].prebuild_run_scripts.count).to eq(1)
 			expect(proj.targets[0].postbuild_run_scripts.count).to eq(1)
+		end
+
+		it 'builds a Specfile with an abstract variant' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_12X/spec_builder_12X_test_39.rb')
+
+			proj = StructCore::SpecBuilder.build project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.variants.count).to eq(1)
+			expect(proj.variants[0].abstract).to eq(true)
 		end
 	end
 end
