@@ -73,4 +73,28 @@ spec('1.2.0') do
       override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
     end
   end
+
+  variant('$base') do
+    abstract
+  end
+
+  variant('dev') do
+    target('iOSTest') do
+      configuration do
+        override 'SWIFT_ACTIVE_COMPILATION_CONDITIONS', 'APP_VARIANT_DEV'
+      end
+    end
+  end
+
+  variant('beta') do
+    target('iOSTest') do
+      source_dir 'iOSTest-Beta'
+      i18n_resource_dir 'iOSTest-Beta/lproj'
+      exclude_files_matching '**/*.md'
+      configuration do
+        override 'SWIFT_ACTIVE_COMPILATION_CONDITIONS', 'APP_VARIANT_DEV'
+      end
+      system_reference 'CoreData.framework'
+    end
+  end
 end

@@ -46,3 +46,8 @@ versions:
   - Numerous bug fixes to migration, writing projects, and parsing specs
   1.1.1:
   - Fixed issues with migrating projects that reference missing xcconfig files.
+  1.2.0:
+  - "There's now a new way to define your projects! Check out Specfile, a rich
+    DSL for defining your projects in Ruby: https://git.io/vyKuh"
+  - You can now generate individual projects in a multi-variant project.
+    Just type 'struct -g my-variant'. Simple!
