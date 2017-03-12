@@ -15,7 +15,7 @@ module StructCore
 		end
 
 		def type(type)
-			@configuration.type = type
+			@configuration.raw_type = type
 		end
 
 		def source(source)

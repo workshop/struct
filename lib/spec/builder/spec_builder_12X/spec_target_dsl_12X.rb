@@ -19,14 +19,14 @@ module StructCore
 
 		def type(type)
 			@type = type
-			@type = type.to_s if type.is_a?(Symbol)
+			@type = ":#{type.to_s}" if type.is_a?(Symbol)
 			# : at the start of the type is shorthand for 'com.apple.product-type.'
 			if @type.start_with? ':'
 				@type[0] = ''
-				@raw_type = type
-				@type = "com.apple.product-type.#{type}"
+				@raw_type = @type
+				@type = "com.apple.product-type.#{@type}"
 			else
-				@raw_type = type
+				@raw_type = @type
 			end
 
 			@profiles << @raw_type
@@ -39,6 +39,7 @@ module StructCore
 
 		def platform(platform)
 			# TODO: Add support for 'tvos', 'watchos'
+			platform = platform.to_s if platform.is_a?(Symbol)
 			unless %w(ios mac).include? platform
 				puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{platform}'. Ignoring...", :yellow]
 				return
@@ -90,7 +91,12 @@ module StructCore
 		end
 
 		def framework_reference(reference, settings = nil)
-			@target.references << StructCore::Specfile::Target::LocalFrameworkReference.new(reference, settings)
+			settings = settings || {}
+			reference = StructCore::Specfile::Target::LocalFrameworkReference.new(reference, settings)
+
+			# Convert any keys to hashes
+			reference.settings = reference.settings.collect{|k,v| [k.to_s, v]}.to_h
+			@target.references << reference
 		end
 
 		def project_framework_reference(project, &block)
@@ -104,16 +110,20 @@ module StructCore
 			@target.references << dsl.reference
 		end
 
+		def exclude_files_matching(glob)
+			@target.file_excludes << glob
+		end
+
 		def script_prebuild(script_path)
-			@target.prebuild_run_scripts << script_path
+			@target.prebuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
 		end
 
 		def script(script_path)
-			@target.postbuild_run_scripts << script_path
+			@target.postbuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
 		end
 
 		def script_postbuild(script_path)
-			@target.postbuild_run_scripts << script_path
+			@target.postbuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
 		end
 
 		def respond_to_missing?(_, _)

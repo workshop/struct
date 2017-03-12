@@ -1,5 +1,6 @@
 require_relative 'spec_configuration_dsl_12X'
 require_relative 'spec_target_dsl_12X'
+require_relative 'spec_variant_dsl_12X'
 
 module StructCore
 	class SpecFileDSL12X
@@ -31,6 +32,16 @@ module StructCore
 			dsl.instance_eval(&block)
 
 			@spec_file.targets << dsl.target
+		end
+
+		def variant(name, abstract=false, &block)
+			dsl = StructCore::SpecVariantDSL12X.new
+			dsl.project_configurations = @spec_file.configurations
+			dsl.project_base_dir = @project_base_dir
+			dsl.variant = StructCore::Specfile::Variant.new(name, [], abstract)
+			dsl.instance_eval(&block)
+
+			@spec_file.variants << dsl.variant
 		end
 
 		def respond_to_missing?(_, _)
