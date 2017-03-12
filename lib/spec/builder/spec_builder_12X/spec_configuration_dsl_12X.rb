@@ -17,7 +17,7 @@ module StructCore
 		end
 
 		def type(type)
-			return unless (type.is_a?(String) || type.is_a?(Symbol))
+			return unless type.is_a?(String) || type.is_a?(Symbol)
 			type = type.to_s
 			return if type.empty?
 
