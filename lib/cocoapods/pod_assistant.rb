@@ -11,7 +11,7 @@ module StructCore
 				debug_xcconfig = StructCore::XcconfigParser.parse "Pods/Target Support Files/Pods-#{target.name}/Pods-#{target.name}.debug.xcconfig", project_dir
 				release_xcconfig = StructCore::XcconfigParser.parse "Pods/Target Support Files/Pods-#{target.name}/Pods-#{target.name}.release.xcconfig", project_dir
 
-				return if debug_xcconfig.empty? || release_xcconfig.empty?
+				next if debug_xcconfig.empty? || release_xcconfig.empty?
 
 				target.configurations.each { |c|
 					project_config = spec.configurations.find { |pc| pc.name == c.name }
