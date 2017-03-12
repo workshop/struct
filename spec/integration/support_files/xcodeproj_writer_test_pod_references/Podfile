@@ -1,0 +1,4 @@
+target 'My app'
+platform :ios, '9.1'
+install! 'cocoapods', :integrate_targets => false
+pod 'AFNetworking', '~> 1.0'

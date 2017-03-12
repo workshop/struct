@@ -4,6 +4,7 @@ require 'paint'
 require 'deep_clone'
 require_relative '../spec/spec_file'
 require_relative '../utils/xcconfig_parser'
+require_relative '../cocoapods/pod_assistant'
 
 # TODO: Refactor this once we have integration tests
 # rubocop:disable all
@@ -82,10 +83,11 @@ module StructCore
 						spec_target.postbuild_run_scripts = [].push(*spec_target.postbuild_run_scripts).push(*target.postbuild_run_scripts)
 					}
 
-					[variant.name, StructCore::Specfile.new(spec.version, spec_targets, spec.configurations, [], spec.base_dir)]
+					[variant.name, StructCore::Specfile.new(spec.version, spec_targets, spec.configurations, [], spec.base_dir, spec.includes_pods)]
 				}.compact.to_h
 
 				specs.each { |name, variant_spec|
+					StructCore::PodAssistant.apply_pod_configration variant_spec, destination
 					if name == '$base'
 						write_xcodeproj variant_spec, File.join(destination, 'project.xcodeproj'), destination
 						puts Paint['Generated project.xcodeproj', :green]

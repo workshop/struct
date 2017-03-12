@@ -120,6 +120,10 @@ module StructCore
 			@target.references << dsl.reference unless dsl.reference.nil? || dsl.reference.settings['frameworks'].empty?
 		end
 
+		def include_cocoapods
+			@project.includes_pods = true
+		end
+
 		def exclude_files_matching(glob)
 			return unless glob.is_a?(String) && !glob.empty?
 			@target.file_excludes << glob

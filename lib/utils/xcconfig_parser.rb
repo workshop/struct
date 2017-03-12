@@ -13,7 +13,15 @@ module StructCore
 			config_str.split("\n").each { |entry|
 				pair = entry.split('=')
 				next unless pair.length == 2
-				config[pair[0]] = pair[1]
+				key = pair[0]
+				val = pair[1]
+
+				# Most list-based values end in 'S' e.g. 'HEADER_SEARCH_PATHS'. Assume this is the case for now.
+				if key.end_with?('S') && val.include?(' ') && val.include?('$(inherited)')
+					val = val.split(' ')
+				end
+
+				config[key] = val
 			}
 
 			config

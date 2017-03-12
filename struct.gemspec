@@ -32,4 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'inquirer', '~> 0.2.1'
   spec.add_dependency 'excon', '~> 0.54.0'
   spec.add_dependency 'ruby_deep_clone', '~> 0.7.2'
+  spec.add_dependency 'deep_merge', '~> 1.1.1'
 end
