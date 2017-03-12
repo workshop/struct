@@ -17,6 +17,7 @@ module StructCore
 		attr_accessor :project_base_dir
 
 		def configuration(name, &block)
+			return unless name.is_a?(String) && !name.empty? && !block.nil?
 			dsl = StructCore::SpecConfigurationDSL12X.new
 			dsl.configuration = StructCore::Specfile::Configuration.new(name, [], {}, nil, nil)
 			dsl.instance_eval(&block)
@@ -25,6 +26,7 @@ module StructCore
 		end
 
 		def target(name, &block)
+			return unless name.is_a?(String) && !name.empty? && !block.nil?
 			dsl = StructCore::SpecTargetDSL12X.new
 			dsl.project_configurations = @spec_file.configurations
 			dsl.project_base_dir = @project_base_dir
@@ -35,9 +37,11 @@ module StructCore
 		end
 
 		def variant(name, abstract = false, &block)
+			return unless name.is_a?(String) && !name.empty? && [true, false].include?(abstract) && !block.nil?
 			dsl = StructCore::SpecVariantDSL12X.new
 			dsl.project_configurations = @spec_file.configurations
 			dsl.project_base_dir = @project_base_dir
+			dsl.project_target_names = @spec_file.targets.map { |t| t.name }
 			dsl.variant = StructCore::Specfile::Variant.new(name, [], abstract)
 			dsl.instance_eval(&block)
 

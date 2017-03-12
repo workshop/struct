@@ -6,13 +6,16 @@ module StructCore
 			@variant = nil
 			@project_configurations = []
 			@project_base_dir = nil
+			@project_target_names = []
 		end
 
 		attr_accessor :variant
 		attr_accessor :project_configurations
 		attr_accessor :project_base_dir
+		attr_accessor :project_target_names
 
 		def target(name, &block)
+			return unless name.is_a?(String) && !name.empty? && !block.nil? && @project_target_names.include?(name)
 			dsl = StructCore::SpecTargetDSL12X.new
 			dsl.project_configurations = @project_configurations
 			dsl.project_base_dir = @project_base_dir

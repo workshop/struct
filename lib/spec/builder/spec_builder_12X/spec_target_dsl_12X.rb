@@ -34,10 +34,12 @@ module StructCore
 		end
 
 		def profile(profile)
+			return unless profile.is_a?(String) && !profile.empty?
 			@profiles << profile
 		end
 
 		def platform(platform)
+			return unless platform.is_a?(String) || platform.is_a?(Symbol)
 			# TODO: Add support for 'tvos', 'watchos'
 			platform = platform.to_s if platform.is_a?(Symbol)
 			unless %w(ios mac).include? platform
@@ -67,30 +69,37 @@ module StructCore
 				dsl.instance_eval(&block)
 
 				config = dsl.configuration
-				config.profiles = @profiles
+				return if config.profiles.empty? && (config.source.nil? || config.source.empty?)
 
+				config.profiles = @profiles
 				@target.configurations << config
 			end
 		end
 
 		def source_dir(path)
+			return unless path.is_a?(String) && !path.empty?
 			@target.source_dir << File.join(@project_base_dir, path)
 		end
 
 		def i18n_resource_dir(path)
+			return unless path.is_a?(String) && !path.empty?
 			@target.res_dir << File.join(@project_base_dir, path)
 		end
 
 		def system_reference(reference)
+			return unless reference.is_a?(String) && !reference.empty?
 			@target.references << StructCore::Specfile::Target::SystemFrameworkReference.new(reference.sub('.framework', '')) if reference.end_with? '.framework'
 			@target.references << StructCore::Specfile::Target::SystemLibraryReference.new(reference) unless reference.end_with? '.framework'
 		end
 
 		def target_reference(reference)
+			return unless reference.is_a?(String) && !reference.empty?
 			@target.references << StructCore::Specfile::Target::TargetReference.new(reference)
 		end
 
 		def framework_reference(reference, settings = nil)
+			return unless reference.is_a?(String) && !reference.empty?
+
 			settings ||= {}
 			reference = StructCore::Specfile::Target::LocalFrameworkReference.new(reference, settings)
 
@@ -100,6 +109,8 @@ module StructCore
 		end
 
 		def project_framework_reference(project, &block)
+			return unless project.is_a?(String) && !project.empty? && !block.nil?
+
 			settings = {}
 			settings['frameworks'] = []
 
@@ -107,22 +118,26 @@ module StructCore
 			dsl.reference = StructCore::Specfile::Target::FrameworkReference.new(project, settings)
 			dsl.instance_eval(&block)
 
-			@target.references << dsl.reference
+			@target.references << dsl.reference unless dsl.reference.nil? || dsl.reference.settings['frameworks'].empty?
 		end
 
 		def exclude_files_matching(glob)
+			return unless glob.is_a?(String) && !glob.empty?
 			@target.file_excludes << glob
 		end
 
 		def script_prebuild(script_path)
+			return unless script_path.is_a?(String) && !script_path.empty?
 			@target.prebuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
 		end
 
 		def script(script_path)
+			return unless script_path.is_a?(String) && !script_path.empty?
 			@target.postbuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
 		end
 
 		def script_postbuild(script_path)
+			return unless script_path.is_a?(String) && !script_path.empty?
 			@target.postbuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
 		end
 

@@ -6,8 +6,13 @@ module StructCore
 
 		attr_accessor :reference
 
-		def framework(name, settings)
-			target = settings.dup
+		def framework(name, settings = nil)
+			unless name.is_a?(String) && !name.empty?
+				@reference = nil
+				return
+			end
+
+			target = (settings || {}).dup
 			target['name'] = name
 
 			# Convert any keys to hashes
