@@ -1,5 +1,14 @@
+def should_stub_tests_on_incompatible_os
+	!ENV['TRAVIS_OS_NAME'].nil? && ENV['TRAVIS_OS_NAME'] != 'osx'
+end
+
 # Must remain at the top of the file to properly track coverage
-if ENV.key? 'CI'
+#
+# We only run coverage on macOS, as this includes integration tests
+# which can only run in macOS that cover XcodeprojWriter.
+#
+# This prevents coverage being skewed when run on other platforms.
+if ENV.key?('CI') && !should_stub_tests_on_incompatible_os
 	require 'coveralls'
 	Coveralls.wear!
 end
@@ -28,10 +37,6 @@ require_relative '../lib/xcodeproj/xcodeproj_writer'
 def copy_support_files(source_dir, dest_dir)
 	FileUtils.cp_r Dir.glob("#{source_dir}/**/*"), dest_dir
 	FileUtils.cp_r Dir.glob("#{source_dir}/**/.*"), dest_dir
-end
-
-def should_stub_tests_on_incompatible_os
-	!ENV['TRAVIS_OS_NAME'].nil? && ENV['TRAVIS_OS_NAME'] != 'osx'
 end
 
 RSpec.configure do |config|
