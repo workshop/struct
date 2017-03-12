@@ -1,5 +1,6 @@
 require 'deep_clone'
 require_relative 'spec_target_configuration_dsl_12X'
+require_relative 'spec_target_project_ref_dsl_12X'
 
 module StructCore
 	class SpecTargetDSL12X
@@ -92,7 +93,28 @@ module StructCore
 			@target.references << StructCore::Specfile::Target::LocalFrameworkReference.new(reference, settings)
 		end
 
-		def project_framework_reference(&block) end
+		def project_framework_reference(project, &block)
+			settings = {}
+			settings['frameworks'] = []
+
+			dsl = StructCore::SpecTargetProjectRefDSL12X.new
+			dsl.reference = StructCore::Specfile::Target::FrameworkReference.new(project, settings)
+			dsl.instance_eval(&block)
+
+			@target.references << dsl.reference
+		end
+
+		def script_prebuild(script_path)
+			@target.prebuild_run_scripts << script_path
+		end
+
+		def script(script_path)
+			@target.postbuild_run_scripts << script_path
+		end
+
+		def script_postbuild(script_path)
+			@target.postbuild_run_scripts << script_path
+		end
 
 		def respond_to_missing?(_, _)
 			true
