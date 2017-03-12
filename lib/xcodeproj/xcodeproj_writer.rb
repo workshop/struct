@@ -64,22 +64,22 @@ module StructCore
 						spec_target = spec_targets.find { |st| st.name == target.name }
 						next if spec_target == nil
 
-						spec_target.source_dir = spec_target.source_dir.unshift(*target.source_dir).uniq
-						spec_target.res_dir = spec_target.res_dir.unshift(*target.res_dir).uniq
-						spec_target.file_excludes = [].unshift(*spec_target.file_excludes).unshift(*target.file_excludes).uniq
+						spec_target.source_dir = spec_target.source_dir.push(*target.source_dir).uniq
+						spec_target.res_dir = spec_target.res_dir.push(*target.res_dir).uniq
+						spec_target.file_excludes = [].push(*spec_target.file_excludes).push(*target.file_excludes).uniq
 
 						(target.configurations || []).each { |configuration|
 							spec_config = spec_target.configurations.find { |sc| sc.name == configuration.name }
 							spec_config.settings.merge! configuration.settings
-							spec_config.profiles = [].unshift(*configuration.profiles).unshift(*spec_config.profiles).uniq
+							spec_config.profiles = [].push(*configuration.profiles).push(*spec_config.profiles).uniq
 							spec_config.source = configuration.source
 						}
 
-						spec_target.file_excludes = [].unshift(*spec_target.file_excludes).unshift(*target.file_excludes)
-						spec_target.options = [].unshift(*spec_target.options).unshift(*target.options)
-						spec_target.references = [].unshift(*spec_target.references).unshift(*target.references)
-						spec_target.prebuild_run_scripts = [].unshift(*spec_target.prebuild_run_scripts).unshift(*target.prebuild_run_scripts)
-						spec_target.postbuild_run_scripts = [].unshift(*spec_target.postbuild_run_scripts).unshift(*target.postbuild_run_scripts)
+						spec_target.file_excludes = [].push(*spec_target.file_excludes).push(*target.file_excludes)
+						spec_target.options = [].push(*spec_target.options).push(*target.options)
+						spec_target.references = [].push(*spec_target.references).push(*target.references)
+						spec_target.prebuild_run_scripts = [].push(*spec_target.prebuild_run_scripts).push(*target.prebuild_run_scripts)
+						spec_target.postbuild_run_scripts = [].push(*spec_target.postbuild_run_scripts).push(*target.postbuild_run_scripts)
 					}
 
 					[variant.name, StructCore::Specfile.new(spec.version, spec_targets, spec.configurations, [], spec.base_dir)]
@@ -345,7 +345,7 @@ module StructCore
 			grouped_source_files = {}
 			source_files_minus_dir = []
 
-			target.source_dir.each { |source_dir|
+			target.source_dir.reverse.each { |source_dir|
 				# For some reason our symlink-traversing glob duplicates the results, so we use .uniq to fix that
 				new_files = Dir.glob("#{source_dir}/**{,/*/**}/*").select { |file|
 					!(file.include? '.xcassets/') and
@@ -358,9 +358,9 @@ module StructCore
 				}
 
 				new_files_minus_dir = new_files.map { |f| f.sub(source_dir, '') }
-				all_source_files.unshift(*new_files)
+				all_source_files.push(*new_files)
 				grouped_source_files[source_dir] = new_files
-				source_files_minus_dir = source_files_minus_dir.unshift(*new_files_minus_dir).uniq
+				source_files_minus_dir = source_files_minus_dir.push(*new_files_minus_dir).uniq
 			}
 
 			grouped_source_files.each { |source_dir, all_files|
@@ -430,7 +430,7 @@ module StructCore
 							}
 
 							lfile_variant_components = []
-							lfile_variant_components.unshift *lfile_components
+							lfile_variant_components.push *lfile_components
 							lfile_variant_components.shift(lfile_lproj_idx + 1)
 							lfile_variant_path = lfile_variant_components.join('/')
 							unless lproj_variant_files.include? lfile_variant_path
@@ -500,7 +500,7 @@ module StructCore
 				script_phase.shell_script = script
 				script_phase
 			}.reverse.each { |script|
-				native_target.build_phases.unshift script
+				native_target.build_phases << script
 			}
 
 			target.postbuild_run_scripts.each { |script|
