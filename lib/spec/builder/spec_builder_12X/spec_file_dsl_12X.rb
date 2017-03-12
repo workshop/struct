@@ -34,7 +34,7 @@ module StructCore
 			@spec_file.targets << dsl.target
 		end
 
-		def variant(name, abstract=false, &block)
+		def variant(name, abstract = false, &block)
 			dsl = StructCore::SpecVariantDSL12X.new
 			dsl.project_configurations = @spec_file.configurations
 			dsl.project_base_dir = @project_base_dir

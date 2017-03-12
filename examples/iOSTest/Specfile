@@ -1,3 +1,10 @@
+# This is an example of the new Specfile format, an alternative to writing your projects
+# in pure JSON or YAML.
+#
+# Specfiles are written in Ruby, so they're incredibly useful when you have need for
+# including environment settings, external data sources, and introducing configuration
+# and targets dynamically into an Xcode project.
+
 spec('1.2.0') do
   configuration('debug') do
     profile 'general:debug'

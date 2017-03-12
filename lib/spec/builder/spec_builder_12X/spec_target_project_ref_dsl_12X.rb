@@ -11,7 +11,7 @@ module StructCore
 			target['name'] = name
 
 			# Convert any keys to hashes
-			target = target.collect{|k,v| [k.to_s, v]}.to_h
+			target = target.map { |k, v| [k.to_s, v] }.to_h
 
 			@reference.settings['frameworks'] << target
 		end

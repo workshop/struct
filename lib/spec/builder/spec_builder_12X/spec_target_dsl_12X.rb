@@ -19,7 +19,7 @@ module StructCore
 
 		def type(type)
 			@type = type
-			@type = ":#{type.to_s}" if type.is_a?(Symbol)
+			@type = ":#{type}" if type.is_a?(Symbol)
 			# : at the start of the type is shorthand for 'com.apple.product-type.'
 			if @type.start_with? ':'
 				@type[0] = ''
@@ -91,11 +91,11 @@ module StructCore
 		end
 
 		def framework_reference(reference, settings = nil)
-			settings = settings || {}
+			settings ||= {}
 			reference = StructCore::Specfile::Target::LocalFrameworkReference.new(reference, settings)
 
 			# Convert any keys to hashes
-			reference.settings = reference.settings.collect{|k,v| [k.to_s, v]}.to_h
+			reference.settings = reference.settings.map { |k, v| [k.to_s, v] }.to_h
 			@target.references << reference
 		end
 
