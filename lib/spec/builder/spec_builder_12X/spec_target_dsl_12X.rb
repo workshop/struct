@@ -11,11 +11,13 @@ module StructCore
 			@profiles = []
 			@project_configurations = []
 			@project_base_dir = nil
+			@project = nil
 		end
 
 		attr_accessor :project_configurations
 		attr_accessor :project_base_dir
 		attr_accessor :target
+		attr_accessor :project
 
 		def type(type)
 			@type = type

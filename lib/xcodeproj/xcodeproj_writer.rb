@@ -494,8 +494,10 @@ module StructCore
 			}
 
 			target.prebuild_run_scripts.map { |script|
-				script_name = script.script_path
-				script = File.read(File.join(project_directory, script.script_path))
+				script_name = File.basename(script.script_path)
+				script_path = script.script_path
+				script_path = File.join(project_directory, script_path) unless Pathname.new(script_path).absolute?
+				script = File.read(script_path)
 
 				script_phase = project.new(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
 				script_phase.name = script_name
@@ -506,8 +508,10 @@ module StructCore
 			}
 
 			target.postbuild_run_scripts.each { |script|
-				script_name = script.script_path
-				script = File.read(File.join(project_directory, script.script_path))
+				script_name = File.basename(script.script_path)
+				script_path = script.script_path
+				script_path = File.join(project_directory, script_path) unless Pathname.new(script_path).absolute?
+				script = File.read(script_path)
 
 				script_phase = native_target.new_shell_script_build_phase script_name
 				script_phase.shell_script = script

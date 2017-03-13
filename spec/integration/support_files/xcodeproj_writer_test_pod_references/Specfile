@@ -1,11 +1,13 @@
 spec('1.2.0') do
-  configuration('debug') do
+  configuration('Debug') do
     profile 'general:debug'
     profile 'ios:debug'
+    type :debug
   end
-  configuration('release') do
+  configuration('Release') do
     profile 'general:release'
     profile 'ios:release'
+    type :release
   end
 
   target('My app') do
