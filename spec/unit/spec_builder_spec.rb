@@ -307,5 +307,21 @@ RSpec.describe StructCore::SpecBuilder do
 			expect(proj.variants.count).to eq(1)
 			expect(proj.variants[0].abstract).to eq(true)
 		end
+
+		it 'builds a Specfile with cocoapods' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_12X/spec_builder_12X_test_40.rb')
+
+			proj = StructCore::SpecBuilder.build project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.includes_pods).to be_truthy
+		end
+
+		it 'builds a Specfile with cocoapods in a variant' do
+			project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_12X/spec_builder_12X_test_41.rb')
+
+			proj = StructCore::SpecBuilder.build project_file
+			expect(proj).to be_an StructCore::Specfile
+			expect(proj.includes_pods).to be_truthy
+		end
 	end
 end
