@@ -1,0 +1,42 @@
+---
+version: 1.1.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+  release:
+    profiles:
+    - general:release
+    - ios:release
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+targets:
+  FrameworkExample:
+    sources: FrameworkExample
+    platform: ios
+    type: ":framework"
+    profiles:
+    - platform:ios
+    - framework
+    configuration:
+      INFOPLIST_FILE: FrameworkExample/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.FrameworkExample
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+  FrameworkExampleTests:
+    sources: FrameworkExampleTests
+    references:
+    - FrameworkExample
+    type: ":bundle.unit-test"
+    profiles:
+    - platform:ios
+    - bundle.unit-test
+    configuration:
+      INFOPLIST_FILE: FrameworkExampleTests/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.FrameworkExampleTests
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      FRAMEWORK_SEARCH_PATHS:
+      - $(inherited)
+      - $(BUILT_PRODUCTS_DIR)

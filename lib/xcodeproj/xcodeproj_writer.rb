@@ -185,6 +185,7 @@ module StructCore
 
 			target_references.each { |native_ref|
 				native_target.add_dependency native_ref
+				native_target.frameworks_build_phase.add_file_reference(native_ref.product_reference, true) if native_ref.product_type.end_with? '.framework'
 			}
 
 			requested_sys_framework_refs = target.references
@@ -399,6 +400,9 @@ module StructCore
 					if file.end_with? '.swift' or file.end_with? '.m' or file.end_with? '.mm'
 						native_target.source_build_phase.files_references << native_file
 						native_target.add_file_references [native_file]
+					elsif target.type.end_with?('.framework') && file.end_with?('.h')
+						header = native_target.headers_build_phase.add_file_reference native_file, true
+						header.settings = { 'ATTRIBUTES' => %w(Public)}
 					elsif file.end_with? '.entitlements'
 						next
 					elsif file.include? '.' # Files without an extension break Xcode compilation during resource phase
