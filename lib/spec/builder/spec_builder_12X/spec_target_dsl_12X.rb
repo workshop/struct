@@ -123,6 +123,7 @@ module StructCore
 		end
 
 		def include_cocoapods
+			return unless @project.version.minor >= 1
 			@project.includes_pods = true
 		end
 

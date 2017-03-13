@@ -17,8 +17,8 @@ module StructCore
 			return Specfile.new(spec_version, [], configurations, [], project_base_dir) unless spec_hash.key? 'targets'
 			raise StandardError.new "Error: Invalid spec file. Key 'targets' should be a hash" unless spec_hash['targets'].is_a?(Hash)
 
-			targets = parse_targets spec_hash, valid_configuration_names, project_base_dir
-			variants = parse_variants spec_hash, valid_configuration_names, project_base_dir
+			targets = parse_targets spec_hash, valid_configuration_names, project_base_dir, spec_version
+			variants = parse_variants spec_hash, valid_configuration_names, project_base_dir, spec_version
 
 			Specfile.new(spec_version, targets, configurations, variants, project_base_dir, @spec_file_uses_pods)
 		end
@@ -51,17 +51,17 @@ module StructCore
 			[valid_configuration_names, configurations]
 		end
 
-		private def parse_targets(spec_hash, valid_configuration_names, project_base_dir)
+		private def parse_targets(spec_hash, valid_configuration_names, project_base_dir, spec_version)
 			(spec_hash['targets'] || {}).map { |target_name, target_opts|
 				next nil if target_opts.nil?
-				parse_target_pods target_opts
+				parse_target_pods target_opts, spec_version
 				parse_target_data(target_name, target_opts, project_base_dir, valid_configuration_names)
 			}.compact
 		end
 
-		private def parse_variants(spec_hash, valid_configuration_names, project_base_dir)
+		private def parse_variants(spec_hash, valid_configuration_names, project_base_dir, spec_version)
 			variants = (spec_hash['variants'] || {}).map { |variant_name, variant_targets|
-				parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names)
+				parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names, spec_version)
 			}.compact
 
 			if variants.select { |variant| variant.name == '$base' }.count.zero?
@@ -71,7 +71,7 @@ module StructCore
 			variants
 		end
 
-		private def parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names)
+		private def parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names, spec_version)
 			return nil if (variant_name || '').empty? && variant_targets.nil?
 
 			abstract = false
@@ -81,7 +81,7 @@ module StructCore
 				if key == 'abstract'
 					abstract = true
 				else
-					parse_variant_target_pods value
+					parse_variant_target_pods value, spec_version
 					variant = parse_variant_target_data(key, value, project_base_dir, valid_configuration_names)
 					targets.unshift(variant) unless variant.nil?
 				end
@@ -265,7 +265,8 @@ module StructCore
 			)
 		end
 
-		def parse_variant_target_pods(target_opts)
+		def parse_variant_target_pods(target_opts, spec_version)
+			return unless spec_version.patch >= 1
 			return if @spec_file_uses_pods
 			return if target_opts.nil? || !target_opts.is_a?(Hash)
 			return unless [false, true].include? target_opts['includes_cocoapods']
@@ -472,7 +473,8 @@ module StructCore
 			)
 		end
 
-		def parse_target_pods(target_opts)
+		def parse_target_pods(target_opts, spec_version)
+			return unless spec_version.patch >= 1
 			return if @spec_file_uses_pods
 			return if target_opts.nil? || !target_opts.is_a?(Hash)
 			return unless [false, true].include? target_opts['includes_cocoapods']

@@ -1,4 +1,4 @@
-spec('1.2.0') do
+spec('1.2.1') do
 	configuration('my-configuration') do
 		profile 'general:debug'
 		profile 'ios:debug'
