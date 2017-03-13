@@ -87,7 +87,7 @@ module StructCore
 				}.compact.to_h
 
 				specs.each { |name, variant_spec|
-					StructCore::PodAssistant.apply_pod_configration variant_spec, destination
+					StructCore::PodAssistant.apply_pod_configuration variant_spec, destination
 					if name == '$base'
 						write_xcodeproj variant_spec, File.join(destination, 'project.xcodeproj'), destination
 						puts Paint['Generated project.xcodeproj', :green]
