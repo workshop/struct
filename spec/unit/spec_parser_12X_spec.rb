@@ -400,6 +400,26 @@ RSpec.describe StructCore::Specparser12X do
 				expect(proj.variants[0].targets[0].prebuild_run_scripts.count).to eq(1)
 				expect(proj.targets[0].postbuild_run_scripts.count).to eq(1)
 			end
+
+			it 'parses a specfile that uses cocoapods' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_12X/spec_parser_12X_test_39.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser12X.new
+
+				proj = parser.parse SPEC_VERSION_12X, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.includes_pods).to be_truthy
+			end
+
+			it 'parses a specfile that uses cocoapods in a variant' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_12X/spec_parser_12X_test_40.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser12X.new
+
+				proj = parser.parse SPEC_VERSION_12X, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.includes_pods).to be_truthy
+			end
 		end
 	end
 end

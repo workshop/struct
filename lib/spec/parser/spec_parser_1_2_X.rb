@@ -9,6 +9,8 @@ module StructCore
 		end
 
 		def parse(spec_version, spec_hash, filename)
+			@spec_file_uses_pods = false
+
 			project_base_dir = File.dirname filename
 
 			valid_configuration_names, configurations = parse_configurations spec_hash
@@ -18,7 +20,7 @@ module StructCore
 			targets = parse_targets spec_hash, valid_configuration_names, project_base_dir
 			variants = parse_variants spec_hash, valid_configuration_names, project_base_dir
 
-			Specfile.new(spec_version, targets, configurations, variants, project_base_dir)
+			Specfile.new(spec_version, targets, configurations, variants, project_base_dir, @spec_file_uses_pods)
 		end
 
 		private def parse_configurations(spec_hash)
@@ -52,6 +54,7 @@ module StructCore
 		private def parse_targets(spec_hash, valid_configuration_names, project_base_dir)
 			(spec_hash['targets'] || {}).map { |target_name, target_opts|
 				next nil if target_opts.nil?
+				parse_target_pods target_opts
 				parse_target_data(target_name, target_opts, project_base_dir, valid_configuration_names)
 			}.compact
 		end
@@ -78,6 +81,7 @@ module StructCore
 				if key == 'abstract'
 					abstract = true
 				else
+					parse_variant_target_pods value
 					variant = parse_variant_target_data(key, value, project_base_dir, valid_configuration_names)
 					targets.unshift(variant) unless variant.nil?
 				end
@@ -259,6 +263,13 @@ module StructCore
 				target_name, type, target_sources_dir, configurations, references, [], target_resources_dir,
 				file_excludes, run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
 			)
+		end
+
+		def parse_variant_target_pods(target_opts)
+			return if @spec_file_uses_pods
+			return if target_opts.nil? || !target_opts.is_a?(Hash)
+			return unless [false, true].include? target_opts['includes_cocoapods']
+			@spec_file_uses_pods = target_opts['includes_cocoapods']
 		end
 
 		def parse_target_type(target_opts)
@@ -459,6 +470,13 @@ module StructCore
 				target_name, type, target_sources_dir, configurations, references, [], target_resources_dir,
 				file_excludes, run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
 			)
+		end
+
+		def parse_target_pods(target_opts)
+			return if @spec_file_uses_pods
+			return if target_opts.nil? || !target_opts.is_a?(Hash)
+			return unless [false, true].include? target_opts['includes_cocoapods']
+			@spec_file_uses_pods = target_opts['includes_cocoapods']
 		end
 	end
 end
