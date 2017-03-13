@@ -9,6 +9,10 @@ RSpec.describe StructCore::XcodeprojWriter do
 			destination = Dir.mktmpdir
 			copy_support_files File.join(File.dirname(__FILE__), 'support_files', 'xcodeproj_writer_test_pod_references'), destination
 
+			Dir.chdir(destination) do
+				`pod install`
+			end
+
 			spec = StructCore::SpecBuilder.build File.join(destination, 'Specfile')
 
 			expect { StructCore::XcodeprojWriter.write spec, destination }.to_not raise_error
