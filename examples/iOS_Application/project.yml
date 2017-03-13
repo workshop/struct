@@ -1,6 +1,6 @@
 ---
 # The project spec version number - this is for struct to identify this spec's schema
-version: 1.1.0
+version: 1.2.1
 # Project-level configurations and build settings. You can add as many as you want here.
 # If you do add another configuration that's not one of debug, release, you must specify
 # its type as either 'debug' or 'release'.
