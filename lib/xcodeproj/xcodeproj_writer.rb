@@ -508,7 +508,7 @@ module StructCore
 				script_phase.shell_script = script
 				script_phase
 			}.reverse.each { |script|
-				native_target.build_phases << script
+				native_target.build_phases.unshift script
 			}
 
 			target.postbuild_run_scripts.each { |script|
