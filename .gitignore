@@ -176,3 +176,5 @@ modules.xml
 *.ipr
 examples/**/*.xcodeproj
 spec/integration/support_files/fastlane/report.xml
+Pods
+Podfile.lock

@@ -4,6 +4,7 @@ require 'paint'
 require 'deep_clone'
 require_relative '../spec/spec_file'
 require_relative '../utils/xcconfig_parser'
+require_relative '../cocoapods/pod_assistant'
 
 # TODO: Refactor this once we have integration tests
 # rubocop:disable all
@@ -82,10 +83,11 @@ module StructCore
 						spec_target.postbuild_run_scripts = [].push(*spec_target.postbuild_run_scripts).push(*target.postbuild_run_scripts)
 					}
 
-					[variant.name, StructCore::Specfile.new(spec.version, spec_targets, spec.configurations, [], spec.base_dir)]
+					[variant.name, StructCore::Specfile.new(spec.version, spec_targets, spec.configurations, [], spec.base_dir, spec.includes_pods)]
 				}.compact.to_h
 
 				specs.each { |name, variant_spec|
+					StructCore::PodAssistant.apply_pod_configuration variant_spec, destination
 					if name == '$base'
 						write_xcodeproj variant_spec, File.join(destination, 'project.xcodeproj'), destination
 						puts Paint['Generated project.xcodeproj', :green]
@@ -492,8 +494,10 @@ module StructCore
 			}
 
 			target.prebuild_run_scripts.map { |script|
-				script_name = script.script_path
-				script = File.read(File.join(project_directory, script.script_path))
+				script_name = File.basename(script.script_path)
+				script_path = script.script_path
+				script_path = File.join(project_directory, script_path) unless Pathname.new(script_path).absolute?
+				script = File.read(script_path)
 
 				script_phase = project.new(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
 				script_phase.name = script_name
@@ -504,8 +508,10 @@ module StructCore
 			}
 
 			target.postbuild_run_scripts.each { |script|
-				script_name = script.script_path
-				script = File.read(File.join(project_directory, script.script_path))
+				script_name = File.basename(script.script_path)
+				script_path = script.script_path
+				script_path = File.join(project_directory, script_path) unless Pathname.new(script_path).absolute?
+				script = File.read(script_path)
 
 				script_phase = native_target.new_shell_script_build_phase script_name
 				script_phase.shell_script = script

@@ -35,8 +35,12 @@ require_relative '../lib/spec/builder/spec_builder'
 require_relative '../lib/xcodeproj/xcodeproj_writer'
 
 def copy_support_files(source_dir, dest_dir)
-	FileUtils.cp_r Dir.glob("#{source_dir}/**/*"), dest_dir
-	FileUtils.cp_r Dir.glob("#{source_dir}/**/.*"), dest_dir
+	Dir.glob("#{source_dir}/**/*").each { |file|
+		FileUtils.cp_r file, file.sub(source_dir, dest_dir), {:remove_destination => true}
+	}
+	Dir.glob("#{source_dir}/**/.**").each { |file|
+		FileUtils.cp_r file, file.sub(source_dir, dest_dir), {:remove_destination => true}
+	}
 end
 
 RSpec.configure do |config|
