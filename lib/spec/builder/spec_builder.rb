@@ -56,7 +56,7 @@ module StructCore
 			raise StandardError.new('Invalid Specfile. No target type was defined') if target.type.nil?
 			raise StandardError.new('Invalid Specfile. No target configurations were found. Ensure you have declared at least'\
 			' one project configuration before declaring your target.') if target.configurations.empty?
-			raise StandardErorr.new('Invalid Specfile. The number of target configurations did not match '\
+			raise StandardError.new('Invalid Specfile. The number of target configurations did not match '\
 			'the number of project configurations. Please ensure you have declared enough target configurations '\
 			'and that these configurations are valid.') unless target.configurations.count == spec_config_count
 		end
