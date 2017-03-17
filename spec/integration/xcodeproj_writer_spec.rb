@@ -100,5 +100,20 @@ RSpec.describe StructCore::XcodeprojWriter do
 
 			FileUtils.rm_rf destination
 		end
+
+		it 'strips out invalid characters from variant project filenames' do
+			destination = Dir.mktmpdir
+
+			project_file = File.join(File.dirname(__FILE__), 'support_files/xcodeproj_writer_test_variant_filenames/project.yml')
+			test_hash = YAML.load_file project_file
+			parser = StructCore::Specparser12X.new
+
+			proj = parser.parse Semantic::Version.new('1.2.1'), test_hash, project_file
+
+			expect { StructCore::XcodeprojWriter.write proj, destination }.to_not raise_error
+			expect(File.exist?(File.join(destination, 'My_variant_project_file.xcodeproj'))).to be_truthy
+
+			FileUtils.rm_rf destination
+		end
 	end
 end

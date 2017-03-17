@@ -92,7 +92,7 @@ module StructCore
 						write_xcodeproj variant_spec, File.join(destination, 'project.xcodeproj'), destination
 						puts Paint['Generated project.xcodeproj', :green]
 					else
-						project_name = name.downcase.gsub(/[^0-9a-z]/, '')
+						project_name = name.gsub(/[\/\\:]/, '_')
 						write_xcodeproj variant_spec, File.join(destination, "#{project_name}.xcodeproj"), destination
 						puts Paint["Generated #{project_name}.xcodeproj", :green]
 					end
