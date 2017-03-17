@@ -48,7 +48,7 @@ module StructCore
 			quit(0)
 		end
 
-		private_class_method def self.do_parse(_)
+		def self.do_parse(_)
 			directory = Dir.pwd
 
 			project_file = nil
@@ -74,7 +74,7 @@ module StructCore
 			quit(0)
 		end
 
-		private_class_method def self.do_watch(_)
+		def self.do_watch(_)
 			begin
 				StructCore::Watcher.watch(Dir.pwd)
 			rescue SystemExit, Interrupt
@@ -83,7 +83,7 @@ module StructCore
 			quit(0)
 		end
 
-		private_class_method def self.do_generate(_)
+		def self.do_generate(_)
 			selected_variants = ARGV.select { |item| item != '-g' && item != '--generate' }
 
 			directory = Dir.pwd
@@ -110,7 +110,7 @@ module StructCore
 			quit(0)
 		end
 
-		private_class_method def self.do_create(_)
+		def self.do_create(_)
 			selected_option = Ask.list 'What do you want to create?', [
 				'Class',
 				'Struct',
@@ -151,5 +151,11 @@ module StructCore
 			StructCore::Migrator.migrate mopts[:path], mopts[:destination]
 			quit(0)
 		end
+
+		private_class_method :do_parse
+		private_class_method :do_watch
+		private_class_method :do_generate
+		private_class_method :do_create
+		private_class_method :do_migrate
 	end
 end

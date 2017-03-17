@@ -5,6 +5,7 @@ require 'deep_clone'
 require_relative '../spec/spec_file'
 require_relative '../utils/xcconfig_parser'
 require_relative '../cocoapods/pod_assistant'
+require_relative '../utils/ruby_2_0_monkeypatches'
 
 # TODO: Refactor this once we have integration tests
 # rubocop:disable all
@@ -258,7 +259,7 @@ module StructCore
 			create_group group, components.drop(1)
 		end
 
-		private_class_method def self.write_xcodeproj(spec, filename, base_dir)
+		def self.write_xcodeproj(spec, filename, base_dir)
 			spec_xcodeproj_type_map = {}
 			spec_xcodeproj_type_map['debug'] = :debug
 			spec_xcodeproj_type_map['release'] = :release
@@ -521,6 +522,9 @@ module StructCore
 				script_phase.shell_script = script
 			}
 		end
+
+		private_class_method :write_xcodeproj
+		private_class_method :add_files_to_target
 	end
 end
 # rubocop:enable all
