@@ -45,7 +45,8 @@ module StructCore
 						quit(0)
 					end
 				end
-			rescue StandardError => _
+			rescue StandardError => err
+				puts err
 			end
 
 			parse_deprecated_commands
@@ -120,7 +121,9 @@ module StructCore
 		end
 
 		def self.do_generate(_)
-			selected_variants = ARGV.select { |item| item != '-g' && item != '--generate' }
+			selected_variants = ARGV.select { |item|
+				!%w(-g --generate g generate).include? item
+			}
 
 			directory = Dir.pwd
 			project_file = nil
