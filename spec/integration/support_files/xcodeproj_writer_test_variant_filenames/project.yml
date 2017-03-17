@@ -1,0 +1,19 @@
+---
+version: 1.2.1
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+  release:
+    profiles:
+    - general:release
+    - ios:release
+targets:
+  My app:
+    type: ":application"
+    platform: ios
+    sources: sources
+variants:
+  "My:variant\\project/file":
+    My app:
