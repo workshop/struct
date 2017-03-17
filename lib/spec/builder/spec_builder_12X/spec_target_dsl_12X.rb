@@ -1,6 +1,7 @@
 require 'deep_clone'
 require_relative 'spec_target_configuration_dsl_12X'
 require_relative 'spec_target_project_ref_dsl_12X'
+require_relative '../../../utils/ruby_2_0_monkeypatches'
 
 module StructCore
 	class SpecTargetDSL12X

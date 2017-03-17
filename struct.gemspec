@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.version       = StructCore::VERSION
   spec.licenses      = ['MIT']
-  spec.required_ruby_version = '>= 2.2.5'
+  spec.required_ruby_version = '>= 2.0.0'
   spec.add_development_dependency 'bundler', '~> 1.12'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'slop', '~> 4.0'
   spec.add_dependency 'paint', '~> 1.0.1'
   spec.add_dependency 'xcodeproj', '~> 1.4.2'
-  spec.add_dependency 'listen', '~> 3.1.5'
+  spec.add_dependency 'listen', '~> 3.0.8'
   spec.add_dependency 'semantic', '~> 1.4.1'
   spec.add_dependency 'awesome_print', '~> 1.7.0'
   spec.add_dependency 'mustache', '~> 1.0.0'

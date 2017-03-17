@@ -25,7 +25,7 @@ module StructCore
 		end
 
 		# @return Array<StructCore::Specfile::Configuration>
-		private def parse_configurations(spec_hash, valid_configuration_names)
+		def parse_configurations(spec_hash, valid_configuration_names)
 			return [] unless spec_hash.key? 'configurations'
 			return [] unless spec_hash['configurations'].is_a? Hash
 
@@ -55,7 +55,7 @@ module StructCore
 			}.compact
 		end
 
-		private def parse_config_overrides(config, name)
+		def parse_config_overrides(config, name)
 			overrides = config['overrides'] || {}
 
 			unless overrides.is_a?(Hash)
@@ -66,7 +66,7 @@ module StructCore
 			overrides
 		end
 
-		private def parse_config_type(config, name)
+		def parse_config_type(config, name)
 			type = config['type']
 			unless type.nil? || type.is_a?(String)
 				type = nil
@@ -76,7 +76,7 @@ module StructCore
 			type
 		end
 
-		private def parse_target_type(target_opts)
+		def parse_target_type(target_opts)
 			# Parse target type
 			return nil unless target_opts.key? 'type'
 
@@ -94,7 +94,7 @@ module StructCore
 			[raw_type, type]
 		end
 
-		private def parse_target_profiles_platform(target_opts, raw_type, target_name)
+		def parse_target_profiles_platform(target_opts, raw_type, target_name)
 			# Parse target platform/type/profiles into a profiles list
 			profiles = nil
 			if target_opts.key? 'profiles'
@@ -119,7 +119,7 @@ module StructCore
 			profiles
 		end
 
-		private def parse_target_configurations(target_opts, valid_config_names, profiles, target_name)
+		def parse_target_configurations(target_opts, valid_config_names, profiles, target_name)
 			# Parse target configurations
 			if target_opts.key? 'configurations'
 				unless target_opts['configurations'].is_a?(Hash)
@@ -146,7 +146,7 @@ module StructCore
 			configurations
 		end
 
-		private def parse_target_sources_dir(target_opts, project_base_dir, target_name)
+		def parse_target_sources_dir(target_opts, project_base_dir, target_name)
 			# Parse target sources
 			unless target_opts.key? 'sources'
 				puts Paint["Warning: Target #{target_name} has no sources directory. Ignoring target...", :yellow]
@@ -162,7 +162,7 @@ module StructCore
 			target_sources_dir
 		end
 
-		private def parse_target_resources_dir(target_opts, project_base_dir, target_sources_dir)
+		def parse_target_resources_dir(target_opts, project_base_dir, target_sources_dir)
 			# Parse target resources
 			target_resources_dir = target_sources_dir
 
@@ -173,7 +173,7 @@ module StructCore
 			target_resources_dir
 		end
 
-		private def parse_target_excludes(target_opts, target_name)
+		def parse_target_excludes(target_opts, target_name)
 			# Parse excludes
 			if target_opts.key?('excludes') && !target_opts['excludes'].nil? && target_opts['excludes'].is_a?(Hash)
 				file_excludes = target_opts['excludes']['files'] || []
@@ -188,7 +188,7 @@ module StructCore
 			file_excludes
 		end
 
-		private def parse_target_references(target_opts, project_base_dir, target_name)
+		def parse_target_references(target_opts, project_base_dir, target_name)
 			return [] unless target_opts.key?('references')
 			raw_references = target_opts['references']
 
@@ -225,7 +225,7 @@ module StructCore
 		end
 
 		# @return StructCore::Specfile::Target
-		private def parse_target_data(target_name, target_opts, project_base_dir, valid_config_names)
+		def parse_target_data(target_name, target_opts, project_base_dir, valid_config_names)
 			type, raw_type = parse_target_type target_opts
 			if type.nil?
 				puts Paint["Warning: Target #{target_name} has no target type. Ignoring target...", :yellow]
@@ -253,5 +253,17 @@ module StructCore
 
 			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes
 		end
+
+		private :parse_configurations
+		private :parse_config_overrides
+		private :parse_config_type
+		private :parse_target_type
+		private :parse_target_profiles_platform
+		private :parse_target_configurations
+		private :parse_target_sources_dir
+		private :parse_target_resources_dir
+		private :parse_target_excludes
+		private :parse_target_references
+		private :parse_target_data
 	end
 end

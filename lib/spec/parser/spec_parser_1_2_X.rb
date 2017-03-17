@@ -23,7 +23,7 @@ module StructCore
 			Specfile.new(spec_version, targets, configurations, variants, project_base_dir, @spec_file_uses_pods)
 		end
 
-		private def parse_configurations(spec_hash)
+		def parse_configurations(spec_hash)
 			valid_configuration_names = []
 			configurations = spec_hash['configurations'].map { |name, config|
 				unless config['source'].nil?
@@ -51,7 +51,7 @@ module StructCore
 			[valid_configuration_names, configurations]
 		end
 
-		private def parse_targets(spec_hash, valid_configuration_names, project_base_dir, spec_version)
+		def parse_targets(spec_hash, valid_configuration_names, project_base_dir, spec_version)
 			(spec_hash['targets'] || {}).map { |target_name, target_opts|
 				next nil if target_opts.nil?
 				parse_target_pods target_opts, spec_version
@@ -59,7 +59,7 @@ module StructCore
 			}.compact
 		end
 
-		private def parse_variants(spec_hash, valid_configuration_names, project_base_dir, spec_version)
+		def parse_variants(spec_hash, valid_configuration_names, project_base_dir, spec_version)
 			variants = (spec_hash['variants'] || {}).map { |variant_name, variant_targets|
 				parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names, spec_version)
 			}.compact
@@ -71,7 +71,7 @@ module StructCore
 			variants
 		end
 
-		private def parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names, spec_version)
+		def parse_variant_data(variant_name, variant_targets, project_base_dir, valid_configuration_names, spec_version)
 			return nil if (variant_name || '').empty? && variant_targets.nil?
 
 			abstract = false
@@ -90,7 +90,7 @@ module StructCore
 			StructCore::Specfile::Variant.new(variant_name, targets, abstract)
 		end
 
-		private def parse_variant_target_type(target_opts)
+		def parse_variant_target_type(target_opts)
 			type = nil
 			raw_type = nil
 			# Parse target type
@@ -111,7 +111,7 @@ module StructCore
 			[raw_type, type]
 		end
 
-		private def parse_variant_target_profiles(target_opts, raw_type, target_name)
+		def parse_variant_target_profiles(target_opts, raw_type, target_name)
 			# Parse target platform/type/profiles into a profiles list
 			profiles = []
 			if target_opts.key? 'profiles'
@@ -128,7 +128,7 @@ module StructCore
 			profiles
 		end
 
-		private def parse_variant_target_configurations(target_opts, valid_config_names, profiles)
+		def parse_variant_target_configurations(target_opts, valid_config_names, profiles)
 			# Parse target configurations
 			configurations = nil
 			if target_opts.key? 'configurations'
@@ -151,7 +151,7 @@ module StructCore
 			configurations
 		end
 
-		private def parse_variant_target_sources(target_opts, project_base_dir)
+		def parse_variant_target_sources(target_opts, project_base_dir)
 			# Parse target sources
 			target_sources_dir = nil
 
@@ -166,7 +166,7 @@ module StructCore
 			target_sources_dir
 		end
 
-		private def parse_variant_target_resources(target_opts, project_base_dir)
+		def parse_variant_target_resources(target_opts, project_base_dir)
 			# Parse target resources
 			target_resources_dir = nil
 			target_resources_dir = File.join(project_base_dir, target_opts['i18n-resources']) if target_opts.key? 'i18n-resources'
@@ -174,7 +174,7 @@ module StructCore
 			target_resources_dir
 		end
 
-		private def parse_variant_target_file_excludes(target_opts, target_name)
+		def parse_variant_target_file_excludes(target_opts, target_name)
 			# Parse excludes
 			if target_opts.key?('excludes') && target_opts['excludes'].is_a?(Hash)
 				file_excludes = target_opts['excludes']['files'] || []
@@ -189,7 +189,7 @@ module StructCore
 			file_excludes
 		end
 
-		private def parse_variant_target_references(target_opts, target_name, project_base_dir)
+		def parse_variant_target_references(target_opts, target_name, project_base_dir)
 			return [] unless target_opts.key? 'references'
 			raw_references = target_opts['references']
 
@@ -248,7 +248,7 @@ module StructCore
 			end
 		end
 
-		private def parse_variant_target_data(target_name, target_opts, project_base_dir, valid_config_names)
+		def parse_variant_target_data(target_name, target_opts, project_base_dir, valid_config_names)
 			return nil if target_opts.nil? || !target_opts.is_a?(Hash)
 			raw_type, type = parse_variant_target_type target_opts
 			profiles = parse_variant_target_profiles target_opts, raw_type, target_name
@@ -480,5 +480,18 @@ module StructCore
 			return unless [false, true].include? target_opts['includes_cocoapods']
 			@spec_file_uses_pods = target_opts['includes_cocoapods']
 		end
+
+		private :parse_configurations
+		private :parse_targets
+		private :parse_variants
+		private :parse_variant_data
+		private :parse_variant_target_type
+		private :parse_variant_target_profiles
+		private :parse_variant_target_configurations
+		private :parse_variant_target_sources
+		private :parse_variant_target_resources
+		private :parse_variant_target_file_excludes
+		private :parse_variant_target_references
+		private :parse_variant_target_data
 	end
 end

@@ -77,13 +77,13 @@ module StructCore
 			end
 		end
 
-		private_class_method def self.out_of_date?(latest_gem_version, local_gem_version)
+		def self.out_of_date?(latest_gem_version, local_gem_version)
 			latest_gem_version.major > local_gem_version.major ||
 				(latest_gem_version.major == local_gem_version.major && latest_gem_version.minor > local_gem_version.minor) ||
 				(latest_gem_version.major == local_gem_version.major && latest_gem_version.minor == local_gem_version.minor && latest_gem_version.patch > local_gem_version.patch)
 		end
 
-		private_class_method def self.print(changelog, local_gem_version)
+		def self.print(changelog, local_gem_version)
 			return if changelog.nil? || changelog['latest'].nil?
 
 			begin
@@ -106,5 +106,8 @@ module StructCore
 			puts Paint["What's new:\n-----------", :yellow]
 			puts Paint[changelog['versions'][latest_gem_version.to_s].map { |str| " -  #{str}" }.join("\n"), :yellow]
 		end
+
+		private_class_method :out_of_date?
+		private_class_method :print
 	end
 end

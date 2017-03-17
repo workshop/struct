@@ -3,6 +3,7 @@ require 'paint'
 require 'yaml'
 require 'json'
 require_relative '../spec_file'
+require_relative '../../utils/ruby_2_0_monkeypatches'
 
 # TODO: Refactor this once we have integration tests
 # rubocop:disable all

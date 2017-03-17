@@ -198,7 +198,7 @@ module StructCore
 		# rubocop:enable Metrics/PerceivedComplexity
 		# rubocop:enable Metrics/CyclomaticComplexity
 
-		private_class_method def self.migrate_build_configurations(project, project_dir, directory)
+		def self.migrate_build_configurations(project, project_dir, directory)
 			project.build_configurations.map { |config|
 				source = nil
 
@@ -218,7 +218,7 @@ module StructCore
 			}
 		end
 
-		private_class_method def self.extract_xcconfig_path(base_configuration_reference, project_dir, directory)
+		def self.extract_xcconfig_path(base_configuration_reference, project_dir, directory)
 			path = base_configuration_reference.hierarchy_path
 			path[0] = '' if path.start_with? '/'
 
@@ -237,7 +237,7 @@ module StructCore
 			path
 		end
 
-		private_class_method def self.extract_target_config_overrides(profiles, build_settings)
+		def self.extract_target_config_overrides(profiles, build_settings)
 			default_settings = profiles.map { |profile_name|
 				[profile_name, File.join(TARGET_CONFIG_PROFILE_PATH, "#{profile_name.sub(':', '_')}.yml")]
 			}.map { |data|
@@ -255,10 +255,15 @@ module StructCore
 			build_settings.reject { |k, _| default_settings.include? k }
 		end
 
-		private_class_method def self.extract_target_xcconfig_overrides(xcconfig_file_ref, project_dir)
+		def self.extract_target_xcconfig_overrides(xcconfig_file_ref, project_dir)
 			return {} if xcconfig_file_ref.nil?
 			xcconfig_file = xcconfig_file_ref.hierarchy_path || ''
 			StructCore::XcconfigParser.parse xcconfig_file, project_dir
 		end
+
+		private_class_method :migrate_build_configurations
+		private_class_method :extract_xcconfig_path
+		private_class_method :extract_target_config_overrides
+		private_class_method :extract_target_xcconfig_overrides
 	end
 end
