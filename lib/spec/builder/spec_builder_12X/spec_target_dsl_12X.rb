@@ -20,7 +20,8 @@ module StructCore
 		attr_accessor :target
 		attr_accessor :project
 
-		def type(type)
+		def type(type = nil)
+			return unless type.is_a?(String) || type.is_a?(Symbol)
 			@type = type
 			@type = ":#{type}" if type.is_a?(Symbol)
 			# : at the start of the type is shorthand for 'com.apple.product-type.'
@@ -36,12 +37,12 @@ module StructCore
 			@target.type = @type
 		end
 
-		def profile(profile)
+		def profile(profile = nil)
 			return unless profile.is_a?(String) && !profile.empty?
 			@profiles << profile
 		end
 
-		def platform(platform)
+		def platform(platform = nil)
 			return unless platform.is_a?(String) || platform.is_a?(Symbol)
 			# TODO: Add support for 'tvos', 'watchos'
 			platform = platform.to_s if platform.is_a?(Symbol)
@@ -78,28 +79,28 @@ module StructCore
 			end
 		end
 
-		def source_dir(path)
+		def source_dir(path = nil)
 			return unless path.is_a?(String) && !path.empty?
 			@target.source_dir << File.join(@project_base_dir, path)
 		end
 
-		def i18n_resource_dir(path)
+		def i18n_resource_dir(path = nil)
 			return unless path.is_a?(String) && !path.empty?
 			@target.res_dir << File.join(@project_base_dir, path)
 		end
 
-		def system_reference(reference)
+		def system_reference(reference = nil)
 			return unless reference.is_a?(String) && !reference.empty?
 			@target.references << StructCore::Specfile::Target::SystemFrameworkReference.new(reference.sub('.framework', '')) if reference.end_with? '.framework'
 			@target.references << StructCore::Specfile::Target::SystemLibraryReference.new(reference) unless reference.end_with? '.framework'
 		end
 
-		def target_reference(reference)
+		def target_reference(reference = nil)
 			return unless reference.is_a?(String) && !reference.empty?
 			@target.references << StructCore::Specfile::Target::TargetReference.new(reference)
 		end
 
-		def framework_reference(reference, settings = nil)
+		def framework_reference(reference = nil, settings = nil)
 			return unless reference.is_a?(String) && !reference.empty?
 
 			settings ||= {}
@@ -110,7 +111,7 @@ module StructCore
 			@target.references << reference
 		end
 
-		def project_framework_reference(project, &block)
+		def project_framework_reference(project = nil, &block)
 			return unless project.is_a?(String) && !project.empty? && !block.nil?
 
 			settings = {}
@@ -128,22 +129,22 @@ module StructCore
 			@project.includes_pods = true
 		end
 
-		def exclude_files_matching(glob)
+		def exclude_files_matching(glob = nil)
 			return unless glob.is_a?(String) && !glob.empty?
 			@target.file_excludes << glob
 		end
 
-		def script_prebuild(script_path)
+		def script_prebuild(script_path = nil)
 			return unless script_path.is_a?(String) && !script_path.empty?
 			@target.prebuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
 		end
 
-		def script(script_path)
+		def script(script_path = nil)
 			return unless script_path.is_a?(String) && !script_path.empty?
 			@target.postbuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
 		end
 
-		def script_postbuild(script_path)
+		def script_postbuild(script_path = nil)
 			return unless script_path.is_a?(String) && !script_path.empty?
 			@target.postbuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
 		end
