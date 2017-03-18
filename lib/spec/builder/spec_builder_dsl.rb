@@ -1,5 +1,6 @@
 require 'semantic'
 require_relative 'spec_builder_12X/spec_file_dsl_12X'
+require_relative 'spec_builder_13X/spec_file_dsl_13X'
 
 module StructCore
 	class SpecBuilderDsl
@@ -24,7 +25,8 @@ module StructCore
 
 		def register_defaults
 			@file_dsls.unshift(
-				StructCore::SpecFileDSL12X.new
+				StructCore::SpecFileDSL12X.new,
+				StructCore::SpecFileDSL13X.new
 			)
 		end
 
