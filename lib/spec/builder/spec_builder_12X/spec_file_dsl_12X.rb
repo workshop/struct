@@ -7,6 +7,7 @@ module StructCore
 		def initialize
 			@spec_file = nil
 			@project_base_dir = nil
+			@current_scope = nil
 		end
 
 		def supports_version(version)
@@ -16,28 +17,32 @@ module StructCore
 		attr_accessor :spec_file
 		attr_accessor :project_base_dir
 
-		def configuration(name = nil, &block)
+		def __spec_configuration(name = nil, &block)
 			return unless name.is_a?(String) && !name.empty? && !block.nil?
 			dsl = StructCore::SpecConfigurationDSL12X.new
 			dsl.configuration = StructCore::Specfile::Configuration.new(name, [], {}, nil, nil)
-			dsl.instance_eval(&block)
+			@current_scope = dsl
+			block.call
+			@current_scope = nil
 
 			@spec_file.configurations << dsl.configuration
 		end
 
-		def target(name, &block)
+		def __spec_target(name, &block)
 			return unless name.is_a?(String) && !name.empty? && !block.nil?
 			dsl = StructCore::SpecTargetDSL12X.new
 			dsl.project_configurations = @spec_file.configurations
 			dsl.project_base_dir = @project_base_dir
 			dsl.project = @spec_file
 			dsl.target = StructCore::Specfile::Target.new(name, nil, [], [], [], [], [], [], [], [])
-			dsl.instance_eval(&block)
+			@current_scope = dsl
+			block.call
+			@current_scope = nil
 
 			@spec_file.targets << dsl.target
 		end
 
-		def variant(name = nil, abstract = false, &block)
+		def __spec_variant(name = nil, abstract = false, &block)
 			return unless name.is_a?(String) && !name.empty? && [true, false].include?(abstract) && !block.nil?
 			dsl = StructCore::SpecVariantDSL12X.new
 			dsl.project_configurations = @spec_file.configurations
@@ -45,7 +50,9 @@ module StructCore
 			dsl.project_target_names = @spec_file.targets.map(&:name)
 			dsl.project = @spec_file
 			dsl.variant = StructCore::Specfile::Variant.new(name, [], abstract)
-			dsl.instance_eval(&block)
+			@current_scope = dsl
+			block.call
+			@current_scope = nil
 
 			@spec_file.variants << dsl.variant
 		end
@@ -54,10 +61,16 @@ module StructCore
 			true
 		end
 
-		# rubocop:disable Style/MethodMissing
-		def method_missing(_, *_)
-			# Do nothing if a method is missing
+		def method_missing(method, *args, &block)
+			if @current_scope.nil? && method == :configuration
+				send('__spec_configuration', *args, &block)
+			elsif @current_scope.nil? && method == :target
+				send('__spec_target', *args, &block)
+			elsif @current_scope.nil? && method == :variant
+				send('__spec_variant', *args, &block)
+			else
+				@current_scope.send(method, *args, &block)
+			end
 		end
-		# rubocop:enable Style/MethodMissing
 	end
 end

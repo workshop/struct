@@ -324,6 +324,13 @@ RSpec.describe StructCore::SpecBuilder do
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.includes_pods).to be_truthy
 			end
+
+			it 'builds a Specfile that consumes ruby methods' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_12X/spec_builder_12X_test_43.rb')
+
+				proj = StructCore::SpecBuilder.build project_file
+				expect(proj).to be_an StructCore::Specfile
+			end
 		end
 	end
 end

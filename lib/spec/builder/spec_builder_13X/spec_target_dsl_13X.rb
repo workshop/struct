@@ -13,6 +13,7 @@ module StructCore
 			@project_configurations = []
 			@project_base_dir = nil
 			@project = nil
+			@current_scope = nil
 		end
 
 		attr_accessor :project_configurations
@@ -56,10 +57,12 @@ module StructCore
 
 		def configuration(name = nil, &block)
 			dsl = StructCore::SpecTargetConfigurationDSL13X.new
+			@current_scope = dsl
 
 			if name.nil?
 				dsl.configuration = StructCore::Specfile::Target::Configuration.new nil, {}, []
-				dsl.instance_eval(&block)
+				block.call
+				@current_scope = nil
 
 				config = dsl.configuration
 				config.profiles = @profiles if config.source.nil? || config.source.empty?
@@ -70,7 +73,8 @@ module StructCore
 				}
 			else
 				dsl.configuration = StructCore::Specfile::Target::Configuration.new name, {}, []
-				dsl.instance_eval(&block)
+				block.call
+				@current_scope = nil
 
 				config = dsl.configuration
 				config.profiles = @profiles if config.source.nil? || config.source.empty?
@@ -160,10 +164,9 @@ module StructCore
 			true
 		end
 
-		# rubocop:disable Style/MethodMissing
-		def method_missing(_, *_)
-			# Do nothing if a method is missing
+		def method_missing(method, *args, &block)
+			return if @current_scope.nil?
+			@current_scope.send(method, *args, &block)
 		end
-		# rubocop:enable Style/MethodMissing
 	end
 end

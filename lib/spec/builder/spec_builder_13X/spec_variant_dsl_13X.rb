@@ -8,6 +8,7 @@ module StructCore
 			@project_base_dir = nil
 			@project_target_names = []
 			@project = nil
+			@current_scope = nil
 		end
 
 		attr_accessor :variant
@@ -27,7 +28,9 @@ module StructCore
 			dsl.project_base_dir = @project_base_dir
 			dsl.target = StructCore::Specfile::Target.new(name, nil, [], [], [], [], [], [], [], [])
 			dsl.project = @project
-			dsl.instance_eval(&block)
+			@current_scope = dsl
+			block.call
+			@current_scope = nil
 
 			@variant.targets << dsl.target
 		end
@@ -36,10 +39,9 @@ module StructCore
 			true
 		end
 
-		# rubocop:disable Style/MethodMissing
-		def method_missing(_, *_)
-			# Do nothing if a method is missing
+		def method_missing(method, *args, &block)
+			return if @current_scope.nil?
+			@current_scope.send(method, *args, &block)
 		end
-		# rubocop:enable Style/MethodMissing
 	end
 end
