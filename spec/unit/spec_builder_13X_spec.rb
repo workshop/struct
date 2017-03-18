@@ -342,6 +342,14 @@ RSpec.describe StructCore::SpecBuilder do
 				proj = StructCore::SpecBuilder.build project_file
 				expect(proj).to be_an StructCore::Specfile
 			end
+
+			it 'builds a Specfile that specifies type uuids' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_13X/spec_builder_13X_test_44.rb')
+
+				proj = StructCore::SpecBuilder.build project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[0].type).to eq('UUID')
+			end
 		end
 	end
 end

@@ -166,6 +166,7 @@ module StructCore
 			end
 
 			native_target = project.new_target PRODUCT_TYPE_UTI_INV[target.type], target.name, platform, nil, nil, :swift
+			native_target.product_type = target.type if PRODUCT_TYPE_UTI_INV[target.type].nil?
 			native_target.build_configurations.clear
 			target_build_settings.each { |name, data|
 				config = native_target.add_build_configuration(name, data[:type])
