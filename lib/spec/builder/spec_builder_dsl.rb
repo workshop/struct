@@ -8,6 +8,7 @@ module StructCore
 			@spec_file = spec_file
 			@file_dsls = file_dsls
 			@project_base_dir = nil
+			@current_scope = nil
 
 			register_defaults if @file_dsls.empty?
 		end
@@ -50,7 +51,18 @@ module StructCore
 			@spec_file.version = spec_version
 			dsl.spec_file = @spec_file
 			dsl.project_base_dir = @project_base_dir
-			dsl.instance_eval(&block)
+
+			@current_scope = dsl
+			block.call
+			@current_scope = nil
+		end
+
+		def respond_to_missing?(_, _)
+			!@current_scope.nil?
+		end
+
+		def method_missing(method, *args, &block)
+			@current_scope.send(method, *args, &block)
 		end
 	end
 end
