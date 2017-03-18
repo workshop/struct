@@ -5,4 +5,5 @@ module StructCore
 	SPEC_VERSION_110 = Semantic::Version.new('1.1.0')
 	SPEC_VERSION_120 = Semantic::Version.new('1.2.0')
 	SPEC_VERSION_121 = Semantic::Version.new('1.2.1')
+	SPEC_VERSION_130 = Semantic::Version.new('1.3.0')
 end
