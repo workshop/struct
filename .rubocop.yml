@@ -131,7 +131,7 @@ Metrics/CyclomaticComplexity:
 
 # We'll try to reduce this over time
 Metrics/PerceivedComplexity:
-  Max: 10
+  Max: 12
 
 # TODO: To avoid breaking the existing API this is disabled. To be reviewed when the next API revision occurs.
 Metrics/ParameterLists:

@@ -111,6 +111,13 @@ module StructCore
 			@target.references << reference
 		end
 
+		def library_reference(reference = nil)
+			return unless reference.is_a?(String) && !reference.empty?
+			reference = StructCore::Specfile::Target::LocalLibraryReference.new(reference, {})
+
+			@target.references << reference
+		end
+
 		def project_framework_reference(project = nil, &block)
 			return unless project.is_a?(String) && !project.empty? && !block.nil?
 

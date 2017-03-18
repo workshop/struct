@@ -324,6 +324,17 @@ RSpec.describe StructCore::SpecBuilder do
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.includes_pods).to be_truthy
 			end
+
+			it 'builds a Specfile that contains library references' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_13X/spec_builder_13X_test_42.rb')
+
+				proj = StructCore::SpecBuilder.build project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[0].references.count).to eq(1)
+				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::LocalLibraryReference)
+				expect(proj.variants[0].targets[0].references.count).to eq(1)
+				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::LocalLibraryReference)
+			end
 		end
 	end
 end
