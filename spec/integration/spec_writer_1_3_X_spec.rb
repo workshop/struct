@@ -11,7 +11,7 @@ RSpec.describe StructCore::Specwriter13X do
 
 			spec_2_data = nil
 
-			expect { spec_2_data = StructCore::Specwriter12X.new.write_spec spec, project_file, true }.to_not raise_error
+			expect { spec_2_data = StructCore::Specwriter13X.new.write_spec spec, project_file, true }.to_not raise_error
 			expect(spec_2_data).to_not be_nil
 			spec_2_hash = YAML.load spec_2_data
 
@@ -22,6 +22,8 @@ RSpec.describe StructCore::Specwriter13X do
 			expect(spec_2.configurations.length).to eq(2)
 			expect(spec_2.targets.length).to eq(1)
 			expect(spec_2.variants.length).to eq(3)
+			expect(spec_2.targets[0].references.length).to eq(2)
+			expect(spec_2.variants[2].targets[0].references.length).to eq(2)
 		end
 	end
 end

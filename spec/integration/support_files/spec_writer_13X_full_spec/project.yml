@@ -17,6 +17,7 @@ targets:
       - "**/*.md"
     references:
     - sdkroot:UIKit.framework
+    - location: library.a
     platform: ios
     type: ":application"
     configuration: "config-target.xcconfig"
@@ -37,5 +38,6 @@ variants:
       sources: sources_beta
       references:
       - sdkroot:CoreData.framework
+      - location: other-library.a
       configuration:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_BETA

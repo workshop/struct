@@ -275,6 +275,11 @@ module StructCore
 					local_path = ref.framework_path.sub(project_directory, '')
 					local_path[0] = '' if local_path.start_with? '/'
 					obj['location'] = local_path
+				elsif ref.is_a? StructCore::Specfile::Target::LocalLibraryReference
+					obj = {}
+					local_path = ref.library_path.sub(project_directory, '')
+					local_path[0] = '' if local_path.start_with? '/'
+					obj['location'] = local_path
 				else
 					nil
 				end
