@@ -6,6 +6,9 @@ module StructCore
 	class Specparser
 		def initialize
 			@parsers = []
+			@deprecated_versions = [
+				StructCore::SPEC_VERSION_100
+			]
 		end
 
 		def register(parser)
@@ -19,15 +22,18 @@ module StructCore
 
 		def register_defaults
 			@parsers.unshift(
-				StructCore::Specparser10X.new,
 				StructCore::Specparser11X.new,
 				StructCore::Specparser12X.new
 			)
 		end
 
+		def deprecated?(version)
+			@deprecated_versions.include? version
+		end
+
 		# There's not much sense refactoring this to be tiny methods.
-		# rubocop:disable Metrics/AbcSize
 		# rubocop:disable Metrics/PerceivedComplexity
+		# rubocop:disable Metrics/AbcSize
 		# @param path [String]
 		def parse(path)
 			register_defaults if @parsers.empty?
@@ -56,6 +62,7 @@ module StructCore
 			}
 
 			raise StandardError.new "Error: Invalid spec file. Project version #{spec_hash['version']} is unsupported by this version of struct." if parser.nil?
+			puts Paint["Spec version #{spec_version} is now deprecated and will be removed soon. Please migrate to the latest spec format as soon as possible.", :red] if deprecated?(spec_version)
 
 			raise StandardError.new "Error: Invalid spec file. No 'configurations' key was present." unless spec_hash.key? 'configurations'
 			raise StandardError.new "Error: Invalid spec file. Key 'configurations' should be a hash" unless spec_hash['configurations'].is_a?(Hash)
@@ -63,7 +70,7 @@ module StructCore
 
 			parser.parse(spec_version, spec_hash, filename)
 		end
-		# rubocop:enable Metrics/AbcSize
 		# rubocop:enable Metrics/PerceivedComplexity
+		# rubocop:enable Metrics/AbcSize
 	end
 end

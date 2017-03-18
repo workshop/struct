@@ -2,14 +2,11 @@ require_relative '../spec_helper'
 
 RSpec.describe StructCore::Specparser12X do
 	describe '#can_parse_version' do
-		SPEC_VERSION_120 = Semantic::Version.new('1.2.0').freeze
-		SPEC_VERSION_121 = Semantic::Version.new('1.2.1').freeze
-
 		it 'specifies that it can only parse Spec versions 1.2.X' do
 			parser = StructCore::Specparser12X.new
 
-			expect(parser.can_parse_version(SPEC_VERSION_120)).to be_truthy
-			expect(parser.can_parse_version(Semantic::Version.new('1.2.1'))).to be_truthy
+			expect(parser.can_parse_version(StructCore::SPEC_VERSION_120)).to be_truthy
+			expect(parser.can_parse_version(StructCore::SPEC_VERSION_121)).to be_truthy
 			expect(parser.can_parse_version(Semantic::Version.new('1.2.1001'))).to be_truthy
 			expect(parser.can_parse_version(Semantic::Version.new('1.3.0'))).to be_falsey
 			expect(parser.can_parse_version(Semantic::Version.new('1.1.0'))).to be_falsey
@@ -22,7 +19,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.configurations.count).to eq(2)
 			end
@@ -32,7 +29,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				expect { parser.parse SPEC_VERSION_120, test_hash, project_file }.to raise_error(StandardError)
+				expect { parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file }.to raise_error(StandardError)
 			end
 
 			it 'can parse a specfile with only 1 configuration' do
@@ -40,7 +37,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.configurations.count).to eq(1)
 			end
@@ -50,7 +47,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				expect { parser.parse SPEC_VERSION_120, test_hash, project_file }.to raise_error(StandardError)
+				expect { parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file }.to raise_error(StandardError)
 			end
 
 			it 'raises an error if a project has an invalid configurations section' do
@@ -58,7 +55,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				expect { parser.parse SPEC_VERSION_120, test_hash, project_file }.to raise_error(StandardError)
+				expect { parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file }.to raise_error(StandardError)
 			end
 
 			it 'raises an error if a project has an invalid profiles section in a configuration block' do
@@ -66,7 +63,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				expect { parser.parse SPEC_VERSION_120, test_hash, project_file }.to raise_error(StandardError)
+				expect { parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file }.to raise_error(StandardError)
 			end
 
 			it 'raises an error if a project has a missing profiles section in a configuration block' do
@@ -74,7 +71,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				expect { parser.parse SPEC_VERSION_120, test_hash, project_file }.to raise_error(StandardError)
+				expect { parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file }.to raise_error(StandardError)
 			end
 
 			it 'can parse a specfile with invalid overrides or types' do
@@ -82,7 +79,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.configurations.count).to eq(1)
 			end
@@ -92,7 +89,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.configurations.count).to eq(1)
 				expect(proj.configurations[0].name).to eq('my-configuration')
@@ -104,7 +101,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets.count).to eq(0)
 			end
@@ -114,7 +111,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets.count).to eq(0)
 			end
@@ -124,7 +121,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].source_dir.count).to eq(1)
 				expect(proj.targets[0].source_dir[0]).to be_truthy
@@ -135,7 +132,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].res_dir.count).to eq(1)
 				expect(proj.targets[0].res_dir[0]).to be_truthy
@@ -146,7 +143,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].file_excludes.count).to eq(2)
 				expect(proj.targets[0].file_excludes[0]).to eq('a/b/c')
@@ -158,7 +155,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].file_excludes.count).to eq(0)
 			end
@@ -168,7 +165,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].file_excludes.count).to eq(0)
 			end
@@ -178,7 +175,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(1)
 				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::SystemFrameworkReference)
@@ -189,7 +186,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(1)
 				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::SystemLibraryReference)
@@ -200,7 +197,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(1)
 				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::FrameworkReference)
@@ -211,7 +208,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(0)
 			end
@@ -221,7 +218,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(0)
 			end
@@ -231,7 +228,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(1)
 				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::LocalFrameworkReference)
@@ -242,7 +239,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].references.count).to eq(1)
 				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::LocalFrameworkReference)
@@ -255,7 +252,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].postbuild_run_scripts.count).to eq(1)
 				expect(proj.targets[0].postbuild_run_scripts[0]).to be_an_instance_of(StructCore::Specfile::Target::RunScript)
@@ -266,7 +263,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets[0].postbuild_run_scripts.count).to eq(0)
 			end
@@ -276,7 +273,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 			end
 
@@ -285,7 +282,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 			end
 
@@ -294,7 +291,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.variants[0].targets.count).to eq(0)
 			end
@@ -304,7 +301,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 			end
 
@@ -313,7 +310,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.variants[0].targets.count).to eq(1)
 				expect(proj.variants[0].targets[0].source_dir.count).to eq(1)
@@ -329,7 +326,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.variants[0].targets.count).to eq(1)
 			end
@@ -339,7 +336,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.configurations.count).to eq(3)
 			end
@@ -349,7 +346,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets.count).to eq(1)
 				expect(proj.targets[0].configurations.count).to eq(2)
@@ -360,7 +357,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.targets.count).to eq(1)
 				expect(proj.targets[0].configurations.count).to eq(2)
@@ -372,7 +369,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.variants.count).to be(2)
 				expect(proj.variants[0].targets.count).to eq(1)
@@ -384,7 +381,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.variants.count).to be(2)
 				expect(proj.variants[0].targets.count).to eq(1)
@@ -396,7 +393,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_120, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_120, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.variants[0].targets[0].prebuild_run_scripts.count).to eq(1)
 				expect(proj.targets[0].postbuild_run_scripts.count).to eq(1)
@@ -407,7 +404,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_121, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_121, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.includes_pods).to be_truthy
 			end
@@ -417,7 +414,7 @@ RSpec.describe StructCore::Specparser12X do
 				test_hash = YAML.load_file project_file
 				parser = StructCore::Specparser12X.new
 
-				proj = parser.parse SPEC_VERSION_121, test_hash, project_file
+				proj = parser.parse StructCore::SPEC_VERSION_121, test_hash, project_file
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.includes_pods).to be_truthy
 			end

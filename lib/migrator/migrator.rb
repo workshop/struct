@@ -54,7 +54,7 @@ module StructCore
 			project = Xcodeproj::Project.open(xcodeproj_path)
 			project_dir = File.dirname(xcodeproj_path)
 
-			spec_version = Semantic::Version.new('1.2.0')
+			spec_version = StructCore::SPEC_VERSION_121
 			configurations = migrate_build_configurations project, project_dir, directory
 
 			targets = project.targets.map { |target|

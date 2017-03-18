@@ -108,7 +108,7 @@ RSpec.describe StructCore::XcodeprojWriter do
 			test_hash = YAML.load_file project_file
 			parser = StructCore::Specparser12X.new
 
-			proj = parser.parse Semantic::Version.new('1.2.1'), test_hash, project_file
+			proj = parser.parse StructCore::SPEC_VERSION_121, test_hash, project_file
 
 			expect { StructCore::XcodeprojWriter.write proj, destination }.to_not raise_error
 			expect(File.exist?(File.join(destination, 'My_variant_project_file.xcodeproj'))).to be_truthy
