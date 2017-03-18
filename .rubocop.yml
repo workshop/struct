@@ -161,3 +161,10 @@ Style/RegexpLiteral:
 # Buggy, as it enforces whichever style is not used
 Style/MultilineIfModifier:
   Enabled: false
+
+# We need dynamic dispatch for the DSL
+Style/MethodMissing:
+  Enabled: false
+
+Performance/RedundantBlockCall:
+  Enabled: false

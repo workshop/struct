@@ -63,11 +63,11 @@ module StructCore
 
 		def method_missing(method, *args, &block)
 			if @current_scope.nil? && method == :configuration
-				self.send('__spec_configuration', *args, &block)
+				send('__spec_configuration', *args, &block)
 			elsif @current_scope.nil? && method == :target
-				self.send('__spec_target', *args, &block)
+				send('__spec_target', *args, &block)
 			elsif @current_scope.nil? && method == :variant
-				self.send('__spec_variant', *args, &block)
+				send('__spec_variant', *args, &block)
 			else
 				@current_scope.send(method, *args, &block)
 			end
