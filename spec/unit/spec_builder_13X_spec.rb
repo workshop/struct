@@ -348,7 +348,7 @@ RSpec.describe StructCore::SpecBuilder do
 
 				proj = StructCore::SpecBuilder.build project_file
 				expect(proj).to be_an StructCore::Specfile
-				expect(proj.targets[0].raw_type).to eq('UUID')
+				expect(proj.targets[0].type).to eq('UUID')
 			end
 		end
 	end
