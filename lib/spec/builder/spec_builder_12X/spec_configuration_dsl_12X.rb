@@ -6,17 +6,17 @@ module StructCore
 
 		attr_accessor :configuration
 
-		def profile(profile)
+		def profile(profile = nil)
 			return unless profile.is_a?(String) && !profile.empty?
 			@configuration.profiles << profile
 		end
 
-		def override(key, value)
+		def override(key = nil, value = nil)
 			return unless key.is_a?(String) && !key.empty? && value.is_a?(String)
 			@configuration.overrides[key] = value
 		end
 
-		def type(type)
+		def type(type = nil)
 			return unless type.is_a?(String) || type.is_a?(Symbol)
 			type = type.to_s
 			return if type.empty?
@@ -24,7 +24,7 @@ module StructCore
 			@configuration.raw_type = type
 		end
 
-		def source(source)
+		def source(source = nil)
 			return unless source.is_a?(String) && !source.empty?
 			@configuration.source = source
 		end

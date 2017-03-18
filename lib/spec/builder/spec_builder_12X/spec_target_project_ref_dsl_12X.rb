@@ -8,7 +8,7 @@ module StructCore
 
 		attr_accessor :reference
 
-		def framework(name, settings = nil)
+		def framework(name = nil, settings = nil)
 			unless name.is_a?(String) && !name.empty?
 				@reference = nil
 				return

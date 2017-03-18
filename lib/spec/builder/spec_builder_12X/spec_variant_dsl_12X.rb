@@ -20,7 +20,7 @@ module StructCore
 			@variant.abstract = true
 		end
 
-		def target(name, &block)
+		def target(name = nil, &block)
 			return unless name.is_a?(String) && !name.empty? && !block.nil? && @project_target_names.include?(name)
 			dsl = StructCore::SpecTargetDSL12X.new
 			dsl.project_configurations = @project_configurations
