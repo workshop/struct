@@ -22,7 +22,11 @@ module StructCore
 		attr_accessor :project
 
 		def type(type = nil)
-			return unless type.is_a?(String) || type.is_a?(Symbol)
+			parse_raw_type(type) if type.is_a?(String) || type.is_a?(Symbol)
+			parse_hash_type(type) if type.is_a?(Hash)
+		end
+
+		def parse_raw_type(type)
 			@type = type
 			@type = ":#{type}" if type.is_a?(Symbol)
 			# : at the start of the type is shorthand for 'com.apple.product-type.'
@@ -34,6 +38,15 @@ module StructCore
 				@raw_type = @type
 			end
 
+			@profiles << @raw_type
+			@target.type = @type
+		end
+
+		def parse_hash_type(type)
+			@type = type[:uuid]
+			return if @type.nil?
+
+			@raw_type = @type
 			@profiles << @raw_type
 			@target.type = @type
 		end
