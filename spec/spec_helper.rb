@@ -16,6 +16,7 @@ end
 require 'semantic'
 require 'tmpdir'
 require 'yaml'
+require_relative '../lib/utils/defines'
 require_relative '../lib/spec/spec_file'
 require_relative '../lib/create/create_class'
 require_relative '../lib/create/create_configuration'
