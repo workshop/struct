@@ -207,7 +207,11 @@ module StructCore
 						next nil
 					end
 
-					next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if raw_reference['frameworks'].nil?
+					if raw_reference['frameworks'].nil?
+						next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if path.end_with? '.framework'
+						next Specfile::Target::LocalLibraryReference.new(path, raw_reference)
+					end
+
 					next Specfile::Target::FrameworkReference.new(path, raw_reference)
 				else
 					# De-symbolise :sdkroot:-prefixed entries
@@ -406,7 +410,11 @@ module StructCore
 						next nil
 					end
 
-					next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if raw_reference['frameworks'].nil?
+					if raw_reference['frameworks'].nil?
+						next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if path.end_with? '.framework'
+						next Specfile::Target::LocalLibraryReference.new(path, raw_reference)
+					end
+
 					next Specfile::Target::FrameworkReference.new(path, raw_reference)
 				else
 					# De-symbolise :sdkroot:-prefixed entries

@@ -498,6 +498,13 @@ module StructCore
 				end
 			}
 
+			target.references.select { |ref| ref.is_a? StructCore::Specfile::Target::LocalLibraryReference }.each { |ref|
+				framework = framework_group.new_file ref.library_path
+
+				# Link
+				native_target.frameworks_build_phase.add_file_reference framework
+			}
+
 			target.prebuild_run_scripts.map { |script|
 				script_name = File.basename(script.script_path)
 				script_path = script.script_path

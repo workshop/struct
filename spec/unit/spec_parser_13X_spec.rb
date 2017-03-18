@@ -418,6 +418,19 @@ RSpec.describe StructCore::Specparser13X do
 				expect(proj).to be_an StructCore::Specfile
 				expect(proj.includes_pods).to be_truthy
 			end
+
+			it 'parses a specfile that contains library references' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_13X/spec_parser_13X_test_41.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser13X.new
+
+				proj = parser.parse StructCore::SPEC_VERSION_130, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[0].references.count).to eq(1)
+				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::LocalLibraryReference)
+				expect(proj.variants[0].targets[0].references.count).to eq(1)
+				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::LocalLibraryReference)
+			end
 		end
 	end
 end

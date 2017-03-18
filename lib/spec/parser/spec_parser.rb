@@ -1,6 +1,7 @@
 require_relative 'spec_parser_1_0_X'
 require_relative 'spec_parser_1_1_X'
 require_relative 'spec_parser_1_2_X'
+require_relative 'spec_parser_1_3_X'
 
 module StructCore
 	class Specparser
@@ -23,7 +24,8 @@ module StructCore
 		def register_defaults
 			@parsers.unshift(
 				StructCore::Specparser11X.new,
-				StructCore::Specparser12X.new
+				StructCore::Specparser12X.new,
+				StructCore::Specparser13X.new
 			)
 		end
 

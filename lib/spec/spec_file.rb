@@ -92,6 +92,16 @@ module StructCore
 				attr_accessor :settings
 			end
 
+			class LocalLibraryReference
+				def initialize(library_path, settings)
+					@library_path = library_path
+					@settings = settings
+				end
+
+				attr_accessor :library_path
+				attr_accessor :settings
+			end
+
 			class FileOption
 				def initialize(glob, options)
 					@glob = glob

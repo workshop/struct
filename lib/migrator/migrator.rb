@@ -107,8 +107,10 @@ module StructCore
 						else
 							next nil
 						end
-					else
+					elsif f.file_ref.path.end_with? '.framework'
 						StructCore::Specfile::Target::LocalFrameworkReference.new(f.file_ref.path, nil)
+					else
+						StructCore::Specfile::Target::LocalLibraryReference.new(f.file_ref.path, nil)
 					end
 				}.compact
 
