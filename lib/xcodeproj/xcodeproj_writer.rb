@@ -6,6 +6,7 @@ require_relative '../spec/spec_file'
 require_relative '../utils/xcconfig_parser'
 require_relative '../cocoapods/pod_assistant'
 require_relative '../utils/ruby_2_0_monkeypatches'
+require_relative 'app_embed_generator'
 
 # TODO: Refactor this once we have integration tests
 # rubocop:disable all
@@ -49,8 +50,10 @@ module StructCore
 
 			raise StandardError.new 'Spec must have at least one configuration' if spec.configurations.empty?
 
+			embedder = AppEmbedGenerator.new
+
 			if spec.variants.count.zero?
-				write_xcodeproj spec, File.join(destination, 'project.xcodeproj'), destination
+				write_xcodeproj spec, File.join(destination, 'project.xcodeproj'), destination, embedder
 				puts Paint['Generated project.xcodeproj', :green]
 			else
 				# Generate a derived spec for each variant and write out the variants
@@ -90,11 +93,11 @@ module StructCore
 				specs.each { |name, variant_spec|
 					StructCore::PodAssistant.apply_pod_configuration variant_spec, destination
 					if name == '$base'
-						write_xcodeproj variant_spec, File.join(destination, 'project.xcodeproj'), destination
+						write_xcodeproj variant_spec, File.join(destination, 'project.xcodeproj'), destination, embedder
 						puts Paint['Generated project.xcodeproj', :green]
 					else
 						project_name = name.gsub(/[\/\\:]/, '_')
-						write_xcodeproj variant_spec, File.join(destination, "#{project_name}.xcodeproj"), destination
+						write_xcodeproj variant_spec, File.join(destination, "#{project_name}.xcodeproj"), destination, embedder
 						puts Paint["Generated #{project_name}.xcodeproj", :green]
 					end
 				}
@@ -260,7 +263,9 @@ module StructCore
 			create_group group, components.drop(1)
 		end
 
-		def self.write_xcodeproj(spec, filename, base_dir)
+		def self.write_xcodeproj(spec, filename, base_dir, embedder)
+			embedder.preprocess(spec)
+
 			spec_xcodeproj_type_map = {}
 			spec_xcodeproj_type_map['debug'] = :debug
 			spec_xcodeproj_type_map['release'] = :release
@@ -319,6 +324,7 @@ module StructCore
 					target_refs[target.name] = native_target
 					remaining_targets_removed += 1
 					remaining_targets.shift
+					embedder.register target, native_target
 				end
 
 				iterations_remaining -= 1
@@ -337,6 +343,7 @@ module StructCore
 				add_files_to_target target, target_refs[target.name], project, spec.base_dir
 			}
 
+			embedder.embed project
 			project.save filename
 			nil
 		end

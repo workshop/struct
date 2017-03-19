@@ -81,9 +81,9 @@ module StructCore
 						elsif target_sdk.include? 'macosx'
 							profiles = ['platform:mac', type.sub(':', '')]
 						elsif target_sdk.include? 'appletvos'
-							profiles = ['platform:tvos', type.sub(':', '')]
+							profiles = ['platform:tv', type.sub(':', '')]
 						elsif target_sdk.include? 'watchos'
-							profiles = ['platform:watchos', type.sub(':', '')]
+							profiles = ['platform:watch', type.sub(':', '')]
 						end
 					end
 

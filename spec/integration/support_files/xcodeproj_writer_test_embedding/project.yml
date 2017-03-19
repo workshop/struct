@@ -1,0 +1,47 @@
+---
+version: 1.3.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+  release:
+    profiles:
+    - general:release
+    - ios:release
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+targets:
+  My app:
+    sources: app
+    references:
+    - sdkroot:UIKit.framework
+    - watch-app
+    platform: ios
+    type: ":application"
+    configuration:
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      INFOPLIST_FILE: app/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.app
+      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+  watch-app:
+    sources: watch-app
+    type: ":application.watchapp2"
+    platform: watch
+    references:
+    - watch-extension
+    configuration:
+      INFOPLIST_FILE: watch-app/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.app.watch-app
+      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IBSC_MODULE: watch-extension
+  watch-extension:
+    sources: watch-extension
+    type: ":watchkit2-extension"
+    platform: watch
+    configuration:
+      INFOPLIST_FILE: watch-extension/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.app.watch-app.watch-extension
+      IPHONEOS_DEPLOYMENT_TARGET: '10.2'

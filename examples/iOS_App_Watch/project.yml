@@ -1,0 +1,48 @@
+---
+version: 1.3.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+  release:
+    profiles:
+    - general:release
+    - ios:release
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+targets:
+  iOSTest:
+    sources: iOSTest
+    i18n-resources: iOSTest/lproj
+    references:
+    - sdkroot:UIKit.framework
+    - iOSTestWatchApp
+    platform: ios
+    type: ":application"
+    configuration:
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      INFOPLIST_FILE: iOSTest/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTest
+      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+  iOSTestWatchApp:
+    sources: iOSTestWatchApp
+    type: ":application.watchapp2"
+    platform: watch
+    references:
+    - iOSTestWatchExtension
+    configuration:
+      INFOPLIST_FILE: iOSTestWatchApp/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTest.iOSTestWatchApp
+      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IBSC_MODULE: iOSTestWatchExtension
+  iOSTestWatchExtension:
+    sources: iOSTestWatchExtension
+    type: ":watchkit2-extension"
+    platform: watch
+    configuration:
+      INFOPLIST_FILE: iOSTestWatchExtension/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTest.iOSTestWatchApp.iOSTestWatchExtension
+      IPHONEOS_DEPLOYMENT_TARGET: '10.2'

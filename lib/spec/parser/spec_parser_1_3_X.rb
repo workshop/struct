@@ -306,8 +306,7 @@ module StructCore
 			# Search for platform only if profiles weren't already defined
 			if profiles.nil? && target_opts.key?('platform')
 				raw_platform = target_opts['platform']
-				# TODO: Add support for 'tvos', 'watchos'
-				unless %w(ios mac).include? raw_platform
+				unless %w(ios mac watch tv).include? raw_platform
 					puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{raw_platform}'. Ignoring target...", :yellow]
 					return nil
 				end
