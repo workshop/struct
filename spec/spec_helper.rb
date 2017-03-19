@@ -34,6 +34,7 @@ require_relative '../lib/spec/writer/spec_writer_1_0_X'
 require_relative '../lib/spec/writer/spec_writer_1_1_X'
 require_relative '../lib/spec/writer/spec_writer_1_2_X'
 require_relative '../lib/spec/builder/spec_builder'
+require_relative '../lib/xcodeproj/app_embed_generator'
 require_relative '../lib/xcodeproj/xcodeproj_writer'
 
 def copy_support_files(source_dir, dest_dir)
