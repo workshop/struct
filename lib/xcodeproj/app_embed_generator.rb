@@ -77,5 +77,8 @@ module StructCore
 			return unless embedded_target.configurations[0].profiles.include? 'watchkit2-extension'
 			embed_app_extensions_phase.add_file_reference embedded_native_target.product_reference
 		end
+
+		private :embed_application_watchapp2
+		private :embed_watchkit2_extension
 	end
 end
