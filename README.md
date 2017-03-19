@@ -5,6 +5,7 @@
 [![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/1.2.1)
 [![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/1.2.1.svg)](https://github.com/lyptt/struct/commits/master)
 [![Build status](https://travis-ci.org/lyptt/struct.svg?branch=master)](https://travis-ci.org/lyptt/struct)
+[![Coverage Status](https://coveralls.io/repos/github/lyptt/struct/badge.svg)](https://coveralls.io/github/lyptt/struct)
 [![Chat on Gitter](https://img.shields.io/gitter/room/lyptt-struct/Lobby.svg)](https://gitter.im/lyptt-struct/Lobby)
 
 `struct` is a tool for iOS and Mac developers to automate the creation and management of Xcode projects.
