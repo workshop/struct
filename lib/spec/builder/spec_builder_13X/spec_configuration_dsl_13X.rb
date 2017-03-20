@@ -22,7 +22,7 @@ module StructCore
 			return if type.empty?
 
 			@configuration.profiles << "general:#{type}"
-			@configuration.raw_type = type
+			@configuration.type = type
 		end
 
 		def source(source = nil)

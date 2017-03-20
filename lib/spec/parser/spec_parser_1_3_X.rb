@@ -39,7 +39,7 @@ module StructCore
 
 				valid_configuration_names << name
 				config = Specfile::Configuration.new(name, config['profiles'], config['overrides'] || {}, config['type'])
-
+				
 				if config.type.nil?
 					puts Paint["Warning: Configuration with name '#{name}' was skipped as its type did not match one of: debug, release"]
 					next nil
