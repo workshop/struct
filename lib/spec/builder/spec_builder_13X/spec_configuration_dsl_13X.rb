@@ -21,6 +21,7 @@ module StructCore
 			type = type.to_s
 			return if type.empty?
 
+			@configuration.profiles << "general:#{type}"
 			@configuration.raw_type = type
 		end
 

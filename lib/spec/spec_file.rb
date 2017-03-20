@@ -16,9 +16,9 @@ module StructCore
 
 			# @return [String]
 			def type
-				if @name == 'debug'
+				if @name.downcase == 'debug'
 					'debug'
-				elsif @name == 'release'
+				elsif @name.downcase == 'release'
 					'release'
 				else
 					@raw_type

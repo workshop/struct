@@ -26,6 +26,7 @@ module StructCore
 		def parse_configurations(spec_hash)
 			valid_configuration_names = []
 			configurations = spec_hash['configurations'].map { |name, config|
+			
 				unless config['source'].nil?
 					valid_configuration_names << name
 					next Specfile::Configuration.new(name, [], {}, config['type'], config['source'])
