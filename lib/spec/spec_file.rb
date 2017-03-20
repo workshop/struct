@@ -6,9 +6,9 @@ require_relative 'writer/spec_writer'
 module StructCore
 	class Specfile
 		class Configuration
-			def initialize(name, profiles, overrides, type = nil, source = nil)
+			def initialize(name, overrides, type = nil, source = nil)
 				@name = name
-				@profiles = profiles || ["general:#{type}"]
+				@profiles = ["general:#{type}"]
 				@overrides = overrides
 				@type = type || @name.downcase 
 				@source = source
@@ -23,10 +23,10 @@ module StructCore
 
 		class Target
 			class Configuration
-				def initialize(name, settings, profiles = nil, source = nil)
+				def initialize(name, settings, source = nil)
 					@name = name
 					@settings = settings
-					@profiles = profiles || []
+					@profiles = []
 					@source = source
 				end
 
@@ -122,19 +122,23 @@ module StructCore
 				@name = target_name
 				@type = target_type
 				@source_dir = []
+				
 				unless source_dir.nil?
 					@source_dir = [source_dir]
 					@source_dir = [].unshift(*source_dir) if source_dir.is_a? Array
 				end
+
 				@configurations = configurations
 				@references = references
 				@options = options
+
 				if !res_dir.nil?
 					@res_dir = [res_dir]
 					@res_dir = [].unshift(*res_dir) if res_dir.is_a? Array
 				else
 					@res_dir = @source_dir
 				end
+
 				@file_excludes = file_excludes || []
 				@postbuild_run_scripts = postbuild_run_scripts || []
 				@prebuild_run_scripts = prebuild_run_scripts || []
