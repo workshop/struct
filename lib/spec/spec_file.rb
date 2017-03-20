@@ -121,6 +121,11 @@ module StructCore
 			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes, postbuild_run_scripts = [], prebuild_run_scripts = [])
 				@name = target_name
 				@type = target_type
+				
+				@profiles = [
+					target_type
+				]
+
 				@source_dir = []
 				
 				unless source_dir.nil?
