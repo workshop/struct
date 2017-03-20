@@ -23,10 +23,10 @@ module StructCore
 
 		class Target
 			class Configuration
-				def initialize(name, settings, source = nil)
+				def initialize(name, settings, profiles = nil, source = nil)
 					@name = name
 					@settings = settings
-					@profiles = []
+					@profiles = profiles || []
 					@source = source
 				end
 
@@ -121,29 +121,20 @@ module StructCore
 			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes, postbuild_run_scripts = [], prebuild_run_scripts = [])
 				@name = target_name
 				@type = target_type
-				
-				@profiles = [
-					target_type
-				]
-
 				@source_dir = []
-				
 				unless source_dir.nil?
 					@source_dir = [source_dir]
 					@source_dir = [].unshift(*source_dir) if source_dir.is_a? Array
 				end
-
 				@configurations = configurations
 				@references = references
 				@options = options
-
 				if !res_dir.nil?
 					@res_dir = [res_dir]
 					@res_dir = [].unshift(*res_dir) if res_dir.is_a? Array
 				else
 					@res_dir = @source_dir
 				end
-
 				@file_excludes = file_excludes || []
 				@postbuild_run_scripts = postbuild_run_scripts || []
 				@prebuild_run_scripts = prebuild_run_scripts || []

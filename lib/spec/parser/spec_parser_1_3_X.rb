@@ -33,7 +33,7 @@ module StructCore
 				end
 
 				valid_configuration_names << name
-				config = Specfile::Configuration.new(name, config['profiles'], config['overrides'] || {}, config['type'])
+				config = Specfile::Configuration.new(name, config['overrides'] || {}, config['type'])
 				
 				if config.type.nil?
 					puts Paint["Warning: Configuration with name '#{name}' was skipped as its type did not match one of: debug, release"]
@@ -109,14 +109,8 @@ module StructCore
 
 		def parse_variant_target_profiles(target_opts, raw_type, target_name)
 			# Parse target platform/type/profiles into a profiles list
-			profiles = []
-			
-			if target_opts.key?('platform')
-				raw_platform = target_opts['platform']
-				profiles = [raw_type, "platform:#{raw_platform}"].compact
-			end
-
-			profiles
+			platform = target_opts['platform']
+			[raw_type, "platform:#{platform}"].compact
 		end
 
 		def parse_variant_target_configurations(target_opts, valid_config_names, profiles)
