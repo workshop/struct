@@ -391,6 +391,16 @@ module StructCore
 			file_excludes
 		end
 
+		def parse_target_source_options(target_opts, target_name)
+			unless target_opts.key?('source_options') && target_opts['source_options'].is_a?(Hash)
+				puts Paint["Warning: Target #{target_name}'s source options was not a Hash. Ignoring source options...", :yellow]
+				return []
+			end
+			target_opts['source_options'].map { |name,settings|
+				StructCore::Specfile::Target::FileOption.new(name, settings)
+			}
+		end
+
 		def parse_target_references(target_opts, target_name, project_base_dir)
 			return [] unless target_opts.key? 'references'
 			raw_references = target_opts['references']
@@ -471,10 +481,11 @@ module StructCore
 			target_resources_dir = parse_target_resources target_opts, project_base_dir, target_sources_dir
 			file_excludes = parse_target_excludes target_opts, target_name
 			references = parse_target_references target_opts, target_name, project_base_dir
+			options = parse_target_source_options target_opts, target_name
 			run_scripts = parse_target_scripts target_opts, project_base_dir
 
 			Specfile::Target.new(
-				target_name, type, target_sources_dir, configurations, references, [], target_resources_dir,
+				target_name, type, target_sources_dir, configurations, references, options, target_resources_dir,
 				file_excludes, run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
 			)
 		end

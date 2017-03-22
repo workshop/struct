@@ -103,13 +103,13 @@ module StructCore
 			end
 
 			class FileOption
-				def initialize(glob, options)
+				def initialize(glob, flags)
 					@glob = glob
-					@options = options
+					@flags = flags
 				end
 
 				attr_accessor :glob
-				attr_accessor :options
+				attr_accessor :flags
 			end
 
 			class RunScript
@@ -125,7 +125,7 @@ module StructCore
 			# @param source_dir [Array<String>]
 			# @param configurations [Array<StructCore::Specfile::Target::Configuration>]
 			# @param references [Array<StructCore::Specfile::Target::FrameworkReference>]
-			# @param options [Array<StructCore::Specfile::Target::FileOption, StructCore::Specfile::Target::FrameworkOption>]
+			# @param options [Array<StructCore::Specfile::Target::FileOption>]
 			# @param res_dir [Array<String>]
 			# @param file_excludes [Array<String>]
 			# @param postbuild_run_scripts [Array<StructCore::Specfile::Target::RunScript>]

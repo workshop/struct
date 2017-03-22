@@ -7,6 +7,7 @@ require_relative '../utils/xcconfig_parser'
 require_relative '../cocoapods/pod_assistant'
 require_relative '../utils/ruby_2_0_monkeypatches'
 require_relative 'app_embed_generator'
+require_relative 'source_flag_generator'
 
 # TODO: Refactor this once we have integration tests
 # rubocop:disable all
@@ -264,7 +265,7 @@ module StructCore
 		end
 
 		def self.write_xcodeproj(spec, filename, base_dir, embedder)
-			embedder.preprocess(spec)
+			embedder.preprocess spec
 
 			spec_xcodeproj_type_map = {}
 			spec_xcodeproj_type_map['debug'] = :debug
@@ -353,6 +354,9 @@ module StructCore
 		# @param project [Xcodeproj::Project]
 		# @param project_working_dir [String]
 		def self.add_files_to_target(target, native_target, project, project_directory)
+			source_flag_generator = SourceFlagGenerator.new
+			source_flag_generator.preprocess target, project_directory
+
 			all_source_files = []
 			grouped_source_files = {}
 			source_files_minus_dir = []
@@ -408,7 +412,9 @@ module StructCore
 					native_file = native_group.new_file File.basename(file)
 					if file.end_with? '.swift' or file.end_with? '.m' or file.end_with? '.mm'
 						native_target.source_build_phase.files_references << native_file
-						native_target.add_file_references [native_file]
+						native_target.add_file_references([native_file]).each { |build_file|
+							source_flag_generator.generate build_file
+						}
 					elsif target.type.end_with?('.framework') && file.end_with?('.h')
 						header = native_target.headers_build_phase.add_file_reference native_file, true
 						header.settings = { 'ATTRIBUTES' => %w(Public)}
