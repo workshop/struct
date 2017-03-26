@@ -173,6 +173,11 @@ module StructCore
 			@target.postbuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
 		end
 
+		def source_options(glob = nil, flags = nil)
+			return unless glob.is_a?(String) && !glob.empty? && flags.is_a?(String)
+			@target.options << StructCore::Specfile::Target::FileOption.new(glob, flags)
+		end
+
 		def respond_to_missing?(_, _)
 			true
 		end

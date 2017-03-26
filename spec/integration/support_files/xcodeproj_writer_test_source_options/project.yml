@@ -21,3 +21,8 @@ targets:
       INFOPLIST_FILE: Info.plist
     references:
     - 'sdkroot:UIKit.framework'
+variants:
+  beta:
+    My app:
+      source_options:
+        sources/**/*.m: ""

@@ -1,0 +1,21 @@
+---
+version: 1.3.0
+configurations:
+  my-configuration:
+    profiles:
+    - general:debug
+    - ios:debug
+    overrides:
+      OVERRIDE: 1
+    type: debug
+targets:
+  my-target:
+    type: ":application"
+    sources: support_files/abc
+    source_options:
+      sources/**/*.m: -W
+variants:
+  beta:
+    my-target:
+      source_options:
+        sources/**/*.m: ""

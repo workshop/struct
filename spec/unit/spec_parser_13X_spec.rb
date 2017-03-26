@@ -431,6 +431,21 @@ RSpec.describe StructCore::Specparser13X do
 				expect(proj.variants[0].targets[0].references.count).to eq(1)
 				expect(proj.targets[0].references[0]).to be_an_instance_of(StructCore::Specfile::Target::LocalLibraryReference)
 			end
+
+			it 'parses a specfile that contains source flags' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_13X/spec_parser_13X_test_42.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser13X.new
+
+				proj = parser.parse StructCore::SPEC_VERSION_130, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[0].options.count).to eq(1)
+				expect(proj.targets[0].options[0]).to be_an_instance_of(StructCore::Specfile::Target::FileOption)
+				expect(proj.targets[0].options[0].flags).to eq('-W')
+				expect(proj.variants[0].targets[0].options.count).to eq(1)
+				expect(proj.targets[0].options[0]).to be_an_instance_of(StructCore::Specfile::Target::FileOption)
+				expect(proj.variants[0].targets[0].options[0].flags).to eq('')
+			end
 		end
 	end
 end

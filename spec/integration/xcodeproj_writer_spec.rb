@@ -19,6 +19,12 @@ RSpec.describe StructCore::XcodeprojWriter do
 				expect { Fastlane::LaneManager.cruise_lane(nil, 'build', {:project => project_file}, {}) }.to_not raise_error
 			}
 
+			project_file = File.join destination, 'beta.xcodeproj'
+			Fastlane.load_actions
+			Dir.chdir(File.join(File.dirname(__FILE__), 'support_files')) {
+				expect { Fastlane::LaneManager.cruise_lane(nil, 'build', {:project => project_file}, {}) }.to_not raise_error
+			}
+
 			FileUtils.rm_rf destination
 		end
 
