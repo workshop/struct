@@ -80,5 +80,9 @@ versions:
   - Improved project naming when generating projects for variants - now no
     transformation is done on project names, so you can name your projects
     whatever you want.
+  - The way you use struct has now changed. '--generate' becomes 'generate'. Run
+    'struct --help' for the full list of commands!
   - Fixed issues where passing too few arguments in Specfile delcarations would
     bail with unhelpful errors.
+  - Removed unhelpful warnings from the 'struct watch' command when using
+    symbolic links.

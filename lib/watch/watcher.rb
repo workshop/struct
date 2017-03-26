@@ -3,6 +3,16 @@ require_relative '../xcodeproj/xcodeproj_writer'
 require 'paint'
 require 'listen'
 
+module Listen
+	class Record
+		class SymlinkDetector
+			def _fail(_, _)
+				# Hide any warnings about duplicate watched directories
+			end
+		end
+	end
+end
+
 module StructCore
 	module Watcher
 		def self.rebuild(project_file, directory)
@@ -28,7 +38,7 @@ module StructCore
 			rebuild(project_file, directory)
 
 			listener = Listen.to(directory, ignore: /\.xcodeproj/) do |modified, added, removed|
-				if modified.include?(project_file) || !added.length.empty? || !removed.length.empty?
+				if modified.include?(project_file) || !added.empty? || !removed.empty?
 					rebuild(project_file, directory)
 				end
 			end
