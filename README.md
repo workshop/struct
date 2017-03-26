@@ -2,8 +2,8 @@
 
 # Struct
 [![Latest Gem Release](https://img.shields.io/gem/v/struct.svg)](https://rubygems.org/gems/struct) 
-[![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/workshop/struct/releases/tag/1.2.1)
-[![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/1.2.1.svg)](https://github.com/workshop/struct/commits/master)
+[![Git Version](https://img.shields.io/github/tag/workshop/struct.svg)](https://github.com/workshop/struct/releases/tag/1.3.0)
+[![Git Version](https://img.shields.io/github/commits-since/workshop/struct/1.3.0.svg)](https://github.com/workshop/struct/commits/master)
 [![Build status](https://api.travis-ci.org/workshop/struct.svg?branch=master)](https://travis-ci.org/workshop/struct)
 [![Coverage Status](https://coveralls.io/repos/github/workshop/struct/badge.svg)](https://coveralls.io/github/workshop/struct)
 [![Chat on Gitter](https://img.shields.io/gitter/room/workshop/Lobby.svg)](https://gitter.im/workshop/Lobby)
@@ -20,7 +20,7 @@ Use a spec file to define your project:
 
 ```yaml
 ---
-version: 1.2.1
+version: 1.3.0
 configurations:
   debug:
     profiles:
@@ -48,10 +48,12 @@ You can find documented examples of the project specification in the examples fo
 
 ## Installation
 
-`struct` requires a minimum of Ruby 2.2.5, however macOS 10.12 ships with 2.0.0.
-You can install a higher version of Ruby with [RVM](https://rvm.io/).
+`struct` requires a minimum of Ruby 2.0.0, which is available in macOS Sierra.
+You can install a higher version of Ruby with [RVM](https://rvm.io/) on an older macOS version.
 
 Install `struct` from Rubygems:
+
+_You may need to use sudo when using the system-provided Ruby_
 
     $ gem install struct
 
@@ -59,24 +61,24 @@ Install `struct` from Rubygems:
 
 Get started with adding `struct` to your app:
 
-[Create your first spec file](https://github.com/lyptt/xcodegen/wiki/Quick-Start)
+[Create your first spec file](https://github.com/workshop/struct/wiki/Quick-Start)
 
 ## Available Commands
 
 To generate an Xcode project from your spec file, run the following from your project directory:
 
-    $ struct --generate
+    $ struct generate
 
 To start the file watcher, run the following from your project directory:
 
-    $ struct --watch
+    $ struct watch
     
 The project will be automatically regenerated whenever the project or any source files change.
 
 Other commands can be discovered by viewing help:
 
-    $ struct --help
+    $ struct help
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/lyptt/struct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/workshop/struct.
