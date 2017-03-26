@@ -391,7 +391,7 @@ module StructCore
 						next false
 					end
 
-					next !(file.include? '.framework/') && !(file.include? '.xcdatamodeld/') && !(file.include? '.bundle/')
+					next !(file.include? '.framework/') && !(file.include? '.xcdatamodeld/') && !(file.include? '.bundle/') && !(file.include? '.a')
 				}
 
 				rel_source_root = source_dir.sub(project_directory, '')
@@ -510,6 +510,13 @@ module StructCore
 
 					(embed_phase.add_file_reference framework).settings = { 'ATTRIBUTES' => attributes }
 				end
+			}
+
+			all_source_files.select { |file|
+				file.end_with? '.a'
+			}.each { |framework|
+				# Link
+				native_target.frameworks_build_phase.add_file_reference framework
 			}
 
 			target.references.select { |ref| ref.is_a? StructCore::Specfile::Target::LocalLibraryReference }.each { |ref|

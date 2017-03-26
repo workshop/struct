@@ -67,3 +67,18 @@ versions:
     was also added so you can run unit tests on framework targets.
   - Fixed an issue where source files were overridden in the wrong order
   - Fixed an issue where certain DSL validation errors would not be visible
+  1.3.0:
+  - Spec 1.3.0 is here! Support for compile flags on source files has been added,
+    along with the ability to link to static libraries on targets. You can now
+    generate WatchOS targets too!
+  - Spec 1.0.0 is now deprecated and will be removed in a future release. Make sure
+    to update your spec files to the latest version!
+  - Ruby 2.0.0 is now supported! If you're on the latest macOS you can now install
+    struct directly without RVM.
+  - Improved file excludes, you can now exclude whole directories instead of just
+    files.
+  - Improved project naming when generating projects for variants - now no
+    transformation is done on project names, so you can name your projects
+    whatever you want.
+  - Fixed issues where passing too few arguments in Specfile delcarations would
+    bail with unhelpful errors.

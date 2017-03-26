@@ -49,7 +49,7 @@ puts `git push origin #{StructCore::VERSION}`
 return if ENV['GITHUB_API_KEY'] == nil
 
 begin
-puts Excon.post('https://api.github.com/repos/lyptt/struct/releases',
+puts Excon.post('https://api.github.com/repos/workshop/struct/releases',
 	:connect_timeout => 30,
 	:body => {
 		:tag_name => StructCore::VERSION,
