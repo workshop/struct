@@ -1,0 +1,28 @@
+---
+version: 1.3.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+  release:
+    profiles:
+    - general:release
+    - ios:release
+targets:
+  My app:
+    type: ":application"
+    platform: ios
+    sources:
+    - sources
+    source_options:
+      sources/**/*.m: -W
+    configuration:
+      INFOPLIST_FILE: Info.plist
+    references:
+    - 'sdkroot:UIKit.framework'
+variants:
+  beta:
+    My app:
+      source_options:
+        sources/**/*.m: ""
