@@ -382,7 +382,7 @@ module StructCore
 			grouped_source_files.each { |source_dir, all_files|
 				files = all_files.select { |file|
 					!(target.file_excludes.any? { |exclude|
-						File.fnmatch(exclude, file)
+						File.fnmatch(exclude, file.slice(project_directory.length+1..-1), File::FNM_PATHNAME | File::FNM_EXTGLOB)
 					})
 				}
 
