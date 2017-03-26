@@ -190,7 +190,8 @@ module StructCore
 		end
 
 		def parse_variant_target_source_options(target_opts, target_name)
-			unless target_opts.key?('source_options') && target_opts['source_options'].is_a?(Hash)
+			return [] unless target_opts.key? 'source_options'
+			unless target_opts['source_options'].is_a?(Hash)
 				puts Paint["Warning: Target #{target_name}'s source options was not a Hash. Ignoring source options...", :yellow]
 				return []
 			end
@@ -403,7 +404,8 @@ module StructCore
 		end
 
 		def parse_target_source_options(target_opts, target_name)
-			unless target_opts.key?('source_options') && target_opts['source_options'].is_a?(Hash)
+			return [] unless target_opts.key? 'source_options'
+			unless target_opts['source_options'].is_a?(Hash)
 				puts Paint["Warning: Target #{target_name}'s source options was not a Hash. Ignoring source options...", :yellow]
 				return []
 			end
