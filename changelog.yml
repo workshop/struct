@@ -1,5 +1,5 @@
 ---
-latest: 1.3.0
+latest: 1.3.1
 versions:
   0.1.4:
   - Added parse command to easily see spec parsing output
@@ -81,7 +81,26 @@ versions:
     is done on project names, so you can name your projects whatever you want.
   - The way you use struct has now changed. '--generate' becomes 'generate'. Run 'struct
     help' for the full list of commands!
-  - Fixed issues where passing too few arguments in Specfile delcarations would bail
+  - Fixed issues where passing too few arguments in Specfile declarations would bail
     with unhelpful errors.
   - Removed unhelpful warnings from the 'struct watch' command when using symbolic
     links.
+  1.3.1:
+  - Spec 1.3.0 is here! Support for compile flags on source files has been added,
+    along with the ability to link to static libraries on targets. You can now generate
+    WatchOS targets too!
+  - Spec 1.0.0 is now deprecated and will be removed in a future release. Make sure
+    to update your spec files to the latest version!
+  - Ruby 2.0.0 is now supported! If you're on the latest macOS you can now install
+    struct directly without RVM.
+  - Improved file excludes, you can now exclude whole directories instead of just
+    files.
+  - Improved project naming when generating projects for variants - now no transformation
+    is done on project names, so you can name your projects whatever you want.
+  - The way you use struct has now changed. '--generate' becomes 'generate'. Run 'struct
+    help' for the full list of commands!
+  - Fixed issues where passing too few arguments in Specfile declarations would bail
+    with unhelpful errors.
+  - Removed unhelpful warnings from the 'struct watch' command when using symbolic
+    links.
+  - Fixed warnings when parsing source options.
