@@ -14,6 +14,7 @@ require_relative '../create/create_target'
 require_relative '../create/create_configuration'
 require_relative '../spec/builder/spec_builder'
 require_relative '../migrator/migrator'
+require_relative '../spec/processor/spec_processor'
 
 module StructCore
 	class CLI
@@ -122,9 +123,9 @@ module StructCore
 		end
 
 		def self.do_generate(_)
-			selected_variants = ARGV.select { |item|
-				!%w(-g --generate g generate).include? item
-			}
+			args = ARGV.select { |item| !%w(-g --generate g generate).include? item }
+			options = args.select { |item| item.start_with? '--' }
+			selected_variants = args.select { |item| !item.start_with? '--' }
 
 			directory = Dir.pwd
 			project_file = nil
@@ -138,10 +139,14 @@ module StructCore
 			end
 
 			begin
-				spec = nil
-				spec = StructCore::Specfile.parse project_file unless project_file.end_with?('Specfile')
-				spec = StructCore::SpecBuilder.build project_file if project_file.end_with?('Specfile')
-				StructCore::XcodeprojWriter.write spec, directory, selected_variants unless spec.nil?
+				if options.include? '--with-processor'
+					StructCore::SpecProcessor.new.process project_file, options.include?('--dry-run')
+				else
+					spec = nil
+					spec = StructCore::Specfile.parse project_file unless project_file.end_with?('Specfile')
+					spec = StructCore::SpecBuilder.build project_file if project_file.end_with?('Specfile')
+					StructCore::XcodeprojWriter.write spec, directory, selected_variants unless spec.nil?
+				end
 			rescue StandardError => err
 				puts Paint[err, :red]
 				quit(-1)
