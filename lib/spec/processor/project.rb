@@ -1,10 +1,5 @@
 require_relative 'processor_component'
 require_relative 'configurations'
-require_relative 'processor_output'
-require_relative '../spec_file'
-require_relative '../../utils/defines'
-require 'xcodeproj'
-require 'semantic'
 
 module StructCore
 	module Processor
