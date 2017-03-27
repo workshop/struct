@@ -8,9 +8,9 @@ module StructCore
 			include ProcessorComponent
 
 			def initialize(structure, working_directory)
+				super(structure, working_directory)
 				@configurations_component = ConfigurationsComponent.new @structure, @working_directory
 				@targets_component = TargetsComponent.new @structure, @working_directory
-				super
 			end
 
 			def process(project)

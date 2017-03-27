@@ -35,4 +35,26 @@ module StructCore
 		settings.merge next_settings || {}
 	}
 	XC_CONFIGURATION_TYPE_MAP = { 'debug' => :debug, 'release' => :release, 'Debug' => :debug, 'Release' => :release }.freeze
+	XC_PRODUCT_TYPE_UTI_INV = {
+		'com.apple.product-type.application' => :application,
+		'com.apple.product-type.framework' => :framework,
+		'com.apple.product-type.library.dynamic' => :dynamic_library,
+		'com.apple.product-type.library.static' => :static_library,
+		'com.apple.product-type.bundle' => :bundle,
+		'com.apple.product-type.bundle.unit-test' => :unit_test_bundle,
+		'com.apple.product-type.bundle.ui-testing' => :ui_test_bundle,
+		'com.apple.product-type.app-extension' => :app_extension,
+		'com.apple.product-type.tool' => :command_line_tool,
+		'com.apple.product-type.application.watchapp' => :watch_app,
+		'com.apple.product-type.application.watchapp2' => :watch2_app,
+		'com.apple.product-type.watchkit-extension' => :watch_extension,
+		'com.apple.product-type.watchkit2-extension' => :watch2_extension,
+		'com.apple.product-type.tv-app-extension' => :tv_extension,
+		'com.apple.product-type.application.messages' => :messages_application,
+		'com.apple.product-type.app-extension.messages' => :messages_extension,
+		'com.apple.product-type.app-extension.messages-sticker-pack' => :sticker_pack,
+		'com.apple.product-type.xpc-service' => :xpc_service
+	}.freeze
+	XC_CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'config_profiles')
+	XC_TARGET_CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'target_config_profiles')
 end

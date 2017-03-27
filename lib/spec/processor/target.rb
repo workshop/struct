@@ -5,17 +5,17 @@ module StructCore
 		class TargetComponent
 			include ProcessorComponent
 
-			def process(target, dsl = nil)
+			def process(target, target_dsl = nil, dsl = nil)
 				output = nil
-				output = process_xc_target target if structure == :spec
-				output = process_spec_target target, dsl if structure == :xcodeproj
+				output = process_xc_target target, target_dsl if structure == :spec && !target_dsl.nil?
+				output = process_spec_target target, target_dsl, dsl if structure == :xcodeproj && !target_dsl.nil? && !dsl.nil?
 
 				output
 			end
 
-			def process_xc_target(target) end
+			def process_xc_target(target, target_dsl) end
 
-			def process_spec_target(target, dsl) end
+			def process_spec_target(target, target_dsl, dsl) end
 		end
 	end
 end
