@@ -1,4 +1,5 @@
 require_relative 'processor_component'
+require_relative 'configurations'
 require_relative 'processor_output'
 require_relative '../spec_file'
 require_relative '../../utils/defines'
@@ -11,6 +12,8 @@ module StructCore
 			include ProcessorComponent
 
 			def process(project)
+				@configurations_component = ConfigurationsComponent.new @structure, @working_directory
+
 				output = []
 				output = process_xc_project project if structure == :spec
 				output = process_spec_project project if structure == :xcodeproj
@@ -32,8 +35,7 @@ module StructCore
 				end
 
 				dsl = StructCore::Specfile.new(version, [], [], [], working_directory, false)
-
-				# TODO: Begin processing DSL contents
+				dsl.configurations = @configurations_component.process project
 
 				[ProcessorOutput.new(dsl, File.join(working_directory, 'project.yml'))]
 			end
@@ -43,8 +45,8 @@ module StructCore
 
 				dsl = Xcodeproj::Project.new File.join(working_directory, 'project.xcodeproj')
 				dsl.root_object.attributes['Struct.Version'] = version.to_s
-
-				# TODO: Begin processing DSL contents
+				dsl.build_configurations.clear
+				@configurations_component.process project, dsl
 
 				[ProcessorOutput.new(dsl, File.join(working_directory, 'project.xcodeproj'))]
 			end

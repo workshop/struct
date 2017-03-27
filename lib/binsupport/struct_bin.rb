@@ -122,6 +122,8 @@ module StructCore
 			quit(0)
 		end
 
+		# There's not much sense refactoring this to be tiny methods.
+		# rubocop:disable Metrics/AbcSize
 		def self.do_generate(_)
 			args = ARGV.select { |item| !%w(-g --generate g generate).include? item }
 			options = args.select { |item| item.start_with? '--' }
@@ -154,6 +156,7 @@ module StructCore
 
 			quit(0)
 		end
+		# rubocop:enable Metrics/AbcSize
 
 		def self.do_create(_)
 			selected_option = Ask.list 'What do you want to create?', [
