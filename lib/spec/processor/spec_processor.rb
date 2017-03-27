@@ -8,18 +8,21 @@ require 'awesome_print'
 
 module StructCore
 	class SpecProcessor
-		def process(project_file, dry_run = false)
+		def initialize(project_file, dry_run = false)
 			return if project_file.to_s.empty?
-			full_project_path, target_structure = resolve_project_data project_file
-			source_dsl = process_source_dsl full_project_path
+			@full_project_path, target_structure = resolve_project_data project_file
+			@dry_run = dry_run
+			@project_component = StructCore::Processor::ProjectComponent.new(target_structure, File.dirname(@full_project_path))
+		end
 
-			root_component = StructCore::Processor::ProjectComponent.new(target_structure, File.dirname(full_project_path))
+		def process
+			source_dsl = process_source_dsl @full_project_path
 
-			outputs = root_component.process source_dsl
+			outputs = @project_component.process source_dsl
 			return if outputs.empty?
 
 			outputs.each { |output|
-				if dry_run
+				if @dry_run
 					ap output.dsl
 				else
 					StructCore::Specwriter.new.write_spec output.dsl, output.path unless output.path.end_with? '.xcodeproj'

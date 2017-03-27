@@ -6,9 +6,12 @@ module StructCore
 		class ProjectComponent
 			include ProcessorComponent
 
-			def process(project)
+			def initialize(structure, working_directory)
 				@configurations_component = ConfigurationsComponent.new @structure, @working_directory
+				super
+			end
 
+			def process(project)
 				output = []
 				output = process_xc_project project if structure == :spec
 				output = process_spec_project project if structure == :xcodeproj

@@ -142,7 +142,7 @@ module StructCore
 
 			begin
 				if options.include? '--with-processor'
-					StructCore::SpecProcessor.new.process project_file, options.include?('--dry-run')
+					StructCore::SpecProcessor.new(project_file, options.include?('--dry-run')).process
 				else
 					spec = nil
 					spec = StructCore::Specfile.parse project_file unless project_file.end_with?('Specfile')
