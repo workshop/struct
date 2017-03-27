@@ -1,5 +1,6 @@
 require_relative 'processor_component'
 require_relative 'configurations'
+require_relative 'targets'
 
 module StructCore
 	module Processor
@@ -8,6 +9,7 @@ module StructCore
 
 			def initialize(structure, working_directory)
 				@configurations_component = ConfigurationsComponent.new @structure, @working_directory
+				@targets_component = TargetsComponent.new @structure, @working_directory
 				super
 			end
 
@@ -34,6 +36,7 @@ module StructCore
 
 				dsl = StructCore::Specfile.new(version, [], [], [], working_directory, false)
 				dsl.configurations = @configurations_component.process project
+				dsl.targets = @targets_component.process project
 
 				[ProcessorOutput.new(dsl, File.join(working_directory, 'project.yml'))]
 			end
@@ -45,6 +48,7 @@ module StructCore
 				dsl.root_object.attributes['Struct.Version'] = version.to_s
 				dsl.build_configurations.clear
 				@configurations_component.process project, dsl
+				@targets_component.process project, dsl
 
 				[ProcessorOutput.new(dsl, File.join(working_directory, 'project.xcodeproj'))]
 			end
