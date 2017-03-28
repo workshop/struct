@@ -25,6 +25,7 @@ module StructCore
 
 			def process_spec_configurations(project, dsl)
 				project.configurations.each { |config| @configuration_component.process config, dsl }
+				dsl.build_configuration_list.default_configuration_name = project.configurations[0].name
 			end
 		end
 	end

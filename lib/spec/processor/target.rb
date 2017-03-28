@@ -1,9 +1,15 @@
 require_relative 'processor_component'
+require_relative 'target_configurations'
 
 module StructCore
 	module Processor
 		class TargetComponent
 			include ProcessorComponent
+
+			def initialize(structure, working_directory)
+				super(structure, working_directory)
+				@configurations_component = TargetConfigurationsComponent.new(@structure, @working_directory)
+			end
 
 			def process(target, target_dsl = nil, dsl = nil)
 				output = nil
@@ -13,9 +19,18 @@ module StructCore
 				output
 			end
 
-			def process_xc_target(target, target_dsl) end
+			# @param target [Xcodeproj::Project::PBXNativeTarget]
+			# @param target_dsl [StructCore::Specfile::Target]
+			def process_xc_target(target, target_dsl)
+				target_dsl.configurations = @configurations_component.process target
+			end
 
-			def process_spec_target(target, target_dsl, dsl) end
+			# @param target [StructCore::Specfile::Target]
+			# @param target_dsl [Xcodeproj::Project::PBXNativeTarget]
+			# @param dsl [Xcodeproj::Project]
+			def process_spec_target(target, target_dsl, dsl)
+				@configurations_component.process target, target_dsl, dsl
+			end
 		end
 	end
 end

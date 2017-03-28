@@ -1,5 +1,6 @@
 require_relative '../spec_file'
 require_relative '../../utils/defines'
+require_relative '../../utils/ruby_2_0_monkeypatches'
 require_relative 'processor_output'
 require 'xcodeproj'
 require 'semantic'

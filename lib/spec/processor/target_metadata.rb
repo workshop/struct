@@ -40,7 +40,7 @@ module StructCore
 			# @param target [StructCore::Specfile::Target]
 			# @param dsl [Xcodeproj::Project]
 			def process_spec_target(target, dsl)
-				dsl.new_target(
+				target = dsl.new_target(
 					@type_component.process(target),
 					target.name,
 					@platform_component.process(target),
@@ -48,6 +48,9 @@ module StructCore
 					nil,
 					:swift
 				)
+
+				target.build_configurations.clear
+				target
 			end
 		end
 	end
