@@ -57,6 +57,7 @@ module StructCore
 		end
 
 		# TODO: Remove any deprecated invocations completely in Struct 2.0.0
+		# rubocop:disable Style/RedundantBegin
 		def self.parse_deprecated_commands
 			begin
 				_ = Slop.parse do |o|
@@ -84,6 +85,7 @@ module StructCore
 			rescue StandardError => _
 			end
 		end
+		# rubocop:enable Style/RedundantBegin
 
 		# TODO: Remove this in Struct 2.0.0 and remove any deprecated invocations completely
 		def self.warn_deprecated_invocation(command, new_command)
