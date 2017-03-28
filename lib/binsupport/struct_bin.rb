@@ -58,27 +58,30 @@ module StructCore
 
 		# TODO: Remove any deprecated invocations completely in Struct 2.0.0
 		def self.parse_deprecated_commands
-			_ = Slop.parse do |o|
-				o.on '--parse' do
-					warn_deprecated_invocation('--parse', 'parse')
-					return do_parse o
+			begin
+				_ = Slop.parse do |o|
+					o.on '--parse' do
+						warn_deprecated_invocation('--parse', 'parse')
+						return do_parse o
+					end
+					o.on '-w', '--watch' do
+						warn_deprecated_invocation('--watch', 'watch')
+						return do_watch o
+					end
+					o.on '-g', '--generate' do
+						warn_deprecated_invocation('--generate', 'generate')
+						return do_generate o
+					end
+					o.on '-c', '--create' do
+						warn_deprecated_invocation('--create', 'create')
+						return do_create o
+					end
+					o.on '-m', '--migrate' do
+						warn_deprecated_invocation('--migrate', 'migrate')
+						return do_migrate o
+					end
 				end
-				o.on '-w', '--watch' do
-					warn_deprecated_invocation('--watch', 'watch')
-					return do_watch o
-				end
-				o.on '-g', '--generate' do
-					warn_deprecated_invocation('--generate', 'generate')
-					return do_generate o
-				end
-				o.on '-c', '--create' do
-					warn_deprecated_invocation('--create', 'create')
-					return do_create o
-				end
-				o.on '-m', '--migrate' do
-					warn_deprecated_invocation('--migrate', 'migrate')
-					return do_migrate o
-				end
+			rescue StandardError => _
 			end
 		end
 
@@ -185,6 +188,8 @@ module StructCore
 			mopts = Slop.parse(args) do |o|
 				o.string '-p', '--path', 'specifies the path of the xcode project to migrate'
 				o.string '-d', '--destination', 'specifies the destination folder to store the migrated project files'
+				o.bool '--with-processor'
+				o.bool '--dry-run'
 				o.on '--help', 'help on using this command' do
 					puts o
 					quit(0)
@@ -196,7 +201,11 @@ module StructCore
 				quit(0)
 			end
 
-			StructCore::Migrator.migrate mopts[:path], mopts[:destination]
+			if mopts.with_processor?
+				StructCore::SpecProcessor.new(mopts[:path], mopts.dry_run?).process
+			else
+				StructCore::Migrator.migrate mopts[:path], mopts[:destination]
+			end
 			quit(0)
 		end
 

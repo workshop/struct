@@ -14,15 +14,15 @@ module StructCore
 			def process(target, target_dsl = nil, dsl = nil)
 				output = []
 
-				output = process_xc_target target if structure == :spec
+				output = process_xc_target target, target_dsl if structure == :spec && !target_dsl.nil?
 				output = process_spec_target target, target_dsl, dsl if structure == :xcodeproj && !dsl.nil? && !target_dsl.nil?
 
 				output
 			end
 
 			# @param target [Xcodeproj::Project::PBXNativeTarget]
-			def process_xc_target(target)
-				target.build_configurations.map { |config| @configuration_component.process config }
+			def process_xc_target(target, target_dsl)
+				target.build_configurations.map { |config| @configuration_component.process config, target_dsl, target }
 			end
 
 			# @param target [StructCore::Specfile::Target]

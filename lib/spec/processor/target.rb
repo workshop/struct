@@ -22,7 +22,8 @@ module StructCore
 			# @param target [Xcodeproj::Project::PBXNativeTarget]
 			# @param target_dsl [StructCore::Specfile::Target]
 			def process_xc_target(target, target_dsl)
-				target_dsl.configurations = @configurations_component.process target
+				target_dsl.configurations = @configurations_component.process target, target_dsl
+				target_dsl
 			end
 
 			# @param target [StructCore::Specfile::Target]

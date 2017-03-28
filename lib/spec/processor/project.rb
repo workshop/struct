@@ -22,7 +22,7 @@ module StructCore
 			end
 
 			def process_xc_project(project)
-				version = project.root_object.metadata['Struct.Version']
+				version = project.root_object.attributes['Struct.Version']
 
 				if version.nil?
 					version = SPEC_VERSION_130

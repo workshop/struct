@@ -8,19 +8,19 @@ module StructCore
 			def process(config, target_dsl = nil, dsl = nil)
 				output = nil
 
-				output = process_xc_config config, target_dsl if structure == :spec && !target_dsl.nil?
+				output = process_xc_config config, dsl if structure == :spec && !dsl.nil?
 				output = process_spec_config config, target_dsl, dsl if structure == :xcodeproj && !dsl.nil? && !target_dsl.nil?
 
 				output
 			end
 
 			# @param config [Xcodeproj::Project::Object::XCBuildConfiguration]
-			# @param target_dsl [Xcodeproj::Project::PBXNativeTarget]
-			def process_xc_config(config, target_dsl)
-				type = config.type
+			# @param dsl [Xcodeproj::Project::PBXNativeTarget]
+			def process_xc_config(config, dsl)
+				type = dsl.product_type.sub 'com.apple.product-type.', ':'
 				config_xcconfig_overrides = extract_target_xcconfig_overrides config.base_configuration_reference, @working_directory
 
-				target_sdk = target_dsl.sdk
+				target_sdk = dsl.sdk
 				target_sdk = config_xcconfig_overrides['SDKROOT'] unless config_xcconfig_overrides['SDKROOT'].nil?
 
 				profiles = []
@@ -77,7 +77,7 @@ module StructCore
 				config.base_configuration_reference = config_group.new_file data[:source]
 			end
 
-			def self.extract_xcconfig_path(base_configuration_reference, project_dir)
+			def extract_xcconfig_path(base_configuration_reference, project_dir)
 				path = base_configuration_reference.hierarchy_path
 				path[0] = '' if path.start_with? '/'
 
@@ -91,7 +91,7 @@ module StructCore
 				path
 			end
 
-			def self.extract_target_config_overrides(profiles, build_settings)
+			def extract_target_config_overrides(profiles, build_settings)
 				default_settings = profiles.map { |profile_name|
 					[profile_name, File.join(XC_TARGET_CONFIG_PROFILE_PATH, "#{profile_name.sub(':', '_')}.yml")]
 				}.map { |data|
@@ -109,7 +109,7 @@ module StructCore
 				build_settings.reject { |k, _| default_settings.include? k }
 			end
 
-			def self.extract_target_xcconfig_overrides(xcconfig_file_ref, project_dir)
+			def extract_target_xcconfig_overrides(xcconfig_file_ref, project_dir)
 				return {} if xcconfig_file_ref.nil?
 				xcconfig_file = xcconfig_file_ref.hierarchy_path || ''
 				StructCore::XcconfigParser.parse xcconfig_file, project_dir
