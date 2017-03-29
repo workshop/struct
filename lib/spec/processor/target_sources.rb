@@ -22,7 +22,7 @@ module StructCore
 			end
 
 			# @param target [Xcodeproj::Project::Object::PBXNativeTarget]
-			# @param _target_dsl [StructCore::Specfile::Target]
+			# @param target_dsl [StructCore::Specfile::Target]
 			def process_xc_sources(target, target_dsl)
 				target_files = target.source_build_phase.files.map(&:file_ref)
 				target_files.unshift(*target.resources_build_phase.files.map { |file|
@@ -42,11 +42,7 @@ module StructCore
 						file.include?('.')
 				})
 
-				flags_component = TargetSourceFlagsComponent.new @structure, @working_directory, target
-				target.source_build_phase.files.each { |build_file|
-					option = flags_component.process(build_file)
-					target_dsl.options << option unless option.nil?
-				}
+				process_xc_build_flags target, target_dsl
 
 				target_files.map { |source|
 					source_entry = @source_component.process source
@@ -105,6 +101,16 @@ module StructCore
 				}
 
 				all_source_files
+			end
+
+			# @param target [Xcodeproj::Project::Object::PBXNativeTarget]
+			# @param target_dsl [StructCore::Specfile::Target]
+			def process_xc_build_flags(target, target_dsl)
+				flags_component = TargetSourceFlagsComponent.new @structure, @working_directory, target
+				target.source_build_phase.files.each { |build_file|
+					option = flags_component.process(build_file)
+					target_dsl.options << option unless option.nil?
+				}
 			end
 		end
 	end
