@@ -1,6 +1,7 @@
 require_relative 'processor_component'
 require_relative 'target_configurations'
 require_relative 'target_sources'
+require_relative 'target_resources'
 
 module StructCore
 	module Processor
@@ -11,6 +12,7 @@ module StructCore
 				super(structure, working_directory)
 				@configurations_component = TargetConfigurationsComponent.new(@structure, @working_directory)
 				@sources_component = TargetSourcesComponent.new(@structure, @working_directory)
+				@resources_component = TargetResourcesComponent.new(@structure, @working_directory)
 			end
 
 			def process(target, target_dsl = nil, dsl = nil)
@@ -35,6 +37,7 @@ module StructCore
 			def process_spec_target(target, target_dsl, dsl)
 				@configurations_component.process target, target_dsl, dsl
 				@sources_component.process target, target_dsl, dsl
+				@resources_component.process target, target_dsl, dsl
 			end
 		end
 	end
