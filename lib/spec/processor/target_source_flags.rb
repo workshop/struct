@@ -25,7 +25,15 @@ module StructCore
 				process_spec source if structure == :xcodeproj
 			end
 
-			def process_xc(source) end
+			# @param source [Xcodeproj::Project::PBXBuildFile]
+			def process_xc(source)
+				return nil if source.settings.nil? || source.settings['COMPILER_FLAGS'].nil?
+
+				path = source.real_path.to_s.sub(@working_directory, '')
+				path[0] = '' if path.start_with? '/'
+
+				StructCore::Specfile::Target::FileOption.new(path, source.settings['COMPILER_FLAGS'])
+			end
 
 			# @param source [Xcodeproj::Project::PBXBuildFile]
 			def process_spec(source)
