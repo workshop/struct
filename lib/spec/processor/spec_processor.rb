@@ -23,7 +23,8 @@ module StructCore
 
 			outputs.each { |output|
 				if @dry_run
-					ap output.dsl, raw: true
+					ap output.dsl if output.dsl.is_a?(Xcodeproj::Project)
+					ap output.dsl, raw: true if output.dsl.is_a?(StructCore::Specfile)
 				else
 					StructCore::Specwriter.new.write_spec output.dsl, output.path unless output.path.end_with? '.xcodeproj'
 					output.dsl.save output.path if output.path.end_with? '.xcodeproj'
