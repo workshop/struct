@@ -3,7 +3,7 @@ require_relative '../writer/spec_writer'
 require_relative '../spec_file'
 require_relative 'project'
 require_relative 'configurations'
-require 'Xcodeproj'
+require 'xcodeproj'
 require 'awesome_print'
 require 'paint'
 
