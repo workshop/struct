@@ -1,6 +1,7 @@
 require_relative 'processor_component'
 require_relative 'configurations'
 require_relative 'targets'
+require_relative '../../cocoapods/pod_assistant'
 
 module StructCore
 	module Processor
@@ -14,9 +15,11 @@ module StructCore
 			end
 
 			def process(project)
+				proj = deep_clone project
+
 				output = []
-				output = process_xc_project project if structure == :spec
-				output = process_spec_project project if structure == :xcodeproj
+				output = process_xc_project proj if structure == :spec
+				output = process_spec_project proj if structure == :xcodeproj
 
 				output
 			end
@@ -42,6 +45,7 @@ module StructCore
 			end
 
 			def process_spec_project(project)
+				StructCore::PodAssistant.apply_pod_configuration project, @working_directory
 				version = project.version
 
 				dsl = Xcodeproj::Project.new File.join(working_directory, 'project.xcodeproj')

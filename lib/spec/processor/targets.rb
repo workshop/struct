@@ -1,6 +1,7 @@
 require_relative 'processor_component'
 require_relative 'target_metadata'
 require_relative 'target'
+require_relative 'target_embeds'
 
 module StructCore
 	module Processor
@@ -30,6 +31,8 @@ module StructCore
 			end
 
 			def process_spec_targets(project, dsl)
+				embed_component = TargetEmbedsComponent.new(@structure, @working_directory)
+
 				project.targets.map { |target|
 					# Pre-create all target DSL objects before they're filled in, as this allows us to resolve target refs
 					target_dsl = @target_metadata_component.process(target, dsl)
@@ -38,8 +41,11 @@ module StructCore
 					[target, target_dsl]
 				}.compact.each { |data|
 					target, target_dsl = data
+					embed_component.register target, target_dsl
 					@target_component.process target, target_dsl, dsl
 				}
+
+				embed_component.process dsl
 			end
 		end
 	end
