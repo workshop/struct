@@ -3,6 +3,7 @@ require_relative 'target_configurations'
 require_relative 'target_sources'
 require_relative 'target_resources'
 require_relative 'target_references'
+require_relative 'target_scripts'
 
 module StructCore
 	module Processor
@@ -15,6 +16,7 @@ module StructCore
 				@sources_component = TargetSourcesComponent.new(@structure, @working_directory)
 				@resources_component = TargetResourcesComponent.new(@structure, @working_directory)
 				@references_component = TargetReferencesProcessor.new(@structure, @working_directory)
+				@scripts_component = TargetScriptsComponent.new(@structure, @working_directory)
 			end
 
 			def process(target, target_dsl = nil, dsl = nil)
@@ -31,6 +33,7 @@ module StructCore
 				target_dsl.configurations = @configurations_component.process target, target_dsl
 				target_dsl.source_dir = @sources_component.process target, target_dsl
 				target_dsl.res_dir = @resources_component.process target
+				target_dsl.references = @references_component.process target
 				target_dsl
 			end
 
@@ -42,6 +45,7 @@ module StructCore
 				@sources_component.process target, target_dsl, dsl
 				@resources_component.process target, target_dsl, dsl
 				@references_component.process target, target_dsl, dsl
+				@scripts_component.process target, target_dsl, dsl
 			end
 		end
 	end
