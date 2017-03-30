@@ -7,13 +7,11 @@ require_relative '../utils/defines'
 require_relative '../refresher/refresher'
 require_relative '../watch/watcher'
 require_relative '../spec/spec_file'
-require_relative '../xcodeproj/xcodeproj_writer'
 require_relative '../create/create_class'
 require_relative '../create/create_struct'
 require_relative '../create/create_target'
 require_relative '../create/create_configuration'
 require_relative '../spec/builder/spec_builder'
-require_relative '../migrator/migrator'
 require_relative '../spec/processor/spec_processor'
 
 module StructCore
@@ -97,6 +95,7 @@ module StructCore
 
 			project_file = nil
 			project_file = File.join(directory, 'project.yml') if File.exist? File.join(directory, 'project.yml')
+			project_file = File.join(directory, 'project.yaml') if File.exist? File.join(directory, 'project.yaml')
 			project_file = File.join(directory, 'project.json') if File.exist? File.join(directory, 'project.json')
 			project_file = File.join(directory, 'Specfile') if File.exist? File.join(directory, 'Specfile')
 
@@ -127,8 +126,6 @@ module StructCore
 			quit(0)
 		end
 
-		# There's not much sense refactoring this to be tiny methods.
-		# rubocop:disable Metrics/AbcSize
 		def self.do_generate(_)
 			args = ARGV.select { |item| !%w(-g --generate g generate).include? item }
 			options = args.select { |item| item.start_with? '--' }
@@ -137,23 +134,17 @@ module StructCore
 			directory = Dir.pwd
 			project_file = nil
 			project_file = File.join(directory, 'project.yml') if File.exist? File.join(directory, 'project.yml')
+			project_file = File.join(directory, 'project.yaml') if File.exist? File.join(directory, 'project.yaml')
 			project_file = File.join(directory, 'project.json') if File.exist? File.join(directory, 'project.json')
 			project_file = File.join(directory, 'Specfile') if File.exist? File.join(directory, 'Specfile')
 
 			if project_file.nil?
-				puts Paint['Could not find project.yml or project.json in the current directory', :red]
+				puts Paint['Could not find a spec file in the current directory', :red]
 				quit(-1)
 			end
 
 			begin
-				if options.include? '--with-processor'
-					StructCore::SpecProcessor.new(project_file, options.include?('--dry-run')).process
-				else
-					spec = nil
-					spec = StructCore::Specfile.parse project_file unless project_file.end_with?('Specfile')
-					spec = StructCore::SpecBuilder.build project_file if project_file.end_with?('Specfile')
-					StructCore::XcodeprojWriter.write spec, directory, selected_variants unless spec.nil?
-				end
+				StructCore::SpecProcessor.new(project_file, options.include?('--dry-run'), selected_variants).process
 			rescue StandardError => err
 				puts Paint[err, :red]
 				quit(-1)
@@ -161,7 +152,6 @@ module StructCore
 
 			quit(0)
 		end
-		# rubocop:enable Metrics/AbcSize
 
 		def self.do_create(_)
 			selected_option = Ask.list 'What do you want to create?', [
@@ -189,8 +179,6 @@ module StructCore
 
 			mopts = Slop.parse(args) do |o|
 				o.string '-p', '--path', 'specifies the path of the xcode project to migrate'
-				o.string '-d', '--destination', 'specifies the destination folder to store the migrated project files'
-				o.bool '--with-processor'
 				o.bool '--dry-run'
 				o.on '--help', 'help on using this command' do
 					puts o
@@ -203,11 +191,7 @@ module StructCore
 				quit(0)
 			end
 
-			if mopts.with_processor?
-				StructCore::SpecProcessor.new(mopts[:path], mopts.dry_run?).process
-			else
-				StructCore::Migrator.migrate mopts[:path], mopts[:destination]
-			end
+			StructCore::SpecProcessor.new(mopts[:path], mopts.dry_run?).process
 			quit(0)
 		end
 

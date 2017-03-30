@@ -9,17 +9,18 @@ require 'paint'
 
 module StructCore
 	class SpecProcessor
-		def initialize(project_file, dry_run = false)
+		def initialize(project_file, dry_run = false, selected_variants = [])
 			return if project_file.to_s.empty?
 			@full_project_path, target_structure = resolve_project_data project_file
 			@dry_run = dry_run
+			@selected_variants = selected_variants || []
 			@project_component = StructCore::Processor::ProjectComponent.new(target_structure, File.dirname(@full_project_path))
 		end
 
 		def process
 			source_dsl = process_source_dsl @full_project_path
 
-			outputs = @project_component.process source_dsl
+			outputs = @project_component.process source_dsl, @selected_variants
 			return if outputs.empty?
 
 			puts "\n" unless @dry_run

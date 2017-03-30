@@ -5,6 +5,7 @@ module StructCore
 		class VariantsComponent
 			include ProcessorComponent
 
+			# rubocop:disable Metrics/AbcSize
 			# @param project [StructCore::Specfile]
 			def process(project, variants = [])
 				selected_variants = variants
@@ -44,6 +45,7 @@ module StructCore
 					[variant.name, StructCore::Specfile.new(project.version, spec_targets, project.configurations, [], project.base_dir, project.includes_pods)]
 				}.compact.to_h
 			end
+			# rubocop:enable Metrics/AbcSize
 		end
 	end
 end

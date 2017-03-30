@@ -17,10 +17,10 @@ module StructCore
 				@variants_component = VariantsComponent.new @structure, @working_directory
 			end
 
-			def process(project)
+			def process(project, selected_variants = [])
 				output = []
 				output = process_xc_project project if structure == :spec
-				output = process_spec_project project if structure == :xcodeproj
+				output = process_spec_project project, selected_variants if structure == :xcodeproj
 
 				output
 			end
@@ -45,12 +45,12 @@ module StructCore
 				[ProcessorOutput.new(dsl, File.join(working_directory, 'project.yml'))]
 			end
 
-			def process_spec_project(project)
+			def process_spec_project(project, selected_variants)
 				version = project.version
 
 				projects = []
 				projects = [['project', project]] if project.variants.empty?
-				projects = @variants_component.process(project) unless project.variants.empty?
+				projects = @variants_component.process(project, selected_variants) unless project.variants.empty?
 
 				projects.map { |proj_data|
 					name, proj = proj_data
