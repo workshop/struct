@@ -14,15 +14,20 @@ module StructCore
 			def process(target, target_dsl = nil, dsl = nil)
 				output = []
 
-				output = process_xc_resources target, target_dsl if structure == :spec && !target_dsl.nil?
+				output = process_xc_resources target if structure == :spec
 				output = process_spec_resources target, target_dsl, dsl if structure == :xcodeproj && !target_dsl.nil? && !dsl.nil?
 
 				output
 			end
 
 			# @param target [Xcodeproj::Project::Object::PBXNativeTarget]
-			# @param target_dsl [StructCore::Specfile::Target]
-			def process_xc_resources(target, target_dsl) end
+			def process_xc_resources(target)
+				target.resources_build_phase.files.select { |f|
+					!f.file_ref.name.nil? && f.file_ref.name.end_with?('.storyboard', '.strings', '.stringsdict')
+				}.map { |ref|
+					@resource_component.process ref.file_ref
+				}.compact.uniq
+			end
 
 			# @param target [StructCore::Specfile::Target]
 			# @param target_dsl [Xcodeproj::Project::Object::PBXNativeTarget]

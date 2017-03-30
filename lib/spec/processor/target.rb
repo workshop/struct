@@ -28,6 +28,7 @@ module StructCore
 			def process_xc_target(target, target_dsl)
 				target_dsl.configurations = @configurations_component.process target, target_dsl
 				target_dsl.source_dir = @sources_component.process target, target_dsl
+				target_dsl.res_dir = @resources_component.process target
 				target_dsl
 			end
 

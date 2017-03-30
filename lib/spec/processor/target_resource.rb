@@ -19,6 +19,8 @@ module StructCore
 				path = resource.real_path.to_s.sub(@working_directory, '')
 				path[0] = '' if path.start_with? '/'
 
+				path = path.split(/\/[A-Za-z]*\.lproj/).first
+
 				path
 			end
 
