@@ -29,6 +29,8 @@ module StructCore
 				file = source.sub(@working_directory, '')
 				file[0] = '' if file.start_with? '/'
 
+				return add_source_reference(file, target_dsl) if file.end_with?('.framework', '.a')
+
 				native_group = file.include?('/') ? create_group(group_dsl, File.dirname(file).split('/')) : group_dsl
 				native_file = native_group.new_file File.basename(file)
 				build_file = nil
@@ -56,6 +58,30 @@ module StructCore
 					group.path = components.first
 				end
 				create_group group, components.drop(1)
+			end
+
+			def add_source_reference(file, target_dsl)
+				if file.end_with? '.framework'
+					framework_group = target_dsl.project.frameworks_group.groups.find { |group| group.display_name == '$local' }
+					framework_group = target_dsl.project.frameworks_group.new_group '$local', nil, '<group>' if framework_group.nil?
+
+					# The 'Embed Frameworks' phase is missing by default from the Xcodeproj template, so we have to add it.
+					embed_phase = target_dsl.build_phases.first { |b| b.name == 'Embed Frameworks' }
+					if embed_phase.nil?
+						embed_phase = target_dsl.project.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
+						embed_phase.name = 'Embed Frameworks'
+						embed_phase.symbol_dst_subfolder_spec = :frameworks
+						target_dsl.build_phases.insert(native_target.build_phases.count, embed_phase)
+					end
+
+					framework = framework_group.new_file file
+					(embed_phase.add_file_reference framework).settings = { 'ATTRIBUTES' => %w(CodeSignOnCopy RemoveHeadersOnCopy)}
+					target_dsl.frameworks_build_phase.add_file_reference framework
+				elsif file.end_with? '.a'
+					target_dsl.frameworks_build_phase.add_file_reference file
+				end
+
+				nil
 			end
 		end
 	end
