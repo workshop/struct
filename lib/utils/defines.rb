@@ -7,6 +7,7 @@ module StructCore
 	SPEC_VERSION_120 = Semantic::Version.new('1.2.0')
 	SPEC_VERSION_121 = Semantic::Version.new('1.2.1')
 	SPEC_VERSION_130 = Semantic::Version.new('1.3.0')
+	LATEST_SPEC_VERSION = SPEC_VERSION_130
 	STRUCT_CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'config_profiles')
 	XC_DEBUG_SETTINGS_MERGED = %w(general:debug ios:debug).map { |profile_name|
 		[profile_name, File.join(STRUCT_CONFIG_PROFILE_PATH, "#{profile_name.sub(':', '_')}.yml")]

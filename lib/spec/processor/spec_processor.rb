@@ -5,6 +5,7 @@ require_relative 'project'
 require_relative 'configurations'
 require 'Xcodeproj'
 require 'awesome_print'
+require 'paint'
 
 module StructCore
 	class SpecProcessor
@@ -21,6 +22,8 @@ module StructCore
 			outputs = @project_component.process source_dsl
 			return if outputs.empty?
 
+			puts "\n" unless @dry_run
+
 			outputs.each { |output|
 				if @dry_run
 					ap output.dsl if output.dsl.is_a?(Xcodeproj::Project)
@@ -28,6 +31,7 @@ module StructCore
 				else
 					StructCore::Specwriter.new.write_spec output.dsl, output.path unless output.path.end_with? '.xcodeproj'
 					output.dsl.save output.path if output.path.end_with? '.xcodeproj'
+					puts Paint["Saved '#{output.path}'"]
 				end
 			}
 		end

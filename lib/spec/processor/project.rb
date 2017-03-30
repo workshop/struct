@@ -1,7 +1,9 @@
 require_relative 'processor_component'
 require_relative 'configurations'
 require_relative 'targets'
+require_relative 'variants'
 require_relative '../../cocoapods/pod_assistant'
+require 'paint'
 
 module StructCore
 	module Processor
@@ -12,14 +14,13 @@ module StructCore
 				super(structure, working_directory)
 				@configurations_component = ConfigurationsComponent.new @structure, @working_directory
 				@targets_component = TargetsComponent.new @structure, @working_directory
+				@variants_component = VariantsComponent.new @structure, @working_directory
 			end
 
 			def process(project)
-				proj = deep_clone project
-
 				output = []
-				output = process_xc_project proj if structure == :spec
-				output = process_spec_project proj if structure == :xcodeproj
+				output = process_xc_project project if structure == :spec
+				output = process_spec_project project if structure == :xcodeproj
 
 				output
 			end
@@ -28,7 +29,7 @@ module StructCore
 				version = project.root_object.attributes['Struct.Version']
 
 				if version.nil?
-					version = SPEC_VERSION_130
+					version = LATEST_SPEC_VERSION
 				else
 					begin
 						version = Semantic::Version.new version
@@ -45,16 +46,26 @@ module StructCore
 			end
 
 			def process_spec_project(project)
-				StructCore::PodAssistant.apply_pod_configuration project, @working_directory
 				version = project.version
 
-				dsl = Xcodeproj::Project.new File.join(working_directory, 'project.xcodeproj')
-				dsl.root_object.attributes['Struct.Version'] = version.to_s
-				dsl.build_configurations.clear
-				@configurations_component.process project, dsl
-				@targets_component.process project, dsl
+				projects = []
+				projects = [['project', project]] if project.variants.empty?
+				projects = @variants_component.process(project) unless project.variants.empty?
 
-				[ProcessorOutput.new(dsl, File.join(working_directory, 'project.xcodeproj'))]
+				projects.map { |proj_data|
+					name, proj = proj_data
+					puts Paint["Processing project '#{name}'..."]
+
+					StructCore::PodAssistant.apply_pod_configuration proj, working_directory
+
+					dsl = Xcodeproj::Project.new File.join(working_directory, "#{name}.xcodeproj")
+					dsl.root_object.attributes['Struct.Version'] = version.to_s
+					dsl.build_configurations.clear
+					@configurations_component.process proj, dsl
+					@targets_component.process proj, dsl
+
+					ProcessorOutput.new(dsl, File.join(working_directory, "#{name}.xcodeproj"))
+				}
 			end
 		end
 	end
