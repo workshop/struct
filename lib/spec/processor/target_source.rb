@@ -75,7 +75,7 @@ module StructCore
 					end
 
 					framework = framework_group.new_file file
-					(embed_phase.add_file_reference framework).settings = { 'ATTRIBUTES' => %w(CodeSignOnCopy RemoveHeadersOnCopy)}
+					(embed_phase.add_file_reference framework).settings = { 'ATTRIBUTES' => %w(CodeSignOnCopy RemoveHeadersOnCopy) }
 					target_dsl.frameworks_build_phase.add_file_reference framework
 				elsif file.end_with? '.a'
 					target_dsl.frameworks_build_phase.add_file_reference file
