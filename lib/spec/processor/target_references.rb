@@ -29,7 +29,23 @@ module StructCore
 			end
 
 			# @param target [Xcodeproj::Project::Object::PBXNativeTarget]
-			def process_xc_refs(target) end
+			def process_xc_refs(target)
+				target.frameworks_build_phase.files.map { |f|
+					if f.file_ref.source_tree == 'SDKROOT' || f.file_ref.source_tree == 'DEVELOPER_DIR'
+						if f.file_ref.path.include? 'System/Library/Frameworks'
+							@system_ref_component.process f.file_ref
+						elsif f.file_ref.path.include? 'usr/lib'
+							@system_lib_ref_component.process f.file_ref
+						else
+							next nil
+						end
+					elsif f.file_ref.path.end_with? '.framework'
+						@local_ref_component.process f.file_ref
+					else
+						@local_lib_ref_component.process f.file_ref
+					end
+				}.compact
+			end
 
 			# @param target [StructCore::Specfile::Target]
 			# @param target_dsl [Xcodeproj::Project::Object::PBXNativeTarget]

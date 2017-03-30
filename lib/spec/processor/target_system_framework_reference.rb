@@ -14,7 +14,10 @@ module StructCore
 				output
 			end
 
-			def process_xc_ref(ref) end
+			# @param ref [Xcodeproj::Project::Object::PBXFileReference]
+			def process_xc_ref(ref)
+				StructCore::Specfile::Target::SystemFrameworkReference.new(ref.path.split('/').last.sub('.framework', ''))
+			end
 
 			# @param ref [StructCore::Specfile::Target::SystemFrameworkReference]
 			# @param target_dsl [Xcodeproj::Project::Object::PBXNativeTarget]
