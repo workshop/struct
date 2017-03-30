@@ -54,10 +54,10 @@ module StructCore
 			# @param target_dsl [Xcodeproj::Project::Object::PBXNativeTarget]
 			# @param dsl [Xcodeproj::Project]
 			def process_spec_sources(target, target_dsl, dsl)
-				all_source_files = glob_sources(target).select { |file|
-					!(target.file_excludes.any? { |exclude|
+				all_source_files = glob_sources(target).reject { |file|
+					target.file_excludes.any? { |exclude|
 						File.fnmatch(exclude, file.slice(@working_directory.length + 1..-1), File::FNM_PATHNAME | File::FNM_EXTGLOB)
-					})
+					}
 				}
 
 				flags_component = TargetSourceFlagsComponent.new @structure, @working_directory, target

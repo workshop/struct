@@ -1,6 +1,9 @@
 require_relative 'processor_component'
 require_relative 'target_system_framework_reference'
 require_relative 'target_system_library_reference'
+require_relative 'target_local_framework_reference'
+require_relative 'target_local_library_reference'
+require_relative 'target_framework_reference'
 
 module StructCore
 	module Processor
@@ -11,6 +14,9 @@ module StructCore
 				super(structure, working_directory)
 				@system_ref_component = TargetSystemFrameworkReferenceComponent.new(@structure, @working_directory)
 				@system_lib_ref_component = TargetSystemLibraryReferenceComponent.new(@structure, @working_directory)
+				@local_ref_component = TargetLocalFrameworkReferenceComponent.new(@structure, @working_directory)
+				@local_lib_ref_component = TargetLocalLibraryReferenceComponent.new(@structure, @working_directory)
+				@subproj_ref_component = TargetFrameworkReferenceComponent.new(@structure, @working_directory)
 			end
 
 			def process(target, target_dsl = nil, dsl = nil)
@@ -41,6 +47,9 @@ module StructCore
 				target.references.each { |ref|
 					@system_ref_component.process ref, target_dsl, dsl.frameworks_group if ref.is_a?(StructCore::Specfile::Target::SystemFrameworkReference)
 					@system_lib_ref_component.process ref, target_dsl, dsl.frameworks_group if ref.is_a?(StructCore::Specfile::Target::SystemLibraryReference)
+					@local_ref_component.process ref, target_dsl, framework_group, embed_phase if ref.is_a?(StructCore::Specfile::Target::LocalFrameworkReference)
+					@local_lib_ref_component.process ref, target_dsl, framework_group if ref.is_a?(StructCore::Specfile::Target::LocalLibraryReference)
+					@subproj_ref_component.process ref, target, target_dsl, framework_group if ref.is_a?(StructCore::Specfile::Target::FrameworkReference)
 				}
 			end
 		end

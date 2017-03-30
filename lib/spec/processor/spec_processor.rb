@@ -40,6 +40,8 @@ module StructCore
 				target_structure = :spec
 			elsif full_project_path.end_with? '.yaml'
 				target_structure = :xcodeproj
+			elsif full_project_path.end_with? '.yml'
+				target_structure = :xcodeproj
 			elsif full_project_path.end_with? '.json'
 				target_structure = :xcodeproj
 			elsif File.basename(full_project_path) == 'Specfile'
