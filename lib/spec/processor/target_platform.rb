@@ -44,6 +44,20 @@ module StructCore
 				sdk = YAML.load_file(File.join(XC_TARGET_CONFIG_PROFILE_PATH, "#{profile.sub(':', '_')}.yml"))['SDKROOT'] unless profile.nil?
 				sdk = target.configurations.first.settings['SDKROOT'] if sdk.nil?
 
+				if sdk.nil? && !target.configurations.first.source.nil?
+					config = XcconfigParser.parse target.configurations.first.source, @working_directory
+					sdk = config['SDKROOT'] unless config.nil?
+				end
+
+				if sdk.nil?
+					puts Paint["Warning: SDKROOT not recognised in configuration for target: '#{target.name}'. Ignoring...", :yellow]
+					return nil
+				end
+
+				resolve_platform sdk
+			end
+
+			def resolve_platform(sdk)
 				if sdk.include? 'iphoneos'
 					platform = :ios
 				elsif sdk.include? 'macosx'
@@ -53,7 +67,7 @@ module StructCore
 				elsif sdk.include? 'watchos'
 					platform = :watchos
 				else
-					puts Paint["Warning: SDKROOT #{build_settings['SDKROOT']} not recognised in configuration for target: '#{target.name}'. Ignoring...", :yellow]
+					puts Paint["Warning: SDKROOT '#{sdk}' not recognised in configuration for target: '#{target.name}'. Ignoring...", :yellow]
 					return nil
 				end
 

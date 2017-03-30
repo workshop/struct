@@ -29,9 +29,12 @@ module StructCore
 				file = source.sub(@working_directory, '')
 				file[0] = '' if file.start_with? '/'
 
+				rel_file = file.sub(group_dsl.path, '')
+				rel_file[0] = '' if rel_file.start_with? '/'
+
 				return add_source_reference(file, target_dsl) if file.end_with?('.framework', '.a')
 
-				native_group = file.include?('/') ? create_group(group_dsl, File.dirname(file).split('/')) : group_dsl
+				native_group = file.include?('/') ? create_group(group_dsl, File.dirname(rel_file).split('/')) : group_dsl
 				native_file = native_group.new_file File.basename(file)
 				build_file = nil
 				if file.end_with? '.swift', '.m', '.mm'
@@ -50,7 +53,7 @@ module StructCore
 			end
 
 			def create_group(parent_group, components)
-				return parent_group if components.first.nil?
+				return parent_group if components.first.nil? || components.first == '.'
 				group = parent_group[components.first]
 				unless group
 					group = parent_group.new_group(components.first)

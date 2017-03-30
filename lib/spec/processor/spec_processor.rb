@@ -35,6 +35,8 @@ module StructCore
 					puts Paint["Saved '#{output.path}'"]
 				end
 			}
+
+			outputs
 		end
 
 		def resolve_project_data(project_file)

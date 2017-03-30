@@ -74,7 +74,7 @@ module StructCore
 
 				config_group = dsl.groups.find { |g| g.display_name == '$config' }
 				config_group = dsl.new_group '$config', nil, '<group>' if config_group.nil?
-				config.base_configuration_reference = config_group.new_file data[:source]
+				xc_config.base_configuration_reference = config_group.new_file config.source
 			end
 
 			def extract_xcconfig_path(base_configuration_reference, project_dir)
@@ -84,7 +84,7 @@ module StructCore
 				source_path = File.join(project_dir, path)
 
 				unless File.exist? source_path
-					puts Paint["Warning: Unable to locate xcconfig file in target: #{name} at: #{source_path}. Xcconfig reference will be ignored."]
+					puts Paint["Warning: Unable to locate xcconfig file: #{source_path}. Xcconfig reference will be ignored."]
 					return nil
 				end
 

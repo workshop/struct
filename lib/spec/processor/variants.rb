@@ -42,7 +42,10 @@ module StructCore
 						spec_target.postbuild_run_scripts = [].push(*spec_target.postbuild_run_scripts).push(*target.postbuild_run_scripts)
 					}
 
-					[variant.name, StructCore::Specfile.new(project.version, spec_targets, project.configurations, [], project.base_dir, project.includes_pods)]
+					name = variant.name
+					name = 'project' if name == '$base'
+
+					[name, StructCore::Specfile.new(project.version, spec_targets, project.configurations, [], project.base_dir, project.includes_pods)]
 				}.compact.to_h
 			end
 			# rubocop:enable Metrics/AbcSize

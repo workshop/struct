@@ -7,10 +7,6 @@ require_relative '../utils/defines'
 require_relative '../refresher/refresher'
 require_relative '../watch/watcher'
 require_relative '../spec/spec_file'
-require_relative '../create/create_class'
-require_relative '../create/create_struct'
-require_relative '../create/create_target'
-require_relative '../create/create_configuration'
 require_relative '../spec/builder/spec_builder'
 require_relative '../spec/processor/spec_processor'
 
@@ -33,9 +29,6 @@ module StructCore
 					end
 					o.on 'g', 'generate', 'generates an xcode project' do
 						return do_generate o
-					end
-					o.on 'c', 'create', 'starts the resource creation wizard for creating files, targets, etc.' do
-						return do_create o
 					end
 					o.on 'm', 'migrate', 'migrates an Xcode project and its files to a specfile (beta)' do
 						return do_migrate o
@@ -70,10 +63,6 @@ module StructCore
 					o.on '-g', '--generate' do
 						warn_deprecated_invocation('--generate', 'generate')
 						return do_generate o
-					end
-					o.on '-c', '--create' do
-						warn_deprecated_invocation('--create', 'create')
-						return do_create o
 					end
 					o.on '-m', '--migrate' do
 						warn_deprecated_invocation('--migrate', 'migrate')
@@ -153,27 +142,6 @@ module StructCore
 			quit(0)
 		end
 
-		def self.do_create(_)
-			selected_option = Ask.list 'What do you want to create?', [
-				'Class',
-				'Struct',
-				'Target',
-				'Build Configuration'
-			]
-
-			if selected_option.zero?
-				StructCore::Create::Class.run_interactive
-			elsif selected_option == 1
-				StructCore::Create::Struct.run_interactive
-			elsif selected_option == 2
-				StructCore::Create::Target.run_interactive
-			elsif selected_option == 3
-				StructCore::Create::Configuration.run_interactive
-			end
-
-			quit(0)
-		end
-
 		def self.do_migrate(_)
 			args = ARGV.select { |item| item != '-m' && item != '--migrate' }
 
@@ -198,7 +166,6 @@ module StructCore
 		private_class_method :do_parse
 		private_class_method :do_watch
 		private_class_method :do_generate
-		private_class_method :do_create
 		private_class_method :do_migrate
 	end
 end

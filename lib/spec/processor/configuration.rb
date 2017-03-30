@@ -17,7 +17,7 @@ module StructCore
 				source = nil
 
 				unless config.base_configuration_reference.nil?
-					source = extract_xcconfig_path config.base_configuration_reference, project_dir, directory
+					source = extract_xcconfig_path config.base_configuration_reference, @working_directory
 				end
 
 				if config.type == :debug
@@ -53,6 +53,20 @@ module StructCore
 
 				build_settings = build_settings.merge spec_config.overrides
 				config.build_settings = build_settings
+			end
+
+			def extract_xcconfig_path(base_configuration_reference, project_dir)
+				path = base_configuration_reference.hierarchy_path
+				path[0] = '' if path.start_with? '/'
+
+				source_path = File.join(project_dir, path)
+
+				unless File.exist? source_path
+					puts Paint["Warning: Unable to locate xcconfig file: #{source_path}. Xcconfig reference will be ignored."]
+					return nil
+				end
+
+				path
 			end
 		end
 	end
