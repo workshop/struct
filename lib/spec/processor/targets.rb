@@ -31,7 +31,7 @@ module StructCore
 			end
 
 			def process_spec_targets(project, dsl)
-				embed_component = TargetEmbedsComponent.new(@structure, @working_directory)
+				embed_component = TargetEmbedsComponent.new(@structure, @working_directory, project)
 
 				project.targets.map { |target|
 					# Pre-create all target DSL objects before they're filled in, as this allows us to resolve target refs

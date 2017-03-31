@@ -4,6 +4,7 @@ require_relative 'target_system_library_reference'
 require_relative 'target_local_framework_reference'
 require_relative 'target_local_library_reference'
 require_relative 'target_framework_reference'
+require_relative 'target_target_reference'
 
 module StructCore
 	module Processor
@@ -17,6 +18,7 @@ module StructCore
 				@local_ref_component = TargetLocalFrameworkReferenceComponent.new(@structure, @working_directory)
 				@local_lib_ref_component = TargetLocalLibraryReferenceComponent.new(@structure, @working_directory)
 				@subproj_ref_component = TargetFrameworkReferenceComponent.new(@structure, @working_directory)
+				@target_ref_component = TargetTargetReferenceComponent.new(@structure, @working_directory)
 			end
 
 			def process(target, target_dsl = nil, dsl = nil)
@@ -30,7 +32,7 @@ module StructCore
 
 			# @param target [Xcodeproj::Project::Object::PBXNativeTarget]
 			def process_xc_refs(target)
-				target.frameworks_build_phase.files.map { |f|
+				refs = target.frameworks_build_phase.files.map { |f|
 					if f.file_ref.source_tree == 'SDKROOT' || f.file_ref.source_tree == 'DEVELOPER_DIR'
 						if f.file_ref.path.include? 'System/Library/Frameworks'
 							@system_ref_component.process f.file_ref
@@ -45,6 +47,11 @@ module StructCore
 						@local_lib_ref_component.process f.file_ref
 					end
 				}.compact
+
+				refs.unshift(*target.dependencies.map { |d|
+					next nil if d.target.nil?
+					@target_ref_component.process d.target
+				}.compact)
 			end
 
 			# @param target [StructCore::Specfile::Target]
@@ -69,6 +76,7 @@ module StructCore
 					@local_ref_component.process ref, target_dsl, framework_group, embed_phase if ref.is_a?(StructCore::Specfile::Target::LocalFrameworkReference)
 					@local_lib_ref_component.process ref, target_dsl, framework_group if ref.is_a?(StructCore::Specfile::Target::LocalLibraryReference)
 					@subproj_ref_component.process ref, target, target_dsl, framework_group if ref.is_a?(StructCore::Specfile::Target::FrameworkReference)
+					@target_ref_component.process ref, target_dsl, dsl if ref.is_a?(StructCore::Specfile::Target::TargetReference)
 				}
 			end
 		end
