@@ -55,7 +55,7 @@ module StructCore
 				framework_group = dsl.frameworks_group.new_group '$local', nil, '<group>' if framework_group.nil?
 
 				# The 'Embed Frameworks' phase is missing by default from the Xcodeproj template, so we have to add it.
-				embed_phase = target_dsl.build_phases.first { |b| b.name == 'Embed Frameworks' }
+				embed_phase = target_dsl.build_phases.find { |b| b.is_a?(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase) && b.name == 'Embed Frameworks' }
 				if embed_phase.nil?
 					embed_phase = dsl.new(Xcodeproj::Project::Object::PBXCopyFilesBuildPhase)
 					embed_phase.name = 'Embed Frameworks'
