@@ -67,9 +67,15 @@ module StructCore
 					rel_source_root = source_dir.sub(@working_directory, '')
 					rel_source_root[0] = '' if rel_source_root.start_with? '/'
 
-					source_dir_component = File.basename(source_dir)
-					source_group = dsl.groups.find { |g| g.path == source_dir_component }
-					source_group ||= dsl.new_group(source_dir_component, rel_source_root, 'SOURCE_ROOT')
+					group_components = rel_source_root.split('/')
+					source_dir_component = group_components.first
+					if source_dir_component.nil?
+						source_group = dsl
+					else
+						source_group = dsl.groups.find { |g| g.path == source_dir_component }
+						source_group ||= dsl.new_group(source_dir_component, source_dir_component, 'SOURCE_ROOT')
+						source_group = create_group source_group, group_components.drop(1)
+					end
 
 					file_dsl = @source_component.process file, target_dsl, source_group
 					flags_component.process file_dsl if file_dsl.is_a?(Xcodeproj::Project::Object::PBXBuildFile)
@@ -111,6 +117,17 @@ module StructCore
 					option = flags_component.process(build_file)
 					target_dsl.options << option unless option.nil?
 				}
+			end
+
+			def create_group(parent_group, components)
+				return parent_group if components.first.nil? || components.first == '.'
+				group = parent_group[components.first]
+				unless group
+					group = parent_group.new_group(components.first)
+					group.source_tree = '<group>'
+					group.path = components.first
+				end
+				create_group group, components.drop(1)
 			end
 		end
 	end

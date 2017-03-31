@@ -34,8 +34,7 @@ module StructCore
 
 				return add_source_reference(file, target_dsl) if file.end_with?('.framework', '.a')
 
-				native_group = file.include?('/') ? create_group(group_dsl, File.dirname(rel_file).split('/')) : group_dsl
-				native_file = native_group.new_file File.basename(file)
+				native_file = group_dsl.new_file File.basename(file)
 				build_file = nil
 				if file.end_with? '.swift', '.m', '.mm'
 					target_dsl.source_build_phase.files_references << native_file
@@ -50,17 +49,6 @@ module StructCore
 				end
 
 				build_file || native_file
-			end
-
-			def create_group(parent_group, components)
-				return parent_group if components.first.nil? || components.first == '.'
-				group = parent_group[components.first]
-				unless group
-					group = parent_group.new_group(components.first)
-					group.source_tree = '<group>'
-					group.path = components.first
-				end
-				create_group group, components.drop(1)
 			end
 
 			def add_source_reference(file, target_dsl)
