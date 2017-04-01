@@ -10,11 +10,15 @@ module StructCore
 		class ProjectComponent
 			include ProcessorComponent
 
-			def initialize(structure, working_directory)
+			def initialize(structure, working_directory, configurations_component = nil, targets_component = nil, variants_component = nil)
 				super(structure, working_directory)
-				@configurations_component = ConfigurationsComponent.new @structure, @working_directory
-				@targets_component = TargetsComponent.new @structure, @working_directory
-				@variants_component = VariantsComponent.new @structure, @working_directory
+				@configurations_component = configurations_component
+				@targets_component = targets_component
+				@variants_component = variants_component
+
+				@configurations_component ||= ConfigurationsComponent.new @structure, @working_directory
+				@targets_component ||= TargetsComponent.new @structure, @working_directory
+				@variants_component ||= VariantsComponent.new @structure, @working_directory
 			end
 
 			def process(project, selected_variants = [])
@@ -34,7 +38,7 @@ module StructCore
 					begin
 						version = Semantic::Version.new version
 					rescue
-						return []
+						version = LATEST_SPEC_VERSION
 					end
 				end
 
@@ -67,6 +71,9 @@ module StructCore
 					ProcessorOutput.new(dsl, File.join(working_directory, "#{name}.xcodeproj"))
 				}
 			end
+
+			private :process_xc_project
+			private :process_spec_project
 		end
 	end
 end
