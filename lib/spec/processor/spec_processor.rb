@@ -11,24 +11,27 @@ module StructCore
 	class SpecProcessor
 		def initialize(project_file, dry_run = false, selected_variants = [])
 			return if project_file.to_s.empty?
-			@full_project_path, target_structure = resolve_project_data project_file
+			@project_file = project_file
 			@dry_run = dry_run
 			@selected_variants = selected_variants || []
-			@project_component = StructCore::Processor::ProjectComponent.new(target_structure, File.dirname(@full_project_path))
 		end
 
-		def process
-			source_dsl = process_source_dsl @full_project_path
+		# @param project_component [StructCore::Processor::ProjectComponent]
+		def process(project_component = nil)
+			full_project_path, target_structure = resolve_project_data @project_file
+			project_component ||= StructCore::Processor::ProjectComponent.new(target_structure, File.dirname(full_project_path))
 
-			outputs = @project_component.process source_dsl, @selected_variants
+			source_dsl = process_source_dsl full_project_path
+
+			outputs = project_component.process source_dsl, @selected_variants
 			return if outputs.empty?
 
 			puts "\n" unless @dry_run
 
 			outputs.each { |output|
 				if @dry_run
-					ap output.dsl if output.dsl.is_a?(Xcodeproj::Project)
-					ap output.dsl, raw: true if output.dsl.is_a?(StructCore::Specfile)
+					print output.dsl if output.dsl.is_a?(Xcodeproj::Project)
+					print output.dsl, raw: true if output.dsl.is_a?(StructCore::Specfile)
 				else
 					StructCore::Specwriter.new.write_spec output.dsl, output.path unless output.path.end_with? '.xcodeproj'
 					output.dsl.save output.path if output.path.end_with? '.xcodeproj'
@@ -74,7 +77,12 @@ module StructCore
 			source_dsl
 		end
 
+		def print(dsl, options = {})
+			ap dsl, options
+		end
+
 		private :resolve_project_data
 		private :process_source_dsl
+		private :print
 	end
 end
