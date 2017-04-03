@@ -109,5 +109,49 @@ RSpec.describe StructCore::Processor::ProjectComponent do
 				expect(spec.targets).to eq(@targets_stub_ret)
 			end
 		end
+
+		describe 'when provided an xcodeproj structure' do
+			before(:each) do
+				@configs_stub = instance_double('StructCore::Processor::ConfigurationsComponent')
+				@targets_stub = instance_double('StructCore::Processor::TargetsComponent')
+				@variants_stub = instance_double('StructCore::Processor::VariantsComponent')
+
+				allow(@configs_stub).to receive(:process)
+				allow(@targets_stub).to receive(:process)
+				allow(@variants_stub).to receive(:process)
+				allow(StructCore::PodAssistant).to receive(:apply_pod_configuration)
+
+				@project_component = StructCore::Processor::ProjectComponent.new(
+					:xcodeproj,
+					'',
+					@configs_stub,
+					@targets_stub,
+					@variants_stub
+				)
+			end
+
+			it 'uses the specified spec version' do
+				project = StructCore::Specfile.new(StructCore::LATEST_SPEC_VERSION, [], [], [], '')
+				dsl = nil
+				expect { dsl = @project_component.process(project, []).first }.to_not raise_error
+				expect(dsl).to be_truthy
+				dsl = dsl.dsl
+
+				expect(dsl).to be_truthy
+				expect(dsl.root_object.attributes['Struct.Version']).to eq(StructCore::LATEST_SPEC_VERSION.to_s)
+			end
+
+			it 'initialises an xcodeproj with targets and configurations' do
+				project = StructCore::Specfile.new(StructCore::LATEST_SPEC_VERSION, [{}], [{}], [], '')
+				dsl = nil
+				expect { dsl = @project_component.process(project, []).first }.to_not raise_error
+				expect(dsl).to be_truthy
+				dsl = dsl.dsl
+
+				expect(dsl).to be_truthy
+				expect(@configs_stub).to receive(:process)
+				expect(@targets_stub).to receive(:process)
+			end
+		end
 	end
 end
