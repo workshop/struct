@@ -116,9 +116,9 @@ RSpec.describe StructCore::Processor::ProjectComponent do
 				@targets_stub = instance_double('StructCore::Processor::TargetsComponent')
 				@variants_stub = instance_double('StructCore::Processor::VariantsComponent')
 
-				allow(@configs_stub).to receive(:process)
-				allow(@targets_stub).to receive(:process)
-				allow(@variants_stub).to receive(:process)
+				allow(@configs_stub).to receive(:process).and_return([])
+				allow(@targets_stub).to receive(:process).and_return([])
+				allow(@variants_stub).to receive(:process).and_return([])
 				allow(StructCore::PodAssistant).to receive(:apply_pod_configuration)
 
 				@project_component = StructCore::Processor::ProjectComponent.new(
@@ -143,14 +143,9 @@ RSpec.describe StructCore::Processor::ProjectComponent do
 
 			it 'initialises an xcodeproj with targets and configurations' do
 				project = StructCore::Specfile.new(StructCore::LATEST_SPEC_VERSION, [{}], [{}], [], '')
-				dsl = nil
-				expect { dsl = @project_component.process(project, []).first }.to_not raise_error
-				expect(dsl).to be_truthy
-				dsl = dsl.dsl
-
-				expect(dsl).to be_truthy
 				expect(@configs_stub).to receive(:process)
 				expect(@targets_stub).to receive(:process)
+				expect { @project_component.process(project, []).first }.to_not raise_error
 			end
 		end
 	end
