@@ -6,9 +6,10 @@ module StructCore
 		class ConfigurationsComponent
 			include ProcessorComponent
 
-			def initialize(structure, working_directory)
+			def initialize(structure, working_directory, config_component = nil)
 				super(structure, working_directory)
-				@configuration_component = ConfigurationComponent.new @structure, @working_directory
+				@configuration_component = config_component
+				@configuration_component ||= ConfigurationComponent.new @structure, @working_directory
 			end
 
 			def process(project, dsl = nil)
