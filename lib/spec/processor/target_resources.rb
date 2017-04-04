@@ -52,17 +52,6 @@ module StructCore
 				}
 			end
 
-			def create_group(parent_group, components)
-				return parent_group if components.first.nil?
-				group = parent_group[components.first]
-				unless group
-					group = parent_group.new_group(components.first)
-					group.source_tree = '<group>'
-					group.path = components.first
-				end
-				create_group group, components.drop(1)
-			end
-
 			def create_resource_group(target, dsl)
 				resource_group = dsl.groups.find { |group| group.display_name == "$lang:#{target.name}" }
 				return resource_group unless resource_group.nil?
@@ -97,7 +86,6 @@ module StructCore
 				lproj_variant_files
 			end
 
-			private :create_group
 			private :create_resource_group
 			private :map_lproj_entries
 		end
