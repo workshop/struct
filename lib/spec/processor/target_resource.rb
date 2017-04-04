@@ -31,17 +31,6 @@ module StructCore
 				native_file = group_dsl.new_file(resource, '<group>')
 				target_dsl.add_resources [native_file]
 			end
-
-			def create_group(parent_group, components)
-				return parent_group if components.first.nil?
-				group = parent_group[components.first]
-				unless group
-					group = parent_group.new_group(components.first)
-					group.source_tree = '<group>'
-					group.path = components.first
-				end
-				create_group group, components.drop(1)
-			end
 		end
 	end
 end
