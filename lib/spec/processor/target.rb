@@ -15,7 +15,7 @@ module StructCore
 				@configurations_component = TargetConfigurationsComponent.new(@structure, @working_directory)
 				@sources_component = TargetSourcesComponent.new(@structure, @working_directory)
 				@resources_component = TargetResourcesComponent.new(@structure, @working_directory)
-				@references_component = TargetReferencesProcessor.new(@structure, @working_directory)
+				@references_component = TargetReferencesComponent.new(@structure, @working_directory)
 				@scripts_component = TargetScriptsComponent.new(@structure, @working_directory)
 			end
 

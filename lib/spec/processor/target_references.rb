@@ -8,17 +8,33 @@ require_relative 'target_target_reference'
 
 module StructCore
 	module Processor
-		class TargetReferencesProcessor
+		class TargetReferencesComponent
 			include ProcessorComponent
 
-			def initialize(structure, working_directory)
+			def initialize(
+				structure,
+				working_directory,
+				system_ref_component = nil,
+				system_lib_ref_component = nil,
+				local_ref_component = nil,
+				local_lib_ref_component = nil,
+				subproj_ref_component = nil,
+				target_ref_component = nil
+			)
 				super(structure, working_directory)
-				@system_ref_component = TargetSystemFrameworkReferenceComponent.new(@structure, @working_directory)
-				@system_lib_ref_component = TargetSystemLibraryReferenceComponent.new(@structure, @working_directory)
-				@local_ref_component = TargetLocalFrameworkReferenceComponent.new(@structure, @working_directory)
-				@local_lib_ref_component = TargetLocalLibraryReferenceComponent.new(@structure, @working_directory)
-				@subproj_ref_component = TargetFrameworkReferenceComponent.new(@structure, @working_directory)
-				@target_ref_component = TargetTargetReferenceComponent.new(@structure, @working_directory)
+				@system_ref_component = system_ref_component
+				@system_lib_ref_component = system_lib_ref_component
+				@local_ref_component = local_ref_component
+				@local_lib_ref_component = local_lib_ref_component
+				@subproj_ref_component = subproj_ref_component
+				@target_ref_component = target_ref_component
+
+				@system_ref_component ||= TargetSystemFrameworkReferenceComponent.new(@structure, @working_directory)
+				@system_lib_ref_component ||= TargetSystemLibraryReferenceComponent.new(@structure, @working_directory)
+				@local_ref_component ||= TargetLocalFrameworkReferenceComponent.new(@structure, @working_directory)
+				@local_lib_ref_component ||= TargetLocalLibraryReferenceComponent.new(@structure, @working_directory)
+				@subproj_ref_component ||= TargetFrameworkReferenceComponent.new(@structure, @working_directory)
+				@target_ref_component ||= TargetTargetReferenceComponent.new(@structure, @working_directory)
 			end
 
 			def process(target, target_dsl = nil, dsl = nil)
