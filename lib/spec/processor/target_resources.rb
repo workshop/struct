@@ -6,9 +6,10 @@ module StructCore
 		class TargetResourcesComponent
 			include ProcessorComponent
 
-			def initialize(structure, working_directory)
+			def initialize(structure, working_directory, resource_component = nil)
 				super(structure, working_directory)
-				@resource_component = TargetResourceComponent.new(@structure, @working_directory)
+				@resource_component = resource_component
+				@resource_component ||= TargetResourceComponent.new(@structure, @working_directory)
 			end
 
 			def process(target, target_dsl = nil, dsl = nil)
@@ -95,6 +96,10 @@ module StructCore
 
 				lproj_variant_files
 			end
+
+			private :create_group
+			private :create_resource_group
+			private :map_lproj_entries
 		end
 	end
 end
