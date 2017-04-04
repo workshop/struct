@@ -447,6 +447,24 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.targets[0].options[0]).to be_an_instance_of(StructCore::Specfile::Target::FileOption)
 				expect(proj.variants[0].targets[0].options[0].flags).to eq('')
 			end
+
+			it 'parses a specfile that contains source flags' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_20X/spec_parser_20X_test_43.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser20X.new
+
+				proj = parser.parse StructCore::SPEC_VERSION_200, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[0].configurations.count).to eq(2)
+				expect(proj.targets[0].configurations[0].settings['IPHONEOS_DEPLOYMENT_TARGET']).to eq(10.2)
+				expect(proj.targets[0].configurations[1].settings['IPHONEOS_DEPLOYMENT_TARGET']).to eq(10.2)
+				expect(proj.targets[0].configurations[0].settings['INFOPLIST_FILE']).to eq('Info.plist')
+				expect(proj.targets[0].configurations[1].settings['INFOPLIST_FILE']).to eq('Info-Release.plist')
+				expect(proj.variants[0].targets[0].configurations[0].settings['FRAMEWORK_SEARCH_PATHS']).to be_truthy
+				expect(proj.variants[0].targets[0].configurations[1].settings['FRAMEWORK_SEARCH_PATHS']).to be_truthy
+				expect(proj.variants[0].targets[0].configurations[0].settings['INFOPLIST_FILE']).to eq('Info-beta.plist')
+				expect(proj.variants[0].targets[0].configurations[1].settings['INFOPLIST_FILE']).to eq('Info-beta-Release.plist')
+			end
 		end
 	end
 end

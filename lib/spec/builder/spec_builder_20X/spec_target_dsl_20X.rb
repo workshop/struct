@@ -14,6 +14,7 @@ module StructCore
 			@project_base_dir = nil
 			@project = nil
 			@current_scope = nil
+			@base_overrides = {}
 		end
 
 		attr_accessor :project_configurations
@@ -78,6 +79,7 @@ module StructCore
 				@current_scope = nil
 
 				config = dsl.configuration
+				config.settings.merge! @base_overrides
 				config.profiles = @profiles if config.source.nil? || config.source.empty?
 				@target.configurations = @project_configurations.map { |project_config|
 					target_config = DeepClone.clone config
@@ -90,9 +92,20 @@ module StructCore
 				@current_scope = nil
 
 				config = dsl.configuration
+				config.settings.merge! @base_overrides
 				config.profiles = @profiles if config.source.nil? || config.source.empty?
 
-				@target.configurations << config
+				unless config.name == '$base'
+					@target.configurations << config
+					return
+				end
+
+				@base_overrides = config.settings
+
+				@target.configurations.each { |c|
+					c.settings ||= {}
+					c.settings.merge! @base_overrides
+				}
 			end
 		end
 
