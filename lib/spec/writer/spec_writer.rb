@@ -1,7 +1,7 @@
-require_relative 'spec_writer_1_0_X'
 require_relative 'spec_writer_1_1_X'
 require_relative 'spec_writer_1_2_X'
 require_relative 'spec_writer_1_3_X'
+require_relative 'spec_writer_2_0_X'
 
 module StructCore
 	class Specwriter
@@ -20,10 +20,10 @@ module StructCore
 
 		def register_defaults
 			@writers.unshift(
-				StructCore::Specwriter10X.new,
 				StructCore::Specwriter11X.new,
 				StructCore::Specwriter12X.new,
-				StructCore::Specwriter13X.new
+				StructCore::Specwriter13X.new,
+				StructCore::Specwriter20X.new
 			)
 		end
 

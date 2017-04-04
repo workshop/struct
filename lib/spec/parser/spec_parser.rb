@@ -1,15 +1,13 @@
-require_relative 'spec_parser_1_0_X'
 require_relative 'spec_parser_1_1_X'
 require_relative 'spec_parser_1_2_X'
 require_relative 'spec_parser_1_3_X'
+require_relative 'spec_parser_2_0_X'
 
 module StructCore
 	class Specparser
 		def initialize
 			@parsers = []
-			@deprecated_versions = [
-				StructCore::SPEC_VERSION_100
-			]
+			@deprecated_versions = []
 		end
 
 		def register(parser)
@@ -25,7 +23,8 @@ module StructCore
 			@parsers.unshift(
 				StructCore::Specparser11X.new,
 				StructCore::Specparser12X.new,
-				StructCore::Specparser13X.new
+				StructCore::Specparser13X.new,
+				StructCore::Specparser20X.new
 			)
 		end
 

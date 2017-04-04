@@ -1,28 +1,36 @@
 require 'semantic'
+require_relative '../../utils/xcconfig_parser'
 
 module StructCore
-	class Specparser11X
+	class Specparser20X
 		# @param version [Semantic::Version]
 		def can_parse_version(version)
-			version.major == 1 && version.minor <= 1
+			version.major == 2 && version.minor.zero?
 		end
 
 		def parse(spec_version, spec_hash, filename)
-			valid_configuration_names, configurations = parse_configurations spec_hash
+			@spec_file_uses_pods = false
 
 			project_base_dir = File.dirname filename
+
+			valid_configuration_names, configurations = parse_configurations spec_hash
 			return Specfile.new(spec_version, [], configurations, [], project_base_dir) unless spec_hash.key? 'targets'
 			raise StandardError.new "Error: Invalid spec file. Key 'targets' should be a hash" unless spec_hash['targets'].is_a?(Hash)
 
 			targets = parse_targets spec_hash, valid_configuration_names, project_base_dir
 			variants = parse_variants spec_hash, valid_configuration_names, project_base_dir
 
-			Specfile.new(spec_version, targets, configurations, variants, project_base_dir)
+			Specfile.new(spec_version, targets, configurations, variants, project_base_dir, @spec_file_uses_pods)
 		end
 
 		def parse_configurations(spec_hash)
 			valid_configuration_names = []
 			configurations = spec_hash['configurations'].map { |name, config|
+				unless config['source'].nil?
+					valid_configuration_names << name
+					next Specfile::Configuration.new(name, [], {}, config['type'], config['source'])
+				end
+
 				unless config.key?('profiles') && config['profiles'].is_a?(Array) && config['profiles'].count > 0
 					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
 					next nil
@@ -36,7 +44,7 @@ module StructCore
 					next nil
 				end
 
-				next config
+				config
 			}.compact
 			raise StandardError.new 'Error: Invalid spec file. Project should have at least one configuration' unless configurations.count > 0
 
@@ -46,6 +54,7 @@ module StructCore
 		def parse_targets(spec_hash, valid_configuration_names, project_base_dir)
 			(spec_hash['targets'] || {}).map { |target_name, target_opts|
 				next nil if target_opts.nil?
+				parse_target_pods target_opts
 				parse_target_data(target_name, target_opts, project_base_dir, valid_configuration_names)
 			}.compact
 		end
@@ -72,6 +81,7 @@ module StructCore
 				if key == 'abstract'
 					abstract = true
 				else
+					parse_variant_target_pods value
 					variant = parse_variant_target_data(key, value, project_base_dir, valid_configuration_names)
 					targets.unshift(variant) unless variant.nil?
 				end
@@ -122,13 +132,17 @@ module StructCore
 			# Parse target configurations
 			configurations = nil
 			if target_opts.key? 'configurations'
-				if target_opts['configurations'].is_a?(Hash)
-					configurations = target_opts['configurations'].map { |config_name, config|
-						next nil if valid_config_names.include? config_name
-						Specfile::Target::Configuration.new(config_name, config, profiles)
-					}.compact
-				end
-			elsif target_opts.key? 'configuration'
+				configurations = target_opts['configurations'].map { |config_name, config|
+					next nil unless valid_config_names.include? config_name
+
+					next Specfile::Target::Configuration.new(config_name, {}, profiles, config) if config.is_a?(String)
+					next Specfile::Target::Configuration.new(config_name, config, profiles)
+				}.compact
+			elsif target_opts.key?('configuration') && target_opts['configuration'].is_a?(String)
+				configurations = valid_config_names.map { |name|
+					Specfile::Target::Configuration.new(name, {}, profiles, target_opts['configuration'])
+				}
+			elsif target_opts.key?('configuration')
 				configurations = valid_config_names.map { |name|
 					Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
 				}
@@ -175,6 +189,17 @@ module StructCore
 			file_excludes
 		end
 
+		def parse_variant_target_source_options(target_opts, target_name)
+			return [] unless target_opts.key? 'source_options'
+			unless target_opts['source_options'].is_a?(Hash)
+				puts Paint["Warning: Target #{target_name}'s source options was not a Hash. Ignoring source options...", :yellow]
+				return []
+			end
+			target_opts['source_options'].map { |name, settings|
+				StructCore::Specfile::Target::FileOption.new(name, settings)
+			}
+		end
+
 		def parse_variant_target_references(target_opts, target_name, project_base_dir)
 			return [] unless target_opts.key? 'references'
 			raw_references = target_opts['references']
@@ -193,7 +218,11 @@ module StructCore
 						next nil
 					end
 
-					next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if raw_reference['frameworks'].nil?
+					if raw_reference['frameworks'].nil?
+						next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if path.end_with? '.framework'
+						next Specfile::Target::LocalLibraryReference.new(path, raw_reference)
+					end
+
 					next Specfile::Target::FrameworkReference.new(path, raw_reference)
 				else
 					# De-symbolise :sdkroot:-prefixed entries
@@ -205,15 +234,33 @@ module StructCore
 			}.compact
 		end
 
-		def parse_variant_target_scripts(target_opts, project_base_dir)
-			# Parse target run scripts
-			return [] unless target_opts.key?('scripts') && target_opts['scripts'].is_a?(Array)
-
-			target_opts['scripts'].map { |s|
+		def parse_run_scripts_list(scripts, project_base_dir)
+			scripts.map { |s|
 				next nil if s.start_with? '/' # Script file should be relative to project
 				next nil unless File.exist? File.join(project_base_dir, s)
 				Specfile::Target::RunScript.new s
 			}.compact
+		end
+
+		def parse_variant_target_scripts(target_opts, project_base_dir)
+			# Parse target run scripts
+			return { prebuild_run_scripts: [], postbuild_run_scripts: [] } unless target_opts.key?('scripts')
+
+			if target_opts['scripts'].is_a?(Array)
+				{ prebuild_run_scripts: [], postbuild_run_scripts: parse_run_scripts_list(target_opts['scripts'], project_base_dir) }
+			elsif target_opts['scripts'].is_a?(Hash)
+				prebuild_run_scripts = []
+				if target_opts['scripts']['prebuild'].is_a?(Array)
+					prebuild_run_scripts = parse_run_scripts_list target_opts['scripts']['prebuild'], project_base_dir
+				end
+
+				postbuild_run_scripts = []
+				if target_opts['scripts']['postbuild'].is_a?(Array)
+					postbuild_run_scripts = parse_run_scripts_list target_opts['scripts']['postbuild'], project_base_dir
+				end
+
+				{ prebuild_run_scripts: prebuild_run_scripts, postbuild_run_scripts: postbuild_run_scripts }
+			end
 		end
 
 		def parse_variant_target_data(target_name, target_opts, project_base_dir, valid_config_names)
@@ -224,10 +271,21 @@ module StructCore
 			target_sources_dir = parse_variant_target_sources target_opts, project_base_dir
 			target_resources_dir = parse_variant_target_resources target_opts, project_base_dir
 			file_excludes = parse_variant_target_file_excludes target_opts, target_name
+			options = parse_variant_target_source_options target_opts, target_name
 			references = parse_variant_target_references target_opts, target_name, project_base_dir
 			run_scripts = parse_variant_target_scripts target_opts, project_base_dir
 
-			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes, run_scripts
+			Specfile::Target.new(
+				target_name, type, target_sources_dir, configurations, references, options, target_resources_dir,
+				file_excludes, run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
+			)
+		end
+
+		def parse_variant_target_pods(target_opts)
+			return if @spec_file_uses_pods
+			return if target_opts.nil? || !target_opts.is_a?(Hash)
+			return unless [false, true].include? target_opts['includes_cocoapods']
+			@spec_file_uses_pods = target_opts['includes_cocoapods']
 		end
 
 		def parse_target_type(target_opts)
@@ -260,8 +318,7 @@ module StructCore
 			# Search for platform only if profiles weren't already defined
 			if profiles.nil? && target_opts.key?('platform')
 				raw_platform = target_opts['platform']
-				# TODO: Add support for 'tvos', 'watchos'
-				unless %w(ios mac).include? raw_platform
+				unless %w(ios mac watch tv).include? raw_platform
 					puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{raw_platform}'. Ignoring target...", :yellow]
 					return nil
 				end
@@ -272,21 +329,24 @@ module StructCore
 			profiles
 		end
 
+		# rubocop:disable Style/ConditionalAssignment
 		def parse_target_configurations(target_opts, target_name, profiles, valid_config_names)
 			# Parse target configurations
-			if target_opts.key? 'configurations'
-				unless target_opts['configurations'].is_a?(Hash)
-					puts Paint["Warning: Key 'configurations' for target #{target_name} is not a hash. Ignoring target...", :yellow]
-					return nil
-				end
+			if target_opts.key?('configurations') && target_opts['configurations'].is_a?(Hash)
 				configurations = target_opts['configurations'].map do |config_name, config|
 					unless valid_config_names.include? config_name
 						puts Paint["Warning: Config name #{config_name} for target #{target_name} was not defined in this spec. Ignoring target...", :yellow]
 						return nil
 					end
-					Specfile::Target::Configuration.new(config_name, config, profiles)
+
+					next Specfile::Target::Configuration.new(config_name, {}, profiles, config) if config.is_a?(String)
+					next Specfile::Target::Configuration.new(config_name, config, profiles)
 				end
-			elsif target_opts.key? 'configuration'
+			elsif target_opts.key?('configuration') && target_opts['configuration'].is_a?(String)
+				configurations = valid_config_names.map { |name|
+					Specfile::Target::Configuration.new(name, {}, profiles, target_opts['configuration'])
+				}
+			elsif target_opts.key?('configuration')
 				configurations = valid_config_names.map { |name|
 					Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
 				}
@@ -298,6 +358,7 @@ module StructCore
 
 			configurations
 		end
+		# rubocop:enable Style/ConditionalAssignment
 
 		def parse_target_sources(target_opts, target_name, project_base_dir)
 			# Parse target sources
@@ -342,6 +403,17 @@ module StructCore
 			file_excludes
 		end
 
+		def parse_target_source_options(target_opts, target_name)
+			return [] unless target_opts.key? 'source_options'
+			unless target_opts['source_options'].is_a?(Hash)
+				puts Paint["Warning: Target #{target_name}'s source options was not a Hash. Ignoring source options...", :yellow]
+				return []
+			end
+			target_opts['source_options'].map { |name, settings|
+				StructCore::Specfile::Target::FileOption.new(name, settings)
+			}
+		end
+
 		def parse_target_references(target_opts, target_name, project_base_dir)
 			return [] unless target_opts.key? 'references'
 			raw_references = target_opts['references']
@@ -360,7 +432,11 @@ module StructCore
 						next nil
 					end
 
-					next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if raw_reference['frameworks'].nil?
+					if raw_reference['frameworks'].nil?
+						next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if path.end_with? '.framework'
+						next Specfile::Target::LocalLibraryReference.new(path, raw_reference)
+					end
+
 					next Specfile::Target::FrameworkReference.new(path, raw_reference)
 				else
 					# De-symbolise :sdkroot:-prefixed entries
@@ -374,13 +450,23 @@ module StructCore
 
 		def parse_target_scripts(target_opts, project_base_dir)
 			# Parse target run scripts
-			return [] unless target_opts.key?('scripts') && target_opts['scripts'].is_a?(Array)
+			return { prebuild_run_scripts: [], postbuild_run_scripts: [] } unless target_opts.key?('scripts')
 
-			target_opts['scripts'].map { |s|
-				next nil if s.start_with? '/' # Script file should be relative to project
-				next nil unless File.exist? File.join(project_base_dir, s)
-				Specfile::Target::RunScript.new s
-			}.compact
+			if target_opts['scripts'].is_a?(Array)
+				{ prebuild_run_scripts: [], postbuild_run_scripts: parse_run_scripts_list(target_opts['scripts'], project_base_dir) }
+			elsif target_opts['scripts'].is_a?(Hash)
+				prebuild_run_scripts = []
+				if target_opts['scripts']['prebuild'].is_a?(Array)
+					prebuild_run_scripts = parse_run_scripts_list target_opts['scripts']['prebuild'], project_base_dir
+				end
+
+				postbuild_run_scripts = []
+				if target_opts['scripts']['postbuild'].is_a?(Array)
+					postbuild_run_scripts = parse_run_scripts_list target_opts['scripts']['postbuild'], project_base_dir
+				end
+
+				{ prebuild_run_scripts: prebuild_run_scripts, postbuild_run_scripts: postbuild_run_scripts }
+			end
 		end
 
 		# @return StructCore::Specfile::Target
@@ -408,9 +494,20 @@ module StructCore
 			target_resources_dir = parse_target_resources target_opts, project_base_dir, target_sources_dir
 			file_excludes = parse_target_excludes target_opts, target_name
 			references = parse_target_references target_opts, target_name, project_base_dir
+			options = parse_target_source_options target_opts, target_name
 			run_scripts = parse_target_scripts target_opts, project_base_dir
 
-			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes, run_scripts
+			Specfile::Target.new(
+				target_name, type, target_sources_dir, configurations, references, options, target_resources_dir,
+				file_excludes, run_scripts[:postbuild_run_scripts], run_scripts[:prebuild_run_scripts]
+			)
+		end
+
+		def parse_target_pods(target_opts)
+			return if @spec_file_uses_pods
+			return if target_opts.nil? || !target_opts.is_a?(Hash)
+			return unless [false, true].include? target_opts['includes_cocoapods']
+			@spec_file_uses_pods = target_opts['includes_cocoapods']
 		end
 
 		private :parse_configurations

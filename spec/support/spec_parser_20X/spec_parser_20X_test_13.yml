@@ -1,0 +1,14 @@
+---
+version: 2.0.0
+configurations:
+  my-configuration:
+    profiles:
+    - general:debug
+    - ios:debug
+    overrides:
+      OVERRIDE: 1
+    type: debug
+targets:
+  my-target:
+    type: ":application"
+    sources: 'support_files/spec_parser_20X_test_12/abc'
