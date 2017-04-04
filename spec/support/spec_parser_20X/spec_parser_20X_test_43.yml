@@ -1,0 +1,33 @@
+---
+version: 2.0.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+  release:
+    profiles:
+    - general:release
+    - ios:release
+targets:
+  my-target:
+    type: ":application"
+    sources: support_files/abc
+    configurations:
+      $base:
+        IPHONEOS_DEPLOYMENT_TARGET: 10.2
+      debug:
+        INFOPLIST_FILE: Info.plist
+      release:
+        INFOPLIST_FILE: Info-Release.plist
+variants:
+  beta:
+    my-target:
+      configurations:
+        $base:
+          FRAMEWORK_SEARCH_PATHS:
+          - frameworks/Carthage
+        debug:
+          INFOPLIST_FILE: Info-beta.plist
+        release:
+          INFOPLIST_FILE: Info-beta-Release.plist
