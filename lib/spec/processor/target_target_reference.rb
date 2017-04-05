@@ -16,7 +16,7 @@ module StructCore
 
 			# @param reference [Xcodeproj::Project::Object::PBXNativeTarget]
 			def process_xc_reference(reference)
-				StructCore::Target::TargetReference.new reference.name
+				StructCore::Specfile::Target::TargetReference.new reference.name
 			end
 
 			# @param reference [StructCore::Specfile::Target::TargetReference]
