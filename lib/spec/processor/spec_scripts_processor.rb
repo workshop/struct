@@ -34,7 +34,7 @@ module StructCore
 		end
 
 		def execute_script_block(block, *args)
-			instance_exec *args, &block
+			instance_exec(*args, &block)
 		end
 
 		private :execute_script_file
