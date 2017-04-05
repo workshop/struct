@@ -154,7 +154,7 @@ module StructCore
 				end
 			end
 
-			unless mopts.path? && mopts.destination?
+			unless mopts.path?
 				puts mopts
 				quit(0)
 			end
