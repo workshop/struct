@@ -1,0 +1,28 @@
+spec '2.0.0' do
+  pre_generate do |spec|
+    spec.targets[0].configurations.each { |c|
+      c.settings ||= {}
+      c.settings['INFOPLIST_FILE'] = 'Info.plist'
+    }
+  end
+  post_generate do |spec, xcodeproj|
+    xcodeproj.root_object.attributes['ConfigurationCount'] = spec.configurations.count
+  end
+  configuration('debug') do
+    profile 'general:debug'
+    profile 'ios:debug'
+  end
+  configuration('release') do
+    profile 'general:release'
+    profile 'ios:release'
+  end
+  target('My app') do
+    platform 'ios'
+    type ':application'
+
+    source_dir 'sources'
+    system_reference 'UIKit.framework'
+
+    configuration do end
+  end
+end

@@ -372,6 +372,15 @@ RSpec.describe StructCore::SpecBuilder do
 				expect(proj.targets[0].configurations.count).to eq(1)
 				expect(proj.targets[0].configurations[0].settings['IPHONEOS_DEPLOYMENT_TARGET']).to eq('10.2')
 			end
+
+			it 'builds a Specfile that specifies generation hooks' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_20X/spec_builder_20X_test_47.rb')
+
+				proj = StructCore::SpecBuilder.build project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.pre_generate_script).to be_an_instance_of(StructCore::Specfile::HookBlockScript)
+				expect(proj.post_generate_script).to be_an_instance_of(StructCore::Specfile::HookBlockScript)
+			end
 		end
 	end
 end

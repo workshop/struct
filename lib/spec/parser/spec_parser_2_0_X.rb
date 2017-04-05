@@ -19,8 +19,9 @@ module StructCore
 
 			targets = parse_targets spec_hash, valid_configuration_names, project_base_dir
 			variants = parse_variants spec_hash, valid_configuration_names, project_base_dir
+			pre_generate_script, post_generate_script = parse_scripts spec_hash['scripts'] || {}, project_base_dir
 
-			Specfile.new(spec_version, targets, configurations, variants, project_base_dir, @spec_file_uses_pods)
+			Specfile.new(spec_version, targets, configurations, variants, project_base_dir, @spec_file_uses_pods, pre_generate_script, post_generate_script)
 		end
 
 		def parse_configurations(spec_hash)
@@ -511,6 +512,23 @@ module StructCore
 			@spec_file_uses_pods = target_opts['includes_cocoapods']
 		end
 
+		def parse_scripts(scripts_opts, project_base_dir)
+			return unless scripts_opts.is_a?(Hash)
+
+			pre_generate = nil
+			post_generate = nil
+
+			if scripts_opts.key?('pre-generate') && File.exist?(File.join(project_base_dir, scripts_opts['pre-generate']))
+				pre_generate = StructCore::Specfile::HookScript.new(File.join(project_base_dir, scripts_opts['pre-generate']))
+			end
+
+			if scripts_opts.key?('post-generate') && File.exist?(File.join(project_base_dir, scripts_opts['post-generate']))
+				post_generate = StructCore::Specfile::HookScript.new(File.join(project_base_dir, scripts_opts['post-generate']))
+			end
+
+			[pre_generate, post_generate]
+		end
+
 		private :parse_configurations
 		private :parse_targets
 		private :parse_variants
@@ -523,5 +541,8 @@ module StructCore
 		private :parse_variant_target_file_excludes
 		private :parse_variant_target_references
 		private :parse_variant_target_data
+		private :parse_target_data
+		private :parse_target_pods
+		private :parse_scripts
 	end
 end

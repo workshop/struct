@@ -57,6 +57,14 @@ module StructCore
 			@spec_file.variants << dsl.variant
 		end
 
+		def pre_generate(&block)
+			@spec_file.pre_generate_script = StructCore::Specfile::HookBlockScript.new block
+		end
+
+		def post_generate(&block)
+			@spec_file.post_generate_script = StructCore::Specfile::HookBlockScript.new block
+		end
+
 		def respond_to_missing?(_, _)
 			true
 		end

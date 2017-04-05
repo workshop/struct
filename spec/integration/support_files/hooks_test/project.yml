@@ -1,0 +1,23 @@
+---
+version: 2.0.0
+scripts:
+  pre-generate: pre-generate.rb
+  post-generate: post-generate.rb
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+  release:
+    profiles:
+    - general:release
+    - ios:release
+targets:
+  My app:
+    type: ":application"
+    platform: ios
+    sources:
+    - sources
+    configuration:
+    references:
+    - 'sdkroot:UIKit.framework'

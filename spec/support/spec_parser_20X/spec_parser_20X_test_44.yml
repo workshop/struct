@@ -1,0 +1,18 @@
+---
+version: 2.0.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+  release:
+    profiles:
+    - general:release
+    - ios:release
+targets:
+  my-target:
+    type: ":application"
+    sources: support_files/abc
+scripts:
+  pre-generate: support_files/pre-generate.rb
+  post-generate: support_files/post-generate.rb
