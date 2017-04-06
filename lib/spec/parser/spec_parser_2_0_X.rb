@@ -534,10 +534,10 @@ module StructCore
 
 		def parse_scheme_build_action(opts, scheme_name)
 			return nil if opts.nil?
-			parallel = true
+			parallel = false
 			parallel = opts['parallel'] if opts.key? 'parallel'
 
-			build_implicit = true
+			build_implicit = false
 			build_implicit = opts['build_implicit'] if opts.key? 'build_implicit'
 
 			targets = []
@@ -547,16 +547,16 @@ module StructCore
 			end
 
 			targets = opts['targets'].map { |name, target_opts|
-				archiving_enabled = true
+				archiving_enabled = false
 				archiving_enabled = target_opts['archiving_enabled'] if target_opts.key? 'archiving_enabled'
 
-				running_enabled = true
+				running_enabled = false
 				running_enabled = target_opts['running_enabled'] if target_opts.key? 'running_enabled'
 
-				profiling_enabled = true
+				profiling_enabled = false
 				profiling_enabled = target_opts['profiling_enabled'] if target_opts.key? 'profiling_enabled'
 
-				testing_enabled = true
+				testing_enabled = false
 				testing_enabled = target_opts['testing_enabled'] if target_opts.key? 'testing_enabled'
 
 				StructCore::Specfile::Scheme::BuildAction::BuildActionTarget.new name, archiving_enabled, running_enabled, profiling_enabled, testing_enabled
@@ -584,7 +584,7 @@ module StructCore
 				return nil
 			end
 
-			reveal = true
+			reveal = false
 			reveal = opts['reveal'] if opts.key? 'reveal'
 
 			StructCore::Specfile::Scheme::ArchiveAction.new opts['name'], reveal
@@ -598,7 +598,7 @@ module StructCore
 				return nil
 			end
 
-			simulate_location = true
+			simulate_location = false
 			simulate_location = opts['simulate_location'] if opts.key? 'simulate_location'
 
 			arguments = ''
@@ -618,7 +618,7 @@ module StructCore
 				return nil
 			end
 
-			inherit_environment = true
+			inherit_environment = false
 			inherit_environment = opts['inherit_environment'] if opts.key? 'inherit_environment'
 
 			configuration = {}

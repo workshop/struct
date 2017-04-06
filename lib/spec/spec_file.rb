@@ -217,7 +217,7 @@ module StructCore
 			attr_accessor :name, :profile_action, :build_action, :analyze_action, :launch_action, :archive_action
 
 			class BuildAction
-				def initialize(targets = [], parallel = true, build_implicit = true)
+				def initialize(targets = [], parallel = false, build_implicit = false)
 					@targets = targets
 					@parallel = parallel
 					@build_implicit = build_implicit
@@ -226,7 +226,7 @@ module StructCore
 				attr_accessor :build_implicit, :targets, :parallel
 
 				class BuildActionTarget
-					def initialize(name, archiving_enabled = true, running_enabled = true, profiling_enabled = true, testing_enabled = true)
+					def initialize(name, archiving_enabled = false, running_enabled = false, profiling_enabled = false, testing_enabled = false)
 						@name = name
 						@archiving_enabled = archiving_enabled
 						@running_enabled = running_enabled
@@ -239,7 +239,7 @@ module StructCore
 			end
 
 			class LaunchAction
-				def initialize(target_name, simulate_location = true, arguments = '', environment = {})
+				def initialize(target_name, simulate_location = false, arguments = '', environment = {})
 					@target_name = target_name
 					@simulate_location = simulate_location
 					@arguments = arguments
@@ -250,7 +250,7 @@ module StructCore
 			end
 
 			class ArchiveAction
-				def initialize(archive_name, reveal = true)
+				def initialize(archive_name, reveal = false)
 					@archive_name = archive_name
 					@reveal = reveal
 				end
@@ -267,7 +267,7 @@ module StructCore
 			end
 
 			class ProfileAction
-				def initialize(target_name, configuration = {}, inherit_environment = true)
+				def initialize(target_name, configuration = {}, inherit_environment = false)
 					@target_name = target_name
 					@configuration = configuration
 					@inherit_environment = inherit_environment
