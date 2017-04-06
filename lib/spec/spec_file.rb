@@ -296,7 +296,10 @@ module StructCore
 		# @param variants [Array<StructCore::Specfile::Variant>]
 		# @param pre_generate_script [StructCore::Specfile::HookScript, StructCore::Specfile::HookBlockScript]
 		# @param post_generate_script [StructCore::Specfile::HookScript, StructCore::Specfile::HookBlockScript]
-		def initialize(version = LATEST_SPEC_VERSION, targets = [], configurations = [], variants = [], base_dir = Dir.pwd, includes_pods = false, pre_generate_script = nil, post_generate_script = nil, schemes = [])
+		def initialize(
+			version = LATEST_SPEC_VERSION, targets = [], configurations = [], variants = [], base_dir = Dir.pwd,
+			includes_pods = false, pre_generate_script = nil, post_generate_script = nil, schemes = []
+		)
 			@version = LATEST_SPEC_VERSION
 			@version = version if version.is_a?(Semantic::Version)
 			@version = Semantic::Version.new(version) if version.is_a?(String)
