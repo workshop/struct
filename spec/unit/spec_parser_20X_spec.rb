@@ -465,6 +465,17 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.variants[0].targets[0].configurations[0].settings['INFOPLIST_FILE']).to eq('Info-beta.plist')
 				expect(proj.variants[0].targets[0].configurations[1].settings['INFOPLIST_FILE']).to eq('Info-beta-Release.plist')
 			end
+
+			it 'parses a specfile that contains hook scripts' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_20X/spec_parser_20X_test_44.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser20X.new
+
+				proj = parser.parse StructCore::SPEC_VERSION_200, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.pre_generate_script).to be_an_instance_of(StructCore::Specfile::HookScript)
+				expect(proj.post_generate_script).to be_an_instance_of(StructCore::Specfile::HookScript)
+			end
 		end
 	end
 end

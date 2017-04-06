@@ -3,6 +3,7 @@ require_relative '../writer/spec_writer'
 require_relative '../spec_file'
 require_relative 'project'
 require_relative 'configurations'
+require_relative 'spec_scripts_processor'
 require 'xcodeproj'
 require 'awesome_print'
 require 'paint'
@@ -17,11 +18,14 @@ module StructCore
 		end
 
 		# @param project_component [StructCore::Processor::ProjectComponent]
-		def process(project_component = nil)
+		# @param scripts_component [StructCore::SpecScriptsProcessor]
+		def process(project_component = nil, scripts_component = nil)
 			full_project_path, target_structure = resolve_project_data @project_file
 			project_component ||= StructCore::Processor::ProjectComponent.new(target_structure, File.dirname(full_project_path))
+			scripts_component ||= StructCore::SpecScriptsProcessor.new
 
 			source_dsl = process_source_dsl full_project_path
+			scripts_component.pre_generate source_dsl
 
 			outputs = project_component.process source_dsl, @selected_variants
 			return if outputs.empty?
@@ -37,6 +41,8 @@ module StructCore
 					output.dsl.save output.path if output.path.end_with? '.xcodeproj'
 					puts Paint["Saved '#{output.path}'"]
 				end
+
+				scripts_component.post_generate source_dsl, output.dsl
 			}
 
 			outputs

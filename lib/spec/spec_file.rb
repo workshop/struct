@@ -184,17 +184,37 @@ module StructCore
 			attr_accessor :abstract
 		end
 
+		class HookScript
+			def initialize(script_path)
+				@script_path = script_path
+			end
+
+			attr_accessor :script_path
+		end
+
+		class HookBlockScript
+			def initialize(block)
+				@block = block
+			end
+
+			attr_accessor :block
+		end
+
 		# @param version [Semantic::Version]
 		# @param targets [Array<StructCore::Specfile::Target>]
 		# @param configurations [Array<StructCore::Specfile::Configuration>]
 		# @param variants [Array<StructCore::Specfile::Variant>]
-		def initialize(version, targets, configurations, variants, base_dir, includes_pods = false)
+		# @param pre_generate_script [StructCore::Specfile::HookScript, StructCore::Specfile::HookBlockScript]
+		# @param post_generate_script [StructCore::Specfile::HookScript, StructCore::Specfile::HookBlockScript]
+		def initialize(version, targets, configurations, variants, base_dir, includes_pods = false, pre_generate_script = nil, post_generate_script = nil)
 			@version = version
 			@targets = targets
 			@variants = variants
 			@configurations = configurations
 			@base_dir = base_dir
 			@includes_pods = includes_pods
+			@pre_generate_script = pre_generate_script
+			@post_generate_script = post_generate_script
 		end
 
 		# @return StructCore::Specfile
@@ -214,5 +234,7 @@ module StructCore
 		attr_accessor :configurations
 		attr_accessor :base_dir
 		attr_accessor :includes_pods
+		attr_accessor :pre_generate_script
+		attr_accessor :post_generate_script
 	end
 end
