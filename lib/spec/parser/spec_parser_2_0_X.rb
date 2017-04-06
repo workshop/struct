@@ -20,8 +20,9 @@ module StructCore
 			targets = parse_targets spec_hash, valid_configuration_names, project_base_dir
 			variants = parse_variants spec_hash, valid_configuration_names, project_base_dir
 			pre_generate_script, post_generate_script = parse_scripts spec_hash['scripts'] || {}, project_base_dir
+			schemes = parse_schemes spec_hash['schemes']
 
-			Specfile.new(spec_version, targets, configurations, variants, project_base_dir, @spec_file_uses_pods, pre_generate_script, post_generate_script)
+			Specfile.new(spec_version, targets, configurations, variants, project_base_dir, @spec_file_uses_pods, pre_generate_script, post_generate_script, schemes)
 		end
 
 		def parse_configurations(spec_hash)
@@ -517,6 +518,115 @@ module StructCore
 			[pre_generate, post_generate]
 		end
 
+		def parse_schemes(scheme_opts)
+			return [] unless scheme_opts.is_a?(Hash)
+
+			scheme_opts.map { |name, opts|
+				build_action = parse_scheme_build_action opts['build'], name
+				launch_action = parse_scheme_launch_action opts['launch'], name
+				archive_action = parse_scheme_archive_action opts['archive'], name
+				analyze_action = parse_scheme_analyze_action opts['analyze'], name
+				profile_action = parse_scheme_profile_action opts['profile'], name
+
+				StructCore::Specfile::Scheme.new name, build_action, launch_action, archive_action, analyze_action, profile_action
+			}
+		end
+
+		def parse_scheme_build_action(opts, scheme_name)
+			return nil if opts.nil?
+			parallel = true
+			parallel = opts['parallel'] if opts.key? 'parallel'
+
+			build_implicit = true
+			build_implicit = opts['build_implicit'] if opts.key? 'build_implicit'
+
+			targets = []
+			unless opts['targets'].is_a? Hash
+				puts Paint["Warning: Found invalid targets entry for scheme #{scheme_name}'s build action. Ignoring.'"]
+				return StructCore::Specfile::Scheme::BuildAction.new targets, parallel, build_implicit
+			end
+
+			targets = opts['targets'].map { |name, target_opts|
+				archiving_enabled = true
+				archiving_enabled = target_opts['archiving_enabled'] if target_opts.key? 'archiving_enabled'
+
+				running_enabled = true
+				running_enabled = target_opts['running_enabled'] if target_opts.key? 'running_enabled'
+
+				profiling_enabled = true
+				profiling_enabled = target_opts['profiling_enabled'] if target_opts.key? 'profiling_enabled'
+
+				testing_enabled = true
+				testing_enabled = target_opts['testing_enabled'] if target_opts.key? 'testing_enabled'
+
+				StructCore::Specfile::Scheme::BuildAction::BuildActionTarget.new name, archiving_enabled, running_enabled, profiling_enabled, testing_enabled
+			}
+
+			StructCore::Specfile::Scheme::BuildAction.new targets, parallel, build_implicit
+		end
+
+		def parse_scheme_analyze_action(opts, scheme_name)
+			return nil if opts.nil?
+
+			unless opts['configuration'].is_a? Hash
+				puts Paint["Warning: Found invalid configuration entry for scheme #{scheme_name}'s analyze action. Ignoring.'"]
+				return StructCore::Specfile::Scheme::AnalyzeAction.new
+			end
+
+			StructCore::Specfile::Scheme::AnalyzeAction.new opts['configuration']
+		end
+
+		def parse_scheme_archive_action(opts, scheme_name)
+			return nil if opts.nil?
+
+			unless opts['name'].is_a?(String) && !opts['name'].empty?
+				puts Paint["Warning: Missing name entry for scheme #{scheme_name}'s archive action. Ignoring action.'"]
+				return nil
+			end
+
+			reveal = true
+			reveal = opts['reveal'] if opts.key? 'reveal'
+
+			StructCore::Specfile::Scheme::ArchiveAction.new opts['name'], reveal
+		end
+
+		def parse_scheme_launch_action(opts, scheme_name)
+			return nil if opts.nil?
+
+			unless opts['target'].is_a?(String) && !opts['target'].empty?
+				puts Paint["Warning: Missing target entry for scheme #{scheme_name}'s launch action. Ignoring action.'"]
+				return nil
+			end
+
+			simulate_location = true
+			simulate_location = opts['simulate_location'] if opts.key? 'simulate_location'
+
+			arguments = ''
+			arguments = opts['arguments'] if opts.key?('arguments') && opts['arguments'].is_a?(String)
+
+			environment = {}
+			environment = opts['environment'] if opts.key?('environment') && opts['environment'].is_a?(Hash)
+
+			StructCore::Specfile::Scheme::LaunchAction.new opts['target'], simulate_location, arguments, environment
+		end
+
+		def parse_scheme_profile_action(opts, scheme_name)
+			return nil if opts.nil?
+
+			unless opts['target'].is_a?(String) && !opts['target'].empty?
+				puts Paint["Warning: Missing target entry for scheme #{scheme_name}'s profile action. Ignoring action.'"]
+				return nil
+			end
+
+			inherit_environment = true
+			inherit_environment = opts['inherit_environment'] if opts.key? 'inherit_environment'
+
+			configuration = {}
+			configuration = opts['configuration'] if opts.key?('configuration') && opts['configuration'].is_a?(Hash)
+
+			StructCore::Specfile::Scheme::ProfileAction.new opts['target'], configuration, inherit_environment
+		end
+
 		private :parse_configurations
 		private :parse_targets
 		private :parse_variants
@@ -527,10 +637,29 @@ module StructCore
 		private :parse_variant_target_sources
 		private :parse_variant_target_resources
 		private :parse_variant_target_file_excludes
+		private :parse_variant_target_source_options
 		private :parse_variant_target_references
+		private :parse_run_scripts_list
+		private :parse_variant_target_scripts
 		private :parse_variant_target_data
+		private :parse_variant_target_pods
+		private :parse_target_type
+		private :parse_target_profiles
+		private :parse_target_configurations
+		private :parse_target_sources
+		private :parse_target_resources
+		private :parse_target_excludes
+		private :parse_target_source_options
+		private :parse_target_references
+		private :parse_target_scripts
 		private :parse_target_data
 		private :parse_target_pods
 		private :parse_scripts
+		private :parse_schemes
+		private :parse_scheme_build_action
+		private :parse_scheme_analyze_action
+		private :parse_scheme_archive_action
+		private :parse_scheme_launch_action
+		private :parse_scheme_profile_action
 	end
 end
