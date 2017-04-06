@@ -2,6 +2,3 @@
 version: 2.0.0
 configurations:
 - debug:
-    profiles:
-    - general:debug
-    - ios:debug

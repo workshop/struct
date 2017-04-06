@@ -59,22 +59,6 @@ RSpec.describe StructCore::Specparser20X do
 				expect { parser.parse StructCore::SPEC_VERSION_200, test_hash, project_file }.to raise_error(StandardError)
 			end
 
-			it 'raises an error if a project has an invalid profiles section in a configuration block' do
-				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_20X/spec_parser_20X_test_7.yml')
-				test_hash = YAML.load_file project_file
-				parser = StructCore::Specparser20X.new
-
-				expect { parser.parse StructCore::SPEC_VERSION_200, test_hash, project_file }.to raise_error(StandardError)
-			end
-
-			it 'raises an error if a project has a missing profiles section in a configuration block' do
-				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_20X/spec_parser_20X_test_8.yml')
-				test_hash = YAML.load_file project_file
-				parser = StructCore::Specparser20X.new
-
-				expect { parser.parse StructCore::SPEC_VERSION_200, test_hash, project_file }.to raise_error(StandardError)
-			end
-
 			it 'can parse a specfile with invalid overrides or types' do
 				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_20X/spec_parser_20X_test_9.yml')
 				test_hash = YAML.load_file project_file

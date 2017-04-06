@@ -25,6 +25,9 @@ module StructCore
 			block.call
 			@current_scope = nil
 
+			dsl.configuration.profiles = %w(general:release ios:release)
+			dsl.configuration.profiles = %w(general:debug ios:debug) if dsl.configuration.type == 'debug'
+
 			@spec_file.configurations << dsl.configuration
 		end
 

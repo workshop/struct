@@ -52,16 +52,11 @@ module StructCore
 			@target.type = @type
 		end
 
-		def profile(profile = nil)
-			return unless profile.is_a?(String) && !profile.empty?
-			@profiles << profile
-		end
-
 		def platform(platform = nil)
 			return unless platform.is_a?(String) || platform.is_a?(Symbol)
-			# TODO: Add support for 'tvos', 'watchos'
+			# TODO: Add support for 'tvos'
 			platform = platform.to_s if platform.is_a?(Symbol)
-			unless %w(ios mac).include? platform
+			unless %w(ios mac watch).include? platform
 				puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{platform}'. Ignoring...", :yellow]
 				return
 			end

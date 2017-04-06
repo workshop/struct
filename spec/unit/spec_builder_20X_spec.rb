@@ -37,18 +37,6 @@ RSpec.describe StructCore::SpecBuilder do
 				expect { StructCore::SpecBuilder.build project_file }.to raise_error(StandardError)
 			end
 
-			it 'raises an error if a project has an invalid profiles section in a configuration block' do
-				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_20X/spec_builder_20X_test_7.rb')
-
-				expect { StructCore::SpecBuilder.build project_file }.to raise_error(StandardError)
-			end
-
-			it 'raises an error if a project has a missing profiles section in a configuration block' do
-				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_20X/spec_builder_20X_test_8.rb')
-
-				expect { StructCore::SpecBuilder.build project_file }.to raise_error(StandardError)
-			end
-
 			it 'can build a Specfile with invalid overrides or types' do
 				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_20X/spec_builder_20X_test_9.rb')
 

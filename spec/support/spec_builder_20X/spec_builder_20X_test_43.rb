@@ -4,8 +4,6 @@ end
 
 spec('2.0.0') do
 	configuration('my-configuration') do
-		profile 'general:debug'
-		profile 'ios:debug'
 		add_overrides
 		type 'debug'
 	end
