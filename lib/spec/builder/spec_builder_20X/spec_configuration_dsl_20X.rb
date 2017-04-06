@@ -6,11 +6,6 @@ module StructCore
 
 		attr_accessor :configuration
 
-		def profile(profile = nil)
-			return unless profile.is_a?(String) && !profile.empty?
-			@configuration.profiles << profile
-		end
-
 		def override(key = nil, value = nil)
 			return unless key.is_a?(String) && !key.empty? && value.is_a?(String)
 			@configuration.overrides[key] = value

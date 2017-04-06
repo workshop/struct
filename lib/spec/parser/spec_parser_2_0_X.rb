@@ -27,23 +27,23 @@ module StructCore
 		def parse_configurations(spec_hash)
 			valid_configuration_names = []
 			configurations = spec_hash['configurations'].map { |name, config|
+				config ||= {}
+
 				unless config['source'].nil?
 					valid_configuration_names << name
 					next Specfile::Configuration.new(name, [], {}, config['type'], config['source'])
 				end
 
-				unless config.key?('profiles') && config['profiles'].is_a?(Array) && config['profiles'].count > 0
-					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
-					next nil
-				end
-
 				valid_configuration_names << name
-				config = Specfile::Configuration.new(name, config['profiles'], config['overrides'] || {}, config['type'])
+				config = Specfile::Configuration.new(name, [], config['overrides'] || {}, config['type'])
 
 				if config.type.nil?
 					puts Paint["Warning: Configuration with name '#{name}' was skipped as its type did not match one of: debug, release"]
 					next nil
 				end
+
+				config.profiles = %w(general:release ios:release)
+				config.profiles = %w(general:debug ios:debug) if config.type == 'debug'
 
 				config
 			}.compact
@@ -113,20 +113,18 @@ module StructCore
 		end
 
 		def parse_variant_target_profiles(target_opts, raw_type, target_name)
-			# Parse target platform/type/profiles into a profiles list
-			profiles = []
-			if target_opts.key? 'profiles'
-				if target_opts['profiles'].is_a?(Array)
-					profiles = target_opts['profiles']
-				else
-					puts Paint["Warning: Key 'profiles' for variant override #{target_name} is not an array. Ignoring...", :yellow]
-				end
-			elsif profiles.nil? && target_opts.key?('platform')
-				raw_platform = target_opts['platform']
-				profiles = [raw_type, "platform:#{raw_platform}"].compact
+			unless target_opts['platform'].is_a?(String)
+				puts Paint["Warning: Platform missing for target: #{target_name}. Please configure a platform for this target."]
+				return []
 			end
 
-			profiles
+			raw_platform = target_opts['platform']
+			unless %w(ios mac watch tv).include? raw_platform
+				puts Paint["Warning: Variant for target #{target_name} specifies unrecognised platform '#{raw_platform}'. Ignoring...", :yellow]
+				return []
+			end
+
+			[raw_type, "platform:#{raw_platform}"].compact
 		end
 
 		def parse_variant_target_configurations(target_opts, valid_config_names, profiles)
@@ -307,28 +305,18 @@ module StructCore
 		end
 
 		def parse_target_profiles(target_opts, target_name, raw_type)
-			# Parse target platform/type/profiles into a profiles list
-			profiles = nil
-			if target_opts.key? 'profiles'
-				if target_opts['profiles'].is_a?(Array)
-					profiles = target_opts['profiles']
-				else
-					puts Paint["Warning: Key 'profiles' for target #{target_name} is not an array. Ignoring...", :yellow]
-				end
+			unless target_opts['platform'].is_a?(String)
+				puts Paint["Warning: Target #{target_name} does not specify a platform. Ignoring target."]
+				return nil
 			end
 
-			# Search for platform only if profiles weren't already defined
-			if profiles.nil? && target_opts.key?('platform')
-				raw_platform = target_opts['platform']
-				unless %w(ios mac watch tv).include? raw_platform
-					puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{raw_platform}'. Ignoring target...", :yellow]
-					return nil
-				end
-
-				profiles = [raw_type, "platform:#{raw_platform}"]
+			raw_platform = target_opts['platform']
+			unless %w(ios mac watch tv).include? raw_platform
+				puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{raw_platform}'. Ignoring target...", :yellow]
+				return nil
 			end
 
-			profiles
+			[raw_type, "platform:#{raw_platform}"]
 		end
 
 		def parse_target_configurations(target_opts, target_name, profiles, valid_config_names)

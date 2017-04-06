@@ -7,8 +7,6 @@ spec('2.0.0') do
 		puts xcodeproj
 	end
 	configuration('my-configuration') do
-		profile 'general:debug'
-		profile 'ios:debug'
 		type 'debug'
 	end
 	target('my-target') do
