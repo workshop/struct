@@ -6,7 +6,7 @@ require_relative 'writer/spec_writer'
 module StructCore
 	class Specfile
 		class Configuration
-			def initialize(name, profiles, overrides, type = nil, source = nil)
+			def initialize(name, profiles = [], overrides = {}, type = nil, source = nil)
 				@name = name
 				@profiles = profiles
 				@overrides = overrides
@@ -35,7 +35,7 @@ module StructCore
 
 		class Target
 			class Configuration
-				def initialize(name, settings, profiles = nil, source = nil)
+				def initialize(name, settings = {}, profiles = [], source = nil)
 					@name = name
 					@settings = settings
 					@profiles = profiles || []
@@ -130,7 +130,11 @@ module StructCore
 			# @param file_excludes [Array<String>]
 			# @param postbuild_run_scripts [Array<StructCore::Specfile::Target::RunScript>]
 			# @param prebuild_run_scripts [Array<StructCore::Specfile::Target::RunScript>]
-			def initialize(target_name, target_type, source_dir, configurations, references, options, res_dir, file_excludes, postbuild_run_scripts = [], prebuild_run_scripts = [])
+			def initialize(
+				target_name, target_type, source_dir = [], configurations = [], references = [],
+				options = [], res_dir = [], file_excludes = [], postbuild_run_scripts = [],
+				prebuild_run_scripts = []
+			)
 				@name = target_name
 				@type = target_type
 				@source_dir = []
@@ -200,14 +204,16 @@ module StructCore
 			attr_accessor :block
 		end
 
-		# @param version [Semantic::Version]
+		# @param version [Semantic::Version, String]
 		# @param targets [Array<StructCore::Specfile::Target>]
 		# @param configurations [Array<StructCore::Specfile::Configuration>]
 		# @param variants [Array<StructCore::Specfile::Variant>]
 		# @param pre_generate_script [StructCore::Specfile::HookScript, StructCore::Specfile::HookBlockScript]
 		# @param post_generate_script [StructCore::Specfile::HookScript, StructCore::Specfile::HookBlockScript]
-		def initialize(version, targets, configurations, variants, base_dir, includes_pods = false, pre_generate_script = nil, post_generate_script = nil)
-			@version = version
+		def initialize(version = LATEST_SPEC_VERSION, targets = [], configurations = [], variants = [], base_dir = Dir.pwd, includes_pods = false, pre_generate_script = nil, post_generate_script = nil)
+			@version = LATEST_SPEC_VERSION
+			@version = version if version.is_a?(Semantic::Version)
+			@version = Semantic::Version.new(version) if version.is_a?(String)
 			@targets = targets
 			@variants = variants
 			@configurations = configurations
