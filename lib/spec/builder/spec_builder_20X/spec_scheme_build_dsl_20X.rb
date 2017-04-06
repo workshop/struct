@@ -27,7 +27,16 @@ module StructCore
 			block.call
 			@current_scope = nil
 
-			@scheme.targets << dsl.target
+			@build_action.targets << dsl.target
+		end
+
+		def respond_to_missing?(_, _)
+			true
+		end
+
+		def method_missing(method, *args, &block)
+			return if @current_scope.nil?
+			@current_scope.send(method, *args, &block)
 		end
 	end
 end

@@ -1,5 +1,7 @@
 module StructCore
 	class SpecSchemeBuildTargetDSL20X
+		attr_accessor :target
+
 		def initialize
 			@target = nil
 		end

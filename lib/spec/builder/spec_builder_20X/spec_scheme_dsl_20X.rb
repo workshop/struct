@@ -25,13 +25,13 @@ module StructCore
 		end
 
 		def archive(opts = {})
-			return unless opts.key?('name') && opts.key?('reveal')
-			return unless opts['name'].is_a?(String) && !opts['name'].empty?
+			return unless opts.key?(:name) && opts.key?(:reveal)
+			return unless opts[:name].is_a?(String) && !opts[:name].empty?
 
 			reveal = true
-			reveal = opts['reveal'] if opts.key? 'reveal'
+			reveal = opts[:reveal] if opts.key? :reveal
 
-			@scheme.archive_action = StructCore::Specfile::Scheme::ArchiveAction.new opts['name'], reveal
+			@scheme.archive_action = StructCore::Specfile::Scheme::ArchiveAction.new opts[:name], reveal
 		end
 
 		def build(&block)
