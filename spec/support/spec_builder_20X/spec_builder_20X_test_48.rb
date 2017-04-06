@@ -28,6 +28,15 @@ spec('2.0.0') do
 			end
 		end
 
+		tests('debug') do
+			target 'my-target'
+			inherit_launch_arguments
+			enable_code_coverage
+			environment do
+				override 'OS_ACTIVITY_MODE', 'disable'
+			end
+		end
+
 		launch('my-target') do
 			enable_location_simulation
 			arguments '-AppleLanguages (en-GB)'

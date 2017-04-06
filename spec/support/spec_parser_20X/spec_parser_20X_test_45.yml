@@ -27,6 +27,14 @@ schemes:
           running_enabled: true
           profiling_enabled: true
           testing_enabled: true
+    test:
+      build_configuration: debug
+      targets:
+      - my-target
+      inherit_launch_arguments: true
+      code_coverage_enabled: true
+      environment:
+        OS_ACTIVITY_MODE: disable
     launch:
       simulate_location: true
       target: my-target

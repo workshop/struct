@@ -475,6 +475,7 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.schemes[0].archive_action).to be_truthy
 				expect(proj.schemes[0].analyze_action).to be_truthy
 				expect(proj.schemes[0].launch_action).to be_truthy
+				expect(proj.schemes[0].test_action).to be_truthy
 
 				expect(proj.schemes[0].analyze_action.configuration['IPHONEOS_DEPLOYMENT_TARGET']).to eq('10.0')
 				expect(proj.schemes[0].archive_action.archive_name).to eq('MyApp.xcarchive')
@@ -494,6 +495,12 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.schemes[0].profile_action.target_name).to eq('my-target')
 				expect(proj.schemes[0].profile_action.configuration['IPHONEOS_DEPLOYMENT_TARGET']).to eq('10.0')
 				expect(proj.schemes[0].profile_action.inherit_environment).to be_truthy
+				expect(proj.schemes[0].test_action.build_configuration).to eq('debug')
+				expect(proj.schemes[0].test_action.targets.count).to eq(1)
+				expect(proj.schemes[0].test_action.targets[0]).to eq('my-target')
+				expect(proj.schemes[0].test_action.inherit_launch_arguments).to be_truthy
+				expect(proj.schemes[0].test_action.code_coverage_enabled).to be_truthy
+				expect(proj.schemes[0].test_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
 			end
 		end
 	end

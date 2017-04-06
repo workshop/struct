@@ -523,12 +523,13 @@ module StructCore
 
 			scheme_opts.map { |name, opts|
 				build_action = parse_scheme_build_action opts['build'], name
+				test_action = parse_scheme_test_action opts['test'], name
 				launch_action = parse_scheme_launch_action opts['launch'], name
 				archive_action = parse_scheme_archive_action opts['archive'], name
 				analyze_action = parse_scheme_analyze_action opts['analyze'], name
 				profile_action = parse_scheme_profile_action opts['profile'], name
 
-				StructCore::Specfile::Scheme.new name, build_action, launch_action, archive_action, analyze_action, profile_action
+				StructCore::Specfile::Scheme.new name, build_action, test_action, launch_action, archive_action, analyze_action, profile_action
 			}
 		end
 
@@ -563,6 +564,34 @@ module StructCore
 			}
 
 			StructCore::Specfile::Scheme::BuildAction.new targets, parallel, build_implicit
+		end
+
+		def parse_scheme_test_action(opts, scheme_name)
+			return nil if opts.nil?
+
+			unless opts['build_configuration'].is_a?(String) && !opts['build_configuration'].empty?
+				puts Paint["Warning: Missing build_configuration entry for scheme #{scheme_name}'s test action. Ignoring action.'"]
+				return nil
+			end
+
+			inherit_launch_arguments = false
+			inherit_launch_arguments = opts['inherit_launch_arguments'] if opts.key? 'inherit_launch_arguments'
+
+			code_coverage_enabled = false
+			code_coverage_enabled = opts['code_coverage_enabled'] if opts.key? 'code_coverage_enabled'
+
+			environment = {}
+			environment = opts['environment'] if opts.key?('environment') && opts['environment'].is_a?(Hash)
+
+			targets = []
+			unless opts['targets'].is_a? Array
+				puts Paint["Warning: Found invalid targets entry for scheme #{scheme_name}'s test action. Ignoring.'"]
+				return StructCore::Specfile::Scheme::TestAction.new opts['build_configuration'], targets, inherit_launch_arguments, code_coverage_enabled, environment
+			end
+
+			targets = opts['targets']
+
+			StructCore::Specfile::Scheme::TestAction.new opts['build_configuration'], targets, inherit_launch_arguments, code_coverage_enabled, environment
 		end
 
 		def parse_scheme_analyze_action(opts, scheme_name)

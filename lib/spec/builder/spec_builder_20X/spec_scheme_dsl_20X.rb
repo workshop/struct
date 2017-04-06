@@ -2,6 +2,7 @@ require_relative 'spec_scheme_analyze_dsl_20X'
 require_relative 'spec_scheme_build_dsl_20X'
 require_relative 'spec_scheme_profile_dsl_20X'
 require_relative 'spec_scheme_launch_dsl_20X'
+require_relative 'spec_scheme_test_dsl_20X'
 
 module StructCore
 	class SpecSchemeDSL20X
@@ -68,6 +69,18 @@ module StructCore
 			@current_scope = nil
 
 			@scheme.profile_action = dsl.profile_action
+		end
+
+		def tests(build_configuration = nil, &block)
+			return unless build_configuration.is_a?(String) && !build_configuration.empty? && !block.nil?
+			dsl = StructCore::SpecSchemeTestDSL20X.new
+
+			@current_scope = dsl
+			dsl.test_action = StructCore::Specfile::Scheme::TestAction.new build_configuration
+			block.call
+			@current_scope = nil
+
+			@scheme.test_action = dsl.test_action
 		end
 
 		def respond_to_missing?(_, _)
