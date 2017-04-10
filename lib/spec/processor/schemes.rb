@@ -48,15 +48,18 @@ module StructCore
 					scheme_dsl.launch_action = @launch_action_component.process scheme.launch_action, scheme_dsl.launch_action, dsl.targets unless scheme.profile_action.nil?
 					# We skip generating Analyze actions as these are implicitly included
 
-					# Resolve default build_configuration values to the spec's build configuration names
-					default_build_configuration = 'Release'
-					default_build_configuration = project.configurations.first.name unless project.configurations.empty?
-					[scheme_dsl.test_action, scheme_dsl.archive_action, scheme_dsl.profile_action, scheme_dsl.launch_action, scheme_dsl.analyze_action].each { |action|
-						action.build_configuration = XC_SCHEME_CONFIGURATION_MAP[action.build_configuration]
-						action.build_configuration = default_build_configuration if action.build_configuration.nil?
-					}
-
+					process_scheme_configurations scheme_dsl, project
 					[scheme_dsl, scheme.name, dsl.path.to_s]
+				}
+			end
+
+			def process_scheme_configurations(scheme_dsl, project)
+				# Resolve default build_configuration values to the spec's build configuration names
+				default_build_configuration = 'Release'
+				default_build_configuration = project.configurations.first.name unless project.configurations.empty?
+				[scheme_dsl.test_action, scheme_dsl.archive_action, scheme_dsl.profile_action, scheme_dsl.launch_action, scheme_dsl.analyze_action].each { |action|
+					action.build_configuration = XC_SCHEME_CONFIGURATION_MAP[action.build_configuration]
+					action.build_configuration = default_build_configuration if action.build_configuration.nil?
 				}
 			end
 		end
