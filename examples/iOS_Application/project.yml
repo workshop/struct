@@ -1,6 +1,6 @@
 ---
 # The project spec version number - this is for struct to identify this spec's schema
-version: 1.2.1
+version: 2.0.0
 # Project-level configurations and build settings. You can add as many as you want here.
 # If you do add another configuration that's not one of debug, release, you must specify
 # its type as either 'debug' or 'release'.
@@ -153,3 +153,36 @@ variants:
       # replace any previous definitions for matching options.
       configuration:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_BETA
+schemes:
+  iOSTest:
+    archive:
+      name: iOSTest.xcarchive
+      reveal: true
+    build:
+      parallel: true
+      build_implicit: true
+      targets:
+        iOSTest:
+          archiving_enabled: true
+          running_enabled: true
+          profiling_enabled: true
+          testing_enabled: true
+    test:
+      build_configuration: debug
+      targets:
+      - iOSTestTests
+      inherit_launch_arguments: true
+      code_coverage_enabled: true
+      environment:
+        OS_ACTIVITY_MODE: disable
+    launch:
+      simulate_location: true
+      target: iOSTest
+      arguments: -AppleLanguages (en-GB)
+      environment:
+        OS_ACTIVITY_MODE: disable
+    profile:
+      target: iOSTest
+      configuration:
+        IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      inherit_environment: true

@@ -380,11 +380,9 @@ RSpec.describe StructCore::SpecBuilder do
 				expect(proj.schemes[0].build_action).to be_truthy
 				expect(proj.schemes[0].profile_action).to be_truthy
 				expect(proj.schemes[0].archive_action).to be_truthy
-				expect(proj.schemes[0].analyze_action).to be_truthy
 				expect(proj.schemes[0].launch_action).to be_truthy
 				expect(proj.schemes[0].test_action).to be_truthy
 
-				expect(proj.schemes[0].analyze_action.configuration['IPHONEOS_DEPLOYMENT_TARGET']).to eq('10.0')
 				expect(proj.schemes[0].archive_action.archive_name).to eq('MyApp.xcarchive')
 				expect(proj.schemes[0].archive_action.reveal).to be_truthy
 				expect(proj.schemes[0].build_action.parallel).to be_truthy

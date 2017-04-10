@@ -1,4 +1,3 @@
-require_relative 'spec_scheme_analyze_dsl_20X'
 require_relative 'spec_scheme_build_dsl_20X'
 require_relative 'spec_scheme_profile_dsl_20X'
 require_relative 'spec_scheme_launch_dsl_20X'
@@ -11,18 +10,6 @@ module StructCore
 		def initialize
 			@scheme = nil
 			@current_scope = nil
-		end
-
-		def analyze(&block)
-			return if block.nil?
-			dsl = StructCore::SpecSchemeAnalyzeDSL20X.new
-
-			@current_scope = dsl
-			dsl.analyze_action = StructCore::Specfile::Scheme::AnalyzeAction.new
-			block.call
-			@current_scope = nil
-
-			@scheme.analyze_action = dsl.analyze_action
 		end
 
 		def archive(opts = {})

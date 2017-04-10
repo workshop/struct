@@ -114,10 +114,7 @@ module StructCore
 		end
 
 		def parse_variant_target_profiles(target_opts, raw_type, target_name)
-			unless target_opts['platform'].is_a?(String)
-				puts Paint["Warning: Platform missing for target: #{target_name}. Please configure a platform for this target."]
-				return []
-			end
+			return [] unless target_opts['platform'].is_a?(String)
 
 			raw_platform = target_opts['platform']
 			unless %w(ios mac watch tv).include? raw_platform
@@ -526,10 +523,9 @@ module StructCore
 				test_action = parse_scheme_test_action opts['test'], name
 				launch_action = parse_scheme_launch_action opts['launch'], name
 				archive_action = parse_scheme_archive_action opts['archive'], name
-				analyze_action = parse_scheme_analyze_action opts['analyze'], name
 				profile_action = parse_scheme_profile_action opts['profile'], name
 
-				StructCore::Specfile::Scheme.new name, build_action, test_action, launch_action, archive_action, analyze_action, profile_action
+				StructCore::Specfile::Scheme.new name, build_action, test_action, launch_action, archive_action, profile_action
 			}
 		end
 
@@ -592,17 +588,6 @@ module StructCore
 			targets = opts['targets']
 
 			StructCore::Specfile::Scheme::TestAction.new opts['build_configuration'], targets, inherit_launch_arguments, code_coverage_enabled, environment
-		end
-
-		def parse_scheme_analyze_action(opts, scheme_name)
-			return nil if opts.nil?
-
-			unless opts['configuration'].is_a? Hash
-				puts Paint["Warning: Found invalid configuration entry for scheme #{scheme_name}'s analyze action. Ignoring.'"]
-				return StructCore::Specfile::Scheme::AnalyzeAction.new
-			end
-
-			StructCore::Specfile::Scheme::AnalyzeAction.new opts['configuration']
 		end
 
 		def parse_scheme_archive_action(opts, scheme_name)
@@ -686,7 +671,6 @@ module StructCore
 		private :parse_scripts
 		private :parse_schemes
 		private :parse_scheme_build_action
-		private :parse_scheme_analyze_action
 		private :parse_scheme_archive_action
 		private :parse_scheme_launch_action
 		private :parse_scheme_profile_action
