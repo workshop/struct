@@ -183,6 +183,4 @@ schemes:
         OS_ACTIVITY_MODE: disable
     profile:
       target: iOSTest
-      configuration:
-        IPHONEOS_DEPLOYMENT_TARGET: '9.1'
       inherit_environment: true

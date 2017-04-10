@@ -12,9 +12,6 @@ scripts:
   post-generate: support_files/post-generate.rb
 schemes:
   my-target:
-    analyze:
-      configuration:
-        IPHONEOS_DEPLOYMENT_TARGET: '10.0'
     archive:
       name: MyApp.xcarchive
       reveal: true
@@ -43,6 +40,4 @@ schemes:
         OS_ACTIVITY_MODE: disable
     profile:
       target: my-target
-      configuration:
-        IPHONEOS_DEPLOYMENT_TARGET: '10.0'
       inherit_environment: true

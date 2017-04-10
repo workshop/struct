@@ -9,12 +9,6 @@ spec('2.0.0') do
 		configuration do end
 	end
 	scheme('my-target') do
-		analyze do
-			configuration do
-				override 'IPHONEOS_DEPLOYMENT_TARGET', '10.0'
-			end
-		end
-
 		archive name: 'MyApp.xcarchive', reveal: true
 
 		build do
@@ -46,9 +40,6 @@ spec('2.0.0') do
 		end
 
 		profile('my-target') do
-			configuration do
-				override 'IPHONEOS_DEPLOYMENT_TARGET', '10.0'
-			end
 			inherit_environment
 		end
 	end
