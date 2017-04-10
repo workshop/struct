@@ -33,7 +33,7 @@ module StructCore
 			)
 		end
 
-		def build
+		def __build
 			@spec_file
 		end
 
@@ -64,7 +64,11 @@ module StructCore
 		end
 
 		def method_missing(method, *args, &block)
-			@current_scope.send(method, *args, &block)
+			if @current_scope.nil? && method == :build
+				send('__build', *args, &block)
+			else
+				@current_scope.send(method, *args, &block)
+			end
 		end
 	end
 end

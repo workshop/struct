@@ -59,4 +59,8 @@ module StructCore
 	}.freeze
 	XC_CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'config_profiles')
 	XC_TARGET_CONFIG_PROFILE_PATH = File.join(__dir__, '..', '..', 'res', 'target_config_profiles')
+	XC_SCHEME_CONFIGURATION_MAP = {
+		'Debug' => :debug,
+		'Release' => :release
+	}.freeze
 end

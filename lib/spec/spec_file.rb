@@ -204,13 +204,92 @@ module StructCore
 			attr_accessor :block
 		end
 
+		class Scheme
+			def initialize(name, build_action = nil, test_action = nil, launch_action = nil, archive_action = nil, profile_action = nil)
+				@name = name
+				@build_action = build_action
+				@test_action = test_action
+				@launch_action = launch_action
+				@archive_action = archive_action
+				@profile_action = profile_action
+			end
+
+			attr_accessor :name, :profile_action, :build_action, :test_action, :launch_action, :archive_action
+
+			class BuildAction
+				def initialize(targets = [], parallel = false, build_implicit = false)
+					@targets = targets
+					@parallel = parallel
+					@build_implicit = build_implicit
+				end
+
+				attr_accessor :build_implicit, :targets, :parallel
+
+				class BuildActionTarget
+					def initialize(name, archiving_enabled = false, running_enabled = false, profiling_enabled = false, testing_enabled = false)
+						@name = name
+						@archiving_enabled = archiving_enabled
+						@running_enabled = running_enabled
+						@profiling_enabled = profiling_enabled
+						@testing_enabled = testing_enabled
+					end
+
+					attr_accessor :name, :archiving_enabled, :running_enabled, :profiling_enabled, :testing_enabled
+				end
+			end
+
+			class TestAction
+				def initialize(build_configuration, targets = [], inherit_launch_arguments = false, code_coverage_enabled = false, environment = {})
+					@build_configuration = build_configuration
+					@targets = targets
+					@inherit_launch_arguments = inherit_launch_arguments
+					@code_coverage_enabled = code_coverage_enabled
+					@environment = environment
+				end
+
+				attr_accessor :build_configuration, :code_coverage_enabled, :inherit_launch_arguments, :environment, :targets
+			end
+
+			class LaunchAction
+				def initialize(target_name, simulate_location = false, arguments = '', environment = {})
+					@target_name = target_name
+					@simulate_location = simulate_location
+					@arguments = arguments
+					@environment = environment
+				end
+
+				attr_accessor :environment, :simulate_location, :arguments, :target_name
+			end
+
+			class ArchiveAction
+				def initialize(archive_name, reveal = false)
+					@archive_name = archive_name
+					@reveal = reveal
+				end
+
+				attr_accessor :reveal, :archive_name
+			end
+
+			class ProfileAction
+				def initialize(target_name, inherit_environment = false)
+					@target_name = target_name
+					@inherit_environment = inherit_environment
+				end
+
+				attr_accessor :inherit_environment, :target_name
+			end
+		end
+
 		# @param version [Semantic::Version, String]
 		# @param targets [Array<StructCore::Specfile::Target>]
 		# @param configurations [Array<StructCore::Specfile::Configuration>]
 		# @param variants [Array<StructCore::Specfile::Variant>]
 		# @param pre_generate_script [StructCore::Specfile::HookScript, StructCore::Specfile::HookBlockScript]
 		# @param post_generate_script [StructCore::Specfile::HookScript, StructCore::Specfile::HookBlockScript]
-		def initialize(version = LATEST_SPEC_VERSION, targets = [], configurations = [], variants = [], base_dir = Dir.pwd, includes_pods = false, pre_generate_script = nil, post_generate_script = nil)
+		def initialize(
+			version = LATEST_SPEC_VERSION, targets = [], configurations = [], variants = [], base_dir = Dir.pwd,
+			includes_pods = false, pre_generate_script = nil, post_generate_script = nil, schemes = []
+		)
 			@version = LATEST_SPEC_VERSION
 			@version = version if version.is_a?(Semantic::Version)
 			@version = Semantic::Version.new(version) if version.is_a?(String)
@@ -221,6 +300,7 @@ module StructCore
 			@includes_pods = includes_pods
 			@pre_generate_script = pre_generate_script
 			@post_generate_script = post_generate_script
+			@schemes = schemes
 		end
 
 		# @return StructCore::Specfile
@@ -242,5 +322,6 @@ module StructCore
 		attr_accessor :includes_pods
 		attr_accessor :pre_generate_script
 		attr_accessor :post_generate_script
+		attr_accessor :schemes
 	end
 end

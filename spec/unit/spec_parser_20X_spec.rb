@@ -460,6 +460,45 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.pre_generate_script).to be_an_instance_of(StructCore::Specfile::HookScript)
 				expect(proj.post_generate_script).to be_an_instance_of(StructCore::Specfile::HookScript)
 			end
+
+			it 'parses a specfile that contains schemes' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_20X/spec_parser_20X_test_45.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser20X.new
+
+				proj = parser.parse StructCore::SPEC_VERSION_200, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.schemes.count).to eq(1)
+				expect(proj.schemes[0].name).to eq('my-target')
+				expect(proj.schemes[0].build_action).to be_truthy
+				expect(proj.schemes[0].profile_action).to be_truthy
+				expect(proj.schemes[0].archive_action).to be_truthy
+				expect(proj.schemes[0].launch_action).to be_truthy
+				expect(proj.schemes[0].test_action).to be_truthy
+
+				expect(proj.schemes[0].archive_action.archive_name).to eq('MyApp.xcarchive')
+				expect(proj.schemes[0].archive_action.reveal).to be_truthy
+				expect(proj.schemes[0].build_action.parallel).to be_truthy
+				expect(proj.schemes[0].build_action.build_implicit).to be_truthy
+				expect(proj.schemes[0].build_action.targets.count).to eq(1)
+				expect(proj.schemes[0].build_action.targets[0].name).to eq('my-target')
+				expect(proj.schemes[0].build_action.targets[0].archiving_enabled).to be_truthy
+				expect(proj.schemes[0].build_action.targets[0].running_enabled).to be_truthy
+				expect(proj.schemes[0].build_action.targets[0].testing_enabled).to be_truthy
+				expect(proj.schemes[0].build_action.targets[0].profiling_enabled).to be_truthy
+				expect(proj.schemes[0].launch_action.simulate_location).to be_truthy
+				expect(proj.schemes[0].launch_action.target_name).to eq('my-target')
+				expect(proj.schemes[0].launch_action.arguments).to eq('-AppleLanguages (en-GB)')
+				expect(proj.schemes[0].launch_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
+				expect(proj.schemes[0].profile_action.target_name).to eq('my-target')
+				expect(proj.schemes[0].profile_action.inherit_environment).to be_truthy
+				expect(proj.schemes[0].test_action.build_configuration).to eq('debug')
+				expect(proj.schemes[0].test_action.targets.count).to eq(1)
+				expect(proj.schemes[0].test_action.targets[0]).to eq('my-target')
+				expect(proj.schemes[0].test_action.inherit_launch_arguments).to be_truthy
+				expect(proj.schemes[0].test_action.code_coverage_enabled).to be_truthy
+				expect(proj.schemes[0].test_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
+			end
 		end
 	end
 end

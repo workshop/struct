@@ -2,6 +2,7 @@ require_relative 'processor_component'
 require_relative 'configurations'
 require_relative 'targets'
 require_relative 'variants'
+require_relative 'schemes'
 require_relative '../../cocoapods/pod_assistant'
 require 'paint'
 
@@ -10,15 +11,17 @@ module StructCore
 		class ProjectComponent
 			include ProcessorComponent
 
-			def initialize(structure, working_directory, configurations_component = nil, targets_component = nil, variants_component = nil)
+			def initialize(structure, working_directory, configurations_component = nil, targets_component = nil, variants_component = nil, schemes_component = nil)
 				super(structure, working_directory)
 				@configurations_component = configurations_component
 				@targets_component = targets_component
 				@variants_component = variants_component
+				@schemes_component = schemes_component
 
 				@configurations_component ||= ConfigurationsComponent.new @structure, @working_directory
 				@targets_component ||= TargetsComponent.new @structure, @working_directory
 				@variants_component ||= VariantsComponent.new @structure, @working_directory
+				@schemes_component ||= SchemesComponent.new @structure, @working_directory
 			end
 
 			def process(project, selected_variants = [])
@@ -56,7 +59,9 @@ module StructCore
 				projects = [['project', project]] if project.variants.empty?
 				projects = @variants_component.process(project, selected_variants) unless project.variants.empty?
 
-				projects.map { |proj_data|
+				schemes = []
+
+				outputs = projects.map { |proj_data|
 					name, proj = proj_data
 					puts Paint["Processing project '#{name}'..."]
 
@@ -68,8 +73,16 @@ module StructCore
 					@configurations_component.process proj, dsl
 					@targets_component.process proj, dsl
 
+					schemes.unshift(*@schemes_component.process(project, dsl))
 					ProcessorOutput.new(dsl, File.join(working_directory, "#{name}.xcodeproj"))
 				}
+
+				outputs.push(*schemes.map { |data|
+					scheme, scheme_name, proj_output_path = data
+					ProcessorOutput.new(scheme, File.join(proj_output_path, 'xcshareddata', 'xcschemes', "#{scheme_name}.xcscheme"), project: proj_output_path, name: scheme_name)
+				})
+
+				outputs
 			end
 
 			private :process_xc_project

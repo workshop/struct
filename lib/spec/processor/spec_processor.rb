@@ -32,19 +32,7 @@ module StructCore
 
 			puts "\n" unless @dry_run
 
-			outputs.each { |output|
-				if @dry_run
-					print output.dsl if output.dsl.is_a?(Xcodeproj::Project)
-					print output.dsl, raw: true if output.dsl.is_a?(StructCore::Specfile)
-				else
-					StructCore::Specwriter.new.write_spec output.dsl, output.path unless output.path.end_with? '.xcodeproj'
-					output.dsl.save output.path if output.path.end_with? '.xcodeproj'
-					puts Paint["Saved '#{output.path}'"]
-				end
-
-				scripts_component.post_generate source_dsl, output.dsl
-			}
-
+			process_outputs outputs, scripts_component, source_dsl
 			outputs
 		end
 
@@ -81,6 +69,23 @@ module StructCore
 			raise StandardError.new "Unrecognised project format: #{File.basename(full_project_path)}" if source_dsl.nil?
 
 			source_dsl
+		end
+
+		def process_outputs(outputs, scripts_component, source_dsl)
+			outputs.each { |output|
+				if @dry_run
+					print output.dsl if output.dsl.is_a?(Xcodeproj::Project)
+					print output.dsl if output.dsl.is_a?(Xcodeproj::XCScheme)
+					print output.dsl, raw: true if output.dsl.is_a?(StructCore::Specfile)
+				else
+					StructCore::Specwriter.new.write_spec output.dsl, output.path unless output.path.end_with?('.xcodeproj', '.xcscheme')
+					output.dsl.save output.path if output.path.end_with? '.xcodeproj'
+					output.dsl.save_as output.options[:project], output.options[:name] if output.path.end_with? '.xcscheme'
+					puts Paint["Saved '#{output.path}'"]
+				end
+
+				scripts_component.post_generate source_dsl, output.dsl
+			}
 		end
 
 		def print(dsl, options = {})
