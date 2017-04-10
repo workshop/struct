@@ -73,18 +73,15 @@ module StructCore
 					@configurations_component.process proj, dsl
 					@targets_component.process proj, dsl
 
-					schemes = @schemes_component.process project, dsl if schemes.empty?
+					schemes.unshift(*@schemes_component.process(project, dsl))
 					ProcessorOutput.new(dsl, File.join(working_directory, "#{name}.xcodeproj"))
 				}
 
-				scheme_outputs = []
-				outputs.each { |proj_output|
-					scheme_outputs.unshift(*schemes.map { |scheme|
-						ProcessorOutput.new(scheme, File.join(proj_output.path, 'xcshareddata', 'xcschemes', "#{scheme.name}.xcscheme"))
-					})
-				}
+				outputs.push(*schemes.map { |data|
+					scheme, scheme_name, proj_output_path = data
+					ProcessorOutput.new(scheme, File.join(proj_output_path, 'xcshareddata', 'xcschemes', "#{scheme_name}.xcscheme"), project: proj_output_path, name: scheme_name)
+				})
 
-				outputs.unshift(*scheme_outputs)
 				outputs
 			end
 

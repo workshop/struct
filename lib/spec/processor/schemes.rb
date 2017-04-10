@@ -48,7 +48,7 @@ module StructCore
 					scheme_dsl.launch_action = @launch_action_component.process scheme.launch_action, scheme_dsl.launch_action, dsl.targets unless scheme.profile_action.nil?
 					# We skip generating Analyze actions as these are implicitly included
 
-					scheme_dsl
+					[scheme_dsl, scheme.name, dsl.path.to_s]
 				}
 			end
 		end

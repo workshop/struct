@@ -635,10 +635,7 @@ module StructCore
 			inherit_environment = false
 			inherit_environment = opts['inherit_environment'] if opts.key? 'inherit_environment'
 
-			configuration = {}
-			configuration = opts['configuration'] if opts.key?('configuration') && opts['configuration'].is_a?(Hash)
-
-			StructCore::Specfile::Scheme::ProfileAction.new opts['target'], configuration, inherit_environment
+			StructCore::Specfile::Scheme::ProfileAction.new opts['target'], inherit_environment
 		end
 
 		private :parse_configurations

@@ -271,13 +271,12 @@ module StructCore
 			end
 
 			class ProfileAction
-				def initialize(target_name, configuration = {}, inherit_environment = false)
+				def initialize(target_name, inherit_environment = false)
 					@target_name = target_name
-					@configuration = configuration
 					@inherit_environment = inherit_environment
 				end
 
-				attr_accessor :inherit_environment, :configuration, :target_name
+				attr_accessor :inherit_environment, :target_name
 			end
 		end
 

@@ -491,7 +491,6 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.schemes[0].launch_action.arguments).to eq('-AppleLanguages (en-GB)')
 				expect(proj.schemes[0].launch_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
 				expect(proj.schemes[0].profile_action.target_name).to eq('my-target')
-				expect(proj.schemes[0].profile_action.configuration['IPHONEOS_DEPLOYMENT_TARGET']).to eq('10.0')
 				expect(proj.schemes[0].profile_action.inherit_environment).to be_truthy
 				expect(proj.schemes[0].test_action.build_configuration).to eq('debug')
 				expect(proj.schemes[0].test_action.targets.count).to eq(1)
