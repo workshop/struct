@@ -367,8 +367,7 @@ module StructCore
 					!(file.include? '.xcassets/') and
 						!(file.include? '.bundle/') and
 						!(file.end_with? 'Info.plist') and
-						!(file.include? '.lproj') and
-						(file.include? '.')
+						!(file.include? '.lproj')
 				}.uniq.select { |f|
 					source_files_minus_dir.count(f.sub(source_dir, '')) == 0
 				}
@@ -420,7 +419,7 @@ module StructCore
 						header.settings = { 'ATTRIBUTES' => %w(Public)}
 					elsif file.end_with? '.entitlements'
 						next
-					elsif file.include? '.' # Files without an extension break Xcode compilation during resource phase
+					else
 						native_target.add_resources [native_file]
 					end
 				}
