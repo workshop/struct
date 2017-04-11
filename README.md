@@ -2,8 +2,8 @@
 
 # Struct
 [![Latest Gem Release](https://img.shields.io/gem/v/struct.svg)](https://rubygems.org/gems/struct) 
-[![Git Version](https://img.shields.io/github/tag/workshop/struct.svg)](https://github.com/workshop/struct/releases/tag/1.3.1)
-[![Git Version](https://img.shields.io/github/commits-since/workshop/struct/1.3.1.svg)](https://github.com/workshop/struct/commits/master)
+[![Git Version](https://img.shields.io/github/tag/workshop/struct.svg)](https://github.com/workshop/struct/releases/tag/1.3.2)
+[![Git Version](https://img.shields.io/github/commits-since/workshop/struct/1.3.2.svg)](https://github.com/workshop/struct/commits/master)
 [![Build status](https://api.travis-ci.org/workshop/struct.svg?branch=master)](https://travis-ci.org/workshop/struct)
 [![Coverage Status](https://coveralls.io/repos/github/workshop/struct/badge.svg)](https://coveralls.io/github/workshop/struct)
 [![Chat on Gitter](https://img.shields.io/gitter/room/workshop/Lobby.svg)](https://gitter.im/workshop/Lobby)

@@ -1,5 +1,5 @@
 ---
-latest: 1.3.1
+latest: 1.3.2
 versions:
   0.1.4:
   - Added parse command to easily see spec parsing output
@@ -104,3 +104,6 @@ versions:
   - Removed unhelpful warnings from the 'struct watch' command when using symbolic
     links.
   - Fixed warnings when parsing source options.
+  1.3.2:
+  - Fixed an issue where files without extensions were not included in the resource
+    build phase of a target.
