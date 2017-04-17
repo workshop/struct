@@ -42,7 +42,7 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
 ```
 
-Then just run `struct --generate` and `struct` will do the rest.
+Then just run `struct generate` and `struct` will do the rest.
 
 You can find documented examples of the project specification in the examples folder.
 
