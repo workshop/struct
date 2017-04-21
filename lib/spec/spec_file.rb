@@ -6,30 +6,18 @@ require_relative 'writer/spec_writer'
 module StructCore
 	class Specfile
 		class Configuration
-			def initialize(name, profiles, overrides, type = nil, source = nil)
+			def initialize(name, overrides, type = nil, source = nil)
 				@name = name
-				@profiles = profiles
+				@profiles = ["general:#{type}"]
 				@overrides = overrides
-				@raw_type = type
+				@type = type || @name.downcase 
 				@source = source
-			end
-
-			# @return [String]
-			def type
-				if @name == 'debug'
-					'debug'
-				elsif @name == 'release'
-					'release'
-				else
-					@raw_type
-				end
 			end
 
 			attr_writer :type
 			attr_accessor :name
 			attr_accessor :profiles
 			attr_accessor :overrides
-			attr_accessor :raw_type
 			attr_accessor :source
 		end
 

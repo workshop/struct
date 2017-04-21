@@ -26,19 +26,15 @@ module StructCore
 		def parse_configurations(spec_hash)
 			valid_configuration_names = []
 			configurations = spec_hash['configurations'].map { |name, config|
+			
 				unless config['source'].nil?
 					valid_configuration_names << name
 					next Specfile::Configuration.new(name, [], {}, config['type'], config['source'])
 				end
 
-				unless config.key?('profiles') && config['profiles'].is_a?(Array) && config['profiles'].count > 0
-					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
-					next nil
-				end
-
 				valid_configuration_names << name
-				config = Specfile::Configuration.new(name, config['profiles'], config['overrides'] || {}, config['type'])
-
+				config = Specfile::Configuration.new(name, config['overrides'] || {}, config['type'])
+				
 				if config.type.nil?
 					puts Paint["Warning: Configuration with name '#{name}' was skipped as its type did not match one of: debug, release"]
 					next nil
@@ -113,19 +109,8 @@ module StructCore
 
 		def parse_variant_target_profiles(target_opts, raw_type, target_name)
 			# Parse target platform/type/profiles into a profiles list
-			profiles = []
-			if target_opts.key? 'profiles'
-				if target_opts['profiles'].is_a?(Array)
-					profiles = target_opts['profiles']
-				else
-					puts Paint["Warning: Key 'profiles' for variant override #{target_name} is not an array. Ignoring...", :yellow]
-				end
-			elsif profiles.nil? && target_opts.key?('platform')
-				raw_platform = target_opts['platform']
-				profiles = [raw_type, "platform:#{raw_platform}"].compact
-			end
-
-			profiles
+			platform = target_opts['platform']
+			[raw_type, "platform:#{platform}"].compact
 		end
 
 		def parse_variant_target_configurations(target_opts, valid_config_names, profiles)
