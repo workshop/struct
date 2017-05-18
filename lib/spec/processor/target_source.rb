@@ -44,7 +44,7 @@ module StructCore
 					header.settings = { 'ATTRIBUTES' => %w(Public) }
 				elsif file.end_with? '.entitlements'
 					return
-				elsif file.include? '.' # Files without an extension break Xcode compilation during resource phase
+				else
 					target_dsl.add_resources [native_file]
 				end
 
