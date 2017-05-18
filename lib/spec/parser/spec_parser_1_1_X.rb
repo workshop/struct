@@ -1,20 +1,13 @@
 require 'semantic'
-require_relative 'spec_parser_1_0_X'
 
 module StructCore
 	class Specparser11X
-		def initialize
-			@legacy_parser = StructCore::Specparser10X.new
-			@spec_version = nil
-		end
-
 		# @param version [Semantic::Version]
 		def can_parse_version(version)
 			version.major == 1 && version.minor <= 1
 		end
 
 		def parse(spec_version, spec_hash, filename)
-			@spec_version = spec_version
 			valid_configuration_names, configurations = parse_configurations spec_hash
 
 			project_base_dir = File.dirname filename
@@ -414,9 +407,7 @@ module StructCore
 
 			target_resources_dir = parse_target_resources target_opts, project_base_dir, target_sources_dir
 			file_excludes = parse_target_excludes target_opts, target_name
-			references = []
-			references = parse_target_references target_opts, target_name, project_base_dir if @spec_version.minor == 1
-			references = @legacy_parser.parse_10x_target_references target_opts, target_name, project_base_dir if @spec_version.minor.zero?
+			references = parse_target_references target_opts, target_name, project_base_dir
 			run_scripts = parse_target_scripts target_opts, project_base_dir
 
 			Specfile::Target.new target_name, type, target_sources_dir, configurations, references, [], target_resources_dir, file_excludes, run_scripts

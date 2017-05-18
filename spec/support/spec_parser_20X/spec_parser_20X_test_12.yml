@@ -1,0 +1,10 @@
+---
+version: 2.0.0
+configurations:
+  my-configuration:
+    overrides:
+      OVERRIDE: 1
+    type: debug
+targets:
+  my-target:
+    sources: 'spec_parser_13X_test_12/abc'

@@ -1,34 +1,21 @@
 ---
 # The project spec version number - this is for struct to identify this spec's schema
-version: 1.2.1
+version: 2.0.0
 # Project-level configurations and build settings. You can add as many as you want here.
 # If you do add another configuration that's not one of debug, release, you must specify
 # its type as either 'debug' or 'release'.
 configurations:
   # An individual project-level configuration
   debug:
-    # Project configuration profiles. Each profile will provide a subset of configuration
-    # settings. You will almost always want 'general', as this defines a large portion of
-    # the settings you would get by default with a project.
-    #
-    # Additional profiles can be used to produce a project that more closely matches your
-    # needs. For example if you mainly need iOS targets, then applying the 'ios' profile
-    # will provide some additional sensible defaults for new targets.
-    profiles:
-    - general:debug
-    - ios:debug
     # Configuration overrides go here. After all of the configuration profiles have been
     # applied, any settings here will be applied on top. This may be useful to provide
     # defaults for code signing for example.
     overrides:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
-    # Instead of profiles and overrides, you can also specify the location of an xcconfig
+    # Instead of overrides, you can also specify the location of an xcconfig
     # file. This will be used to configure the project instead.
     # source: config/debug.xcconfig
   release:
-    profiles:
-    - general:release
-    - ios:release
     overrides:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
 # Build targets. Currently any kind of target should be supported, however only common
@@ -71,7 +58,7 @@ targets:
     #     codeSignOnCopy: false
     references:
     - sdkroot:UIKit.framework
-    # The platform for this target. Supported platforms are 'ios' and 'mac'.
+    # The platform for this target. Supported platforms are 'ios', 'mac' and 'watch'.
     platform: ios
     # The type of target. This corresponds to the UTI Apple associates with each target type.
     # ':' will be replaced with the namespace of Apple's UTI, e.g. ':application' will
@@ -105,12 +92,8 @@ targets:
     references:
     - iOSTest
     type: ":bundle.unit-test"
-    # Target configuration profiles to apply to this target. This will override project-level
-    # settings. You should usually apply a platform profile e.g. platform:ios. Currently 'ios'
-    # and 'mac' are supported.
-    profiles:
-    - platform:ios
-    - bundle.unit-test
+    platform: ios
+    type: ":bundle.unit-test"
     configuration:
       TEST_HOST: "$(BUILT_PRODUCTS_DIR)/iOSTest.app/iOSTest"
       INFOPLIST_FILE: iOSTestTests/Info.plist
@@ -170,3 +153,34 @@ variants:
       # replace any previous definitions for matching options.
       configuration:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_BETA
+schemes:
+  iOSTest:
+    archive:
+      name: iOSTest.xcarchive
+      reveal: true
+    build:
+      parallel: true
+      build_implicit: true
+      targets:
+        iOSTest:
+          archiving_enabled: true
+          running_enabled: true
+          profiling_enabled: true
+          testing_enabled: true
+    test:
+      build_configuration: debug
+      targets:
+      - iOSTestTests
+      inherit_launch_arguments: true
+      code_coverage_enabled: true
+      environment:
+        OS_ACTIVITY_MODE: disable
+    launch:
+      simulate_location: true
+      target: iOSTest
+      arguments: -AppleLanguages (en-GB)
+      environment:
+        OS_ACTIVITY_MODE: disable
+    profile:
+      target: iOSTest
+      inherit_environment: true

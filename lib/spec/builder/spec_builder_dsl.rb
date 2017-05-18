@@ -1,6 +1,7 @@
 require 'semantic'
 require_relative 'spec_builder_12X/spec_file_dsl_12X'
 require_relative 'spec_builder_13X/spec_file_dsl_13X'
+require_relative 'spec_builder_20X/spec_file_dsl_20X'
 
 module StructCore
 	class SpecBuilderDsl
@@ -27,11 +28,12 @@ module StructCore
 		def register_defaults
 			@file_dsls.unshift(
 				StructCore::SpecFileDSL12X.new,
-				StructCore::SpecFileDSL13X.new
+				StructCore::SpecFileDSL13X.new,
+				StructCore::SpecFileDSL20X.new
 			)
 		end
 
-		def build
+		def __build
 			@spec_file
 		end
 
@@ -62,7 +64,11 @@ module StructCore
 		end
 
 		def method_missing(method, *args, &block)
-			@current_scope.send(method, *args, &block)
+			if @current_scope.nil? && method == :build
+				send('__build', *args, &block)
+			else
+				@current_scope.send(method, *args, &block)
+			end
 		end
 	end
 end

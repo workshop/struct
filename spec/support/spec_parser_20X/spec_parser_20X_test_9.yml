@@ -1,0 +1,12 @@
+---
+version: 2.0.0
+configurations:
+  debug:
+    overrides:
+    - 1
+    - 2
+    - 3
+    type:
+    - 1
+    - 2
+    - 3
