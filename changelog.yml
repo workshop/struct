@@ -104,3 +104,20 @@ versions:
   - Removed unhelpful warnings from the 'struct watch' command when using symbolic
     links.
   - Fixed warnings when parsing source options.
+  2.0.0:
+  - "Spec 2.0.0 is here! Support for defining schemes has been added, along with a
+    handful of improvements to make defining your specs much simpler.
+    For more information, check out the migration guide: https://git.io/vHemR"
+  - Also new in Spec 2.0.0 is the ability to hook into the project generation lifecycle.
+    You can now perform actions before a project is generated, and after a project is
+    generated, and you're provided metadata to enable performing any pre-post
+    processing on your projects. This works in both YAML/JSON and Specfile formats!
+  - Spec 1.0.0 has now been removed and is no longer supported. If you're still
+    using the 1.0.0 format, you can continue to use Struct 1.3.1.
+  - Various internal improvements have been made to ensure that new features are
+    much easier to add, without negatively affecting the stability of the software.
+    We've raised our code coverage considerably to boot!
+  - The Struct API exposed when using Struct as a gem has had an overhaul to make
+    working with internal models and project generation methods much simpler.
+  - Project migration is now much more capable, you'll notice much less complaining
+    from Struct when migrating your existing Xcode projects!
