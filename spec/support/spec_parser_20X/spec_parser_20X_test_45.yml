@@ -24,6 +24,7 @@ schemes:
           running_enabled: true
           profiling_enabled: true
           testing_enabled: true
+          analyzing_enabled: true
     test:
       build_configuration: debug
       targets:
