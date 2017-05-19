@@ -486,6 +486,7 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.schemes[0].build_action.targets[0].running_enabled).to be_truthy
 				expect(proj.schemes[0].build_action.targets[0].testing_enabled).to be_truthy
 				expect(proj.schemes[0].build_action.targets[0].profiling_enabled).to be_truthy
+				expect(proj.schemes[0].build_action.targets[0].analyzing_enabled).to be_truthy
 				expect(proj.schemes[0].launch_action.simulate_location).to be_truthy
 				expect(proj.schemes[0].launch_action.target_name).to eq('my-target')
 				expect(proj.schemes[0].launch_action.arguments).to eq('-AppleLanguages (en-GB)')

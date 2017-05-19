@@ -163,10 +163,11 @@ schemes:
       build_implicit: true
       targets:
         iOSTest:
-          archiving_enabled: true
-          running_enabled: true
-          profiling_enabled: true
-          testing_enabled: true
+          archiving_enabled: false
+          running_enabled: false
+          profiling_enabled: false
+          testing_enabled: false
+          analyzing_enabled: false
     test:
       build_configuration: debug
       targets:

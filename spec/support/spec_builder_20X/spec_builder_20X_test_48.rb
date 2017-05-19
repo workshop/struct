@@ -19,6 +19,7 @@ spec('2.0.0') do
 				enable_running
 				enable_profiling
 				enable_testing
+				enable_analyzing
 			end
 		end
 

@@ -226,15 +226,16 @@ module StructCore
 				attr_accessor :build_implicit, :targets, :parallel
 
 				class BuildActionTarget
-					def initialize(name, archiving_enabled = false, running_enabled = false, profiling_enabled = false, testing_enabled = false)
+					def initialize(name, archiving_enabled = false, running_enabled = false, profiling_enabled = false, testing_enabled = false, analyzing_enabled = false)
 						@name = name
 						@archiving_enabled = archiving_enabled
 						@running_enabled = running_enabled
 						@profiling_enabled = profiling_enabled
 						@testing_enabled = testing_enabled
+						@analyzing_enabled = analyzing_enabled
 					end
 
-					attr_accessor :name, :archiving_enabled, :running_enabled, :profiling_enabled, :testing_enabled
+					attr_accessor :name, :archiving_enabled, :running_enabled, :profiling_enabled, :testing_enabled, :analyzing_enabled
 				end
 			end
 

@@ -556,7 +556,10 @@ module StructCore
 				testing_enabled = false
 				testing_enabled = target_opts['testing_enabled'] if target_opts.key? 'testing_enabled'
 
-				StructCore::Specfile::Scheme::BuildAction::BuildActionTarget.new name, archiving_enabled, running_enabled, profiling_enabled, testing_enabled
+				analyzing_enabled = false
+				analyzing_enabled = target_opts['analyzing_enabled'] if target_opts.key? 'analyzing_enabled'
+
+				StructCore::Specfile::Scheme::BuildAction::BuildActionTarget.new name, archiving_enabled, running_enabled, profiling_enabled, testing_enabled, analyzing_enabled
 			}
 
 			StructCore::Specfile::Scheme::BuildAction.new targets, parallel, build_implicit

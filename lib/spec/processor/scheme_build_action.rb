@@ -26,7 +26,13 @@ module StructCore
 					target = target_dsls.find { |t| t.name == action_target.name }
 					next nil if target.nil?
 
-					Xcodeproj::XCScheme::BuildAction::Entry.new target
+					entry = Xcodeproj::XCScheme::BuildAction::Entry.new target
+					entry.build_for_testing = action_target.testing_enabled
+					entry.build_for_archiving = action_target.archiving_enabled
+					entry.build_for_analyzing = action_target.analyzing_enabled
+					entry.build_for_running = action_target.running_enabled
+					entry.build_for_profiling = action_target.profiling_enabled
+					entry
 				}.compact.each { |entry|
 					action_dsl.add_entry entry
 				}
