@@ -34,6 +34,7 @@ module StructCore
 				runnable = Xcodeproj::XCScheme::BuildableProductRunnable.new target unless target.nil?
 
 				action_dsl.allow_location_simulation = action.simulate_location
+				action_dsl.build_configuration = action.build_configuration unless action.build_configuration.nil?
 				action_dsl.environment_variables = @environment_variables_component.process action.environment
 				action_dsl.command_line_arguments = @arguments_component.process action.arguments
 				action_dsl.buildable_product_runnable = runnable unless runnable.nil?

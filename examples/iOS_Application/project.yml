@@ -1,6 +1,6 @@
 ---
 # The project spec version number - this is for struct to identify this spec's schema
-version: 2.0.0
+version: 2.1.0
 # Project-level configurations and build settings. You can add as many as you want here.
 # If you do add another configuration that's not one of debug, release, you must specify
 # its type as either 'debug' or 'release'.
@@ -16,6 +16,10 @@ configurations:
     # file. This will be used to configure the project instead.
     # source: config/debug.xcconfig
   release:
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+  appstore:
+    type: release
     overrides:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
 # Build targets. Currently any kind of target should be supported, however only common
@@ -158,6 +162,7 @@ schemes:
     archive:
       name: iOSTest.xcarchive
       reveal: true
+      build_configuration: appstore
     build:
       parallel: true
       build_implicit: true
@@ -177,6 +182,7 @@ schemes:
       environment:
         OS_ACTIVITY_MODE: disable
     launch:
+      build_configuration: debug
       simulate_location: true
       target: iOSTest
       arguments: -AppleLanguages (en-GB)
@@ -185,3 +191,4 @@ schemes:
     profile:
       target: iOSTest
       inherit_environment: true
+      build_configuration: debug

@@ -5,11 +5,12 @@ module StructCore
 	class Specparser20X
 		# @param version [Semantic::Version]
 		def can_parse_version(version)
-			version.major == 2 && version.minor.zero?
+			version.major == 2
 		end
 
 		def parse(spec_version, spec_hash, filename)
 			@spec_file_uses_pods = false
+			@spec_version = spec_version
 
 			project_base_dir = File.dirname filename
 
@@ -604,7 +605,12 @@ module StructCore
 			reveal = false
 			reveal = opts['reveal'] if opts.key? 'reveal'
 
-			StructCore::Specfile::Scheme::ArchiveAction.new opts['name'], reveal
+			build_configuration = nil
+			if @spec_version.major == 2 && @spec_version.minor >= 1
+				build_configuration = opts['build_configuration'] if opts.key? 'build_configuration'
+			end
+
+			StructCore::Specfile::Scheme::ArchiveAction.new opts['name'], reveal, build_configuration
 		end
 
 		def parse_scheme_launch_action(opts, scheme_name)
@@ -624,7 +630,12 @@ module StructCore
 			environment = {}
 			environment = opts['environment'] if opts.key?('environment') && opts['environment'].is_a?(Hash)
 
-			StructCore::Specfile::Scheme::LaunchAction.new opts['target'], simulate_location, arguments, environment
+			build_configuration = nil
+			if @spec_version.major == 2 && @spec_version.minor >= 1
+				build_configuration = opts['build_configuration'] if opts.key? 'build_configuration'
+			end
+
+			StructCore::Specfile::Scheme::LaunchAction.new opts['target'], simulate_location, arguments, environment, build_configuration
 		end
 
 		def parse_scheme_profile_action(opts, scheme_name)
@@ -638,7 +649,12 @@ module StructCore
 			inherit_environment = false
 			inherit_environment = opts['inherit_environment'] if opts.key? 'inherit_environment'
 
-			StructCore::Specfile::Scheme::ProfileAction.new opts['target'], inherit_environment
+			build_configuration = nil
+			if @spec_version.major == 2 && @spec_version.minor >= 1
+				build_configuration = opts['build_configuration'] if opts.key? 'build_configuration'
+			end
+
+			StructCore::Specfile::Scheme::ProfileAction.new opts['target'], inherit_environment, build_configuration
 		end
 
 		private :parse_configurations
