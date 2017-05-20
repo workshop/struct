@@ -12,7 +12,7 @@ module StructCore
 		end
 
 		def supports_version(version)
-			version.major == 2 && version.minor.zero?
+			version.major == 2
 		end
 
 		attr_accessor :spec_file
@@ -68,6 +68,7 @@ module StructCore
 
 			dsl = StructCore::SpecSchemeDSL20X.new
 			dsl.scheme = StructCore::Specfile::Scheme.new name
+			dsl.project = @spec_file
 			@current_scope = dsl
 			block.call
 			@current_scope = nil

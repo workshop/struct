@@ -1,14 +1,20 @@
 module StructCore
 	class SpecSchemeProfileDSL20X
-		attr_accessor :current_scope, :profile_action
+		attr_accessor :current_scope, :profile_action, :project
 
 		def initialize
 			@current_scope = nil
 			@profile_action = nil
+			@project = nil
 		end
 
 		def inherit_environment
 			@profile_action.inherit_environment = true
+		end
+
+		def build_configuration(args = '')
+			return if args.nil? || !args.is_a?(String)
+			@profile_action.build_configuration = args if @project.version.major == 2 && @project.version.minor >= 1
 		end
 
 		def respond_to_missing?(_, _)

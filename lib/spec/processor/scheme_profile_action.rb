@@ -26,6 +26,7 @@ module StructCore
 
 				action_dsl.should_use_launch_scheme_args_env = action.inherit_environment
 				action_dsl.buildable_product_runnable = runnable unless runnable.nil?
+				action_dsl.build_configuration = action.build_configuration unless action.build_configuration.nil?
 
 				action_dsl
 			end

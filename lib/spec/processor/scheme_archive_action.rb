@@ -21,6 +21,7 @@ module StructCore
 			def process_spec_action(action, action_dsl)
 				action_dsl.custom_archive_name = action.archive_name
 				action_dsl.reveal_archive_in_organizer = action.reveal
+				action_dsl.build_configuration = action.build_configuration unless action.build_configuration.nil?
 
 				action_dsl
 			end

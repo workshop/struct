@@ -55,9 +55,12 @@ module StructCore
 
 			def process_scheme_configurations(scheme_dsl, project)
 				# Resolve default build_configuration values to the spec's build configuration names
+				project_configurations = project.configurations.map(&:name)
 				default_build_configuration = 'Release'
-				default_build_configuration = project.configurations.first.name unless project.configurations.empty?
-				[scheme_dsl.test_action, scheme_dsl.archive_action, scheme_dsl.profile_action, scheme_dsl.launch_action, scheme_dsl.analyze_action].each { |action|
+				default_build_configuration = project_configurations.first unless project_configurations.empty?
+				[scheme_dsl.test_action, scheme_dsl.archive_action, scheme_dsl.profile_action, scheme_dsl.launch_action, scheme_dsl.analyze_action].select { |action|
+					!(project_configurations.include? action.build_configuration)
+				}.each { |action|
 					action.build_configuration = XC_SCHEME_CONFIGURATION_MAP[action.build_configuration]
 					action.build_configuration = default_build_configuration if action.build_configuration.nil?
 				}

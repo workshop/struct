@@ -5,11 +5,12 @@ require_relative 'spec_scheme_test_dsl_20X'
 
 module StructCore
 	class SpecSchemeDSL20X
-		attr_accessor :current_scope, :scheme
+		attr_accessor :current_scope, :scheme, :project
 
 		def initialize
 			@scheme = nil
 			@current_scope = nil
+			@project = nil
 		end
 
 		def archive(opts = {})
@@ -19,7 +20,12 @@ module StructCore
 			reveal = true
 			reveal = opts[:reveal] if opts.key? :reveal
 
-			@scheme.archive_action = StructCore::Specfile::Scheme::ArchiveAction.new opts[:name], reveal
+			build_configuration = nil
+			if @project.version.major == 2 && @project.version.minor >= 1
+				build_configuration = opts[:build_configuration] if opts.key? :build_configuration
+			end
+
+			@scheme.archive_action = StructCore::Specfile::Scheme::ArchiveAction.new opts[:name], reveal, build_configuration
 		end
 
 		def build(&block)
@@ -40,6 +46,7 @@ module StructCore
 
 			@current_scope = dsl
 			dsl.launch_action = StructCore::Specfile::Scheme::LaunchAction.new target_name
+			dsl.project = @project
 			block.call
 			@current_scope = nil
 
@@ -52,6 +59,7 @@ module StructCore
 
 			@current_scope = dsl
 			dsl.profile_action = StructCore::Specfile::Scheme::ProfileAction.new target_name
+			dsl.project = @project
 			block.call
 			@current_scope = nil
 
@@ -64,6 +72,7 @@ module StructCore
 
 			@current_scope = dsl
 			dsl.test_action = StructCore::Specfile::Scheme::TestAction.new build_configuration
+			dsl.project = @project
 			block.call
 			@current_scope = nil
 
