@@ -2,8 +2,8 @@
 
 # Struct
 [![Latest Gem Release](https://img.shields.io/gem/v/struct.svg)](https://rubygems.org/gems/struct) 
-[![Git Version](https://img.shields.io/github/tag/workshop/struct.svg)](https://github.com/workshop/struct/releases/tag/1.3.1)
-[![Git Version](https://img.shields.io/github/commits-since/workshop/struct/1.3.1.svg)](https://github.com/workshop/struct/commits/master)
+[![Git Version](https://img.shields.io/github/tag/workshop/struct.svg)](https://github.com/workshop/struct/releases/tag/2.0.1)
+[![Git Version](https://img.shields.io/github/commits-since/workshop/struct/2.0.1.svg)](https://github.com/workshop/struct/commits/master)
 [![Build status](https://api.travis-ci.org/workshop/struct.svg?branch=master)](https://travis-ci.org/workshop/struct)
 [![Coverage Status](https://coveralls.io/repos/github/workshop/struct/badge.svg)](https://coveralls.io/github/workshop/struct)
 [![Chat on Gitter](https://img.shields.io/gitter/room/workshop/Lobby.svg)](https://gitter.im/workshop/Lobby)
@@ -20,16 +20,10 @@ Use a spec file to define your project:
 
 ```yaml
 ---
-version: 1.3.0
+version: 2.0.0
 configurations:
   debug:
-    profiles:
-    - general:debug
-    - ios:debug
   release:
-    profiles:
-    - general:release
-    - ios:release
 targets:
   MyApp:
     sources: src
@@ -42,7 +36,7 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
 ```
 
-Then just run `struct --generate` and `struct` will do the rest.
+Then just run `struct generate` and `struct` will do the rest.
 
 You can find documented examples of the project specification in the examples folder.
 

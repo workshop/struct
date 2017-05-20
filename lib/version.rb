@@ -1,3 +1,3 @@
 module StructCore
-	VERSION = '1.3.1'.freeze
+	VERSION = '2.0.1'.freeze
 end

@@ -34,7 +34,7 @@ module StructCore
 			project_directory = File.dirname(path)
 
 			spec_hash = {}
-			spec_hash['version'] = '1.3.0'
+			spec_hash['version'] = '2.0.0'
 
 			configurations = {}
 			spec.configurations.each { |config|

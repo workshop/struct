@@ -22,6 +22,10 @@ module StructCore
 			@target.testing_enabled = true
 		end
 
+		def enable_analyzing
+			@target.analyzing_enabled = true
+		end
+
 		def respond_to_missing?(_, _)
 			true
 		end
