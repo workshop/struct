@@ -19,12 +19,14 @@ module StructCore
 		attr_accessor :project_base_dir
 
 		def __spec_configuration(name = nil, &block)
-			return unless name.is_a?(String) && !name.empty? && !block.nil?
+			return unless name.is_a?(String) && !name.empty?
 			dsl = StructCore::SpecConfigurationDSL20X.new
 			dsl.configuration = StructCore::Specfile::Configuration.new(name, [], {}, nil, nil)
-			@current_scope = dsl
-			block.call
-			@current_scope = nil
+			unless block.nil?
+				@current_scope = dsl
+				block.call
+				@current_scope = nil
+			end
 
 			dsl.configuration.profiles = %w(general:release ios:release)
 			dsl.configuration.profiles = %w(general:debug ios:debug) if dsl.configuration.type == 'debug'
