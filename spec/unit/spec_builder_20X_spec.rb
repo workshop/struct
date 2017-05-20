@@ -385,6 +385,7 @@ RSpec.describe StructCore::SpecBuilder do
 
 				expect(proj.schemes[0].archive_action.archive_name).to eq('MyApp.xcarchive')
 				expect(proj.schemes[0].archive_action.reveal).to be_truthy
+				expect(proj.schemes[0].archive_action.build_configuration).to eq('my-configuration')
 				expect(proj.schemes[0].build_action.parallel).to be_truthy
 				expect(proj.schemes[0].build_action.build_implicit).to be_truthy
 				expect(proj.schemes[0].build_action.targets.count).to eq(1)
@@ -398,9 +399,11 @@ RSpec.describe StructCore::SpecBuilder do
 				expect(proj.schemes[0].launch_action.target_name).to eq('my-target')
 				expect(proj.schemes[0].launch_action.arguments).to eq('-AppleLanguages (en-GB)')
 				expect(proj.schemes[0].launch_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
+				expect(proj.schemes[0].launch_action.build_configuration).to eq('my-configuration')
 				expect(proj.schemes[0].profile_action.target_name).to eq('my-target')
 				expect(proj.schemes[0].profile_action.inherit_environment).to be_truthy
-				expect(proj.schemes[0].test_action.build_configuration).to eq('debug')
+				expect(proj.schemes[0].profile_action.build_configuration).to eq('my-configuration')
+				expect(proj.schemes[0].test_action.build_configuration).to eq('my-configuration')
 				expect(proj.schemes[0].test_action.targets.count).to eq(1)
 				expect(proj.schemes[0].test_action.targets[0]).to eq('my-target')
 				expect(proj.schemes[0].test_action.inherit_launch_arguments).to be_truthy

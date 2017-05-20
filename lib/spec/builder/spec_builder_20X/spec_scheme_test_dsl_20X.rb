@@ -2,11 +2,12 @@ require_relative 'spec_scheme_test_environment_dsl_20X'
 
 module StructCore
 	class SpecSchemeTestDSL20X
-		attr_accessor :current_scope, :test_action
+		attr_accessor :current_scope, :test_action, :project
 
 		def initialize
 			@current_scope = nil
 			@test_action = nil
+			@project = nil
 		end
 
 		def target(name = nil)
@@ -34,6 +35,11 @@ module StructCore
 			@current_scope = nil
 
 			@test_action.environment = dsl.environment
+		end
+
+		def build_configuration(args = '')
+			return if args.nil? || !args.is_a?(String)
+			@test_action.build_configuration = args if @project.version.major == 2 && @project.version.minor >= 1
 		end
 
 		def respond_to_missing?(_, _)
