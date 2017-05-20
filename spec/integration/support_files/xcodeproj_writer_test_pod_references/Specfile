@@ -1,12 +1,8 @@
-spec('1.2.1') do
+spec('2.0.0') do
   configuration('Debug') do
-    profile 'general:debug'
-    profile 'ios:debug'
     type :debug
   end
   configuration('Release') do
-    profile 'general:release'
-    profile 'ios:release'
     type :release
   end
 
