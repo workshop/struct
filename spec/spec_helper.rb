@@ -32,6 +32,7 @@ require_relative '../lib/spec/writer/spec_writer_2_0_X'
 require_relative '../lib/spec/builder/spec_builder'
 require_relative '../lib/spec/processor/spec_processor'
 require_relative '../lib/spec/processor/spec_scripts_processor'
+require_relative '../lib/refresher/changelog_history'
 
 def copy_support_files(source_dir, dest_dir)
 	Dir.glob("#{source_dir}/**/*").each { |file|
