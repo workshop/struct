@@ -6,6 +6,7 @@ require 'semantic'
 require 'paint'
 require 'tmpdir'
 require_relative '../version'
+require_relative './changelog_history'
 
 module StructCore
 	class Refresher
@@ -14,6 +15,7 @@ module StructCore
 		# There's not much sense refactoring this to be tiny methods.
 		# rubocop:disable Metrics/AbcSize
 		# rubocop:disable Metrics/PerceivedComplexity
+		# rubocop:disable Metrics/MethodLength
 		def self.run
 			# Silently fail whenever possible and try not to wait too long. Don't want to bug the users!
 			return unless Refresher.internet?
@@ -48,7 +50,8 @@ module StructCore
 			# Keep the timeout super-short. This is a fairly big assumption and needs fine-tuning, but most devs
 			# have awesome internet connections, so this should be fine for the most part. Don't want to keep
 			# the UI stalling for too long!
-			changelog_res = Excon.get("#{GIT_CONTENT_REPOSITORY_BASE}/changelog.yml", connect_timeout: 5)
+			changelog_url = ENV['STRUCT_CHANGELOG_URL'] || "#{GIT_CONTENT_REPOSITORY_BASE}/changelog.yml"
+			changelog_res = Excon.get(changelog_url, connect_timeout: 5)
 
 			return unless changelog_res.status == 200 && !changelog_res.body.nil?
 
@@ -66,6 +69,7 @@ module StructCore
 		end
 		# rubocop:enable Metrics/AbcSize
 		# rubocop:enable Metrics/PerceivedComplexity
+		# rubocop:enable Metrics/MethodLength
 
 		def self.internet?
 			dns_resolver = Resolv::DNS.new
@@ -78,9 +82,7 @@ module StructCore
 		end
 
 		def self.out_of_date?(latest_gem_version, local_gem_version)
-			latest_gem_version.major > local_gem_version.major ||
-				(latest_gem_version.major == local_gem_version.major && latest_gem_version.minor > local_gem_version.minor) ||
-				(latest_gem_version.major == local_gem_version.major && latest_gem_version.minor == local_gem_version.minor && latest_gem_version.patch > local_gem_version.patch)
+			latest_gem_version > local_gem_version
 		end
 
 		def self.print(changelog, local_gem_version)
@@ -103,8 +105,11 @@ module StructCore
 
 			return if changelog['versions'].nil? || changelog['versions'][latest_gem_version.to_s].nil?
 
+			changes = RefresherHelpers.determine_changes changelog, local_gem_version, latest_gem_version
+			return if changes.empty?
+
 			puts Paint["What's new:\n-----------", :yellow]
-			puts Paint[changelog['versions'][latest_gem_version.to_s].map { |str| " -  #{str}" }.join("\n"), :yellow]
+			puts Paint[changes, :yellow]
 		end
 
 		private_class_method :out_of_date?

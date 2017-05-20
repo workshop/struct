@@ -12,19 +12,21 @@ module StructCore
 		end
 
 		def supports_version(version)
-			version.major == 2 && version.minor.zero?
+			version.major == 2
 		end
 
 		attr_accessor :spec_file
 		attr_accessor :project_base_dir
 
 		def __spec_configuration(name = nil, &block)
-			return unless name.is_a?(String) && !name.empty? && !block.nil?
+			return unless name.is_a?(String) && !name.empty?
 			dsl = StructCore::SpecConfigurationDSL20X.new
 			dsl.configuration = StructCore::Specfile::Configuration.new(name, [], {}, nil, nil)
-			@current_scope = dsl
-			block.call
-			@current_scope = nil
+			unless block.nil?
+				@current_scope = dsl
+				block.call
+				@current_scope = nil
+			end
 
 			dsl.configuration.profiles = %w(general:release ios:release)
 			dsl.configuration.profiles = %w(general:debug ios:debug) if dsl.configuration.type == 'debug'
@@ -66,6 +68,7 @@ module StructCore
 
 			dsl = StructCore::SpecSchemeDSL20X.new
 			dsl.scheme = StructCore::Specfile::Scheme.new name
+			dsl.project = @spec_file
 			@current_scope = dsl
 			block.call
 			@current_scope = nil

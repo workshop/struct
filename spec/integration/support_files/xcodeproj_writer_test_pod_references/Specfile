@@ -1,10 +1,6 @@
 spec('2.0.0') do
-  configuration('Debug') do
-    type :debug
-  end
-  configuration('Release') do
-    type :release
-  end
+  configuration 'Debug'
+  configuration 'Release'
 
   target('My app') do
     platform 'ios'

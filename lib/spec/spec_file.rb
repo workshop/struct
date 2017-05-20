@@ -252,32 +252,35 @@ module StructCore
 			end
 
 			class LaunchAction
-				def initialize(target_name, simulate_location = false, arguments = '', environment = {})
+				def initialize(target_name, simulate_location = false, arguments = '', environment = {}, build_configuration = nil)
 					@target_name = target_name
 					@simulate_location = simulate_location
 					@arguments = arguments
 					@environment = environment
+					@build_configuration = build_configuration
 				end
 
-				attr_accessor :environment, :simulate_location, :arguments, :target_name
+				attr_accessor :environment, :simulate_location, :arguments, :target_name, :build_configuration
 			end
 
 			class ArchiveAction
-				def initialize(archive_name, reveal = false)
+				def initialize(archive_name, reveal = false, build_configuration = nil)
 					@archive_name = archive_name
 					@reveal = reveal
+					@build_configuration = build_configuration
 				end
 
-				attr_accessor :reveal, :archive_name
+				attr_accessor :reveal, :archive_name, :build_configuration
 			end
 
 			class ProfileAction
-				def initialize(target_name, inherit_environment = false)
+				def initialize(target_name, inherit_environment = false, build_configuration = nil)
 					@target_name = target_name
 					@inherit_environment = inherit_environment
+					@build_configuration = build_configuration
 				end
 
-				attr_accessor :inherit_environment, :target_name
+				attr_accessor :inherit_environment, :target_name, :build_configuration
 			end
 		end
 

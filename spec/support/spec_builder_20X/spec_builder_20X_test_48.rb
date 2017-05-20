@@ -1,4 +1,4 @@
-spec('2.0.0') do
+spec('2.1.0') do
 	configuration('my-configuration') do
 		override 'OVERRIDE', '1'
 		type 'debug'
@@ -9,7 +9,7 @@ spec('2.0.0') do
 		configuration do end
 	end
 	scheme('my-target') do
-		archive name: 'MyApp.xcarchive', reveal: true
+		archive name: 'MyApp.xcarchive', reveal: true, build_configuration: 'my-configuration'
 
 		build do
 			parallelize_builds
@@ -30,6 +30,7 @@ spec('2.0.0') do
 			environment do
 				override 'OS_ACTIVITY_MODE', 'disable'
 			end
+			build_configuration 'my-configuration'
 		end
 
 		launch('my-target') do
@@ -38,10 +39,12 @@ spec('2.0.0') do
 			environment do
 				override 'OS_ACTIVITY_MODE', 'disable'
 			end
+			build_configuration 'my-configuration'
 		end
 
 		profile('my-target') do
 			inherit_environment
+			build_configuration 'my-configuration'
 		end
 	end
 end
