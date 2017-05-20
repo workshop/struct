@@ -144,11 +144,11 @@ versions:
   - Various bug fixes to the new Spec 2.0.0 format.
   2.1.0:
   - Spec 2.1.0 is here! This contains a few improvements for defining schemes, as
-    well as introducing improved syntax in the Specfile format for declaring
-    project configurations.
+    well as introducing improved syntax in the Specfile format for declaring project
+    configurations.
   - You can now declare project configurations as 'debug' or 'Debug', and 'release'
     or 'Release' without specifying the configuration type! This works across any
-    spec version, so there's no migration necessary to benefit from this change.
-    Struct will continue to maintain backwards compatibility for specifying the
-    types by hand, however feel free to remove this declaration if you're using
-    'Debug' and 'Release' in your project configuration.
+    spec version, so there's no migration necessary to benefit from this change. Struct
+    will continue to maintain backwards compatibility for specifying the types by
+    hand, however feel free to remove this declaration if you're using 'Debug' and
+    'Release' in your project configuration.
