@@ -92,7 +92,7 @@ module StructCore
 					@local_ref_component.process ref, target_dsl, framework_group, embed_phase if ref.is_a?(StructCore::Specfile::Target::LocalFrameworkReference)
 					@local_lib_ref_component.process ref, target_dsl, framework_group if ref.is_a?(StructCore::Specfile::Target::LocalLibraryReference)
 					@subproj_ref_component.process ref, target, target_dsl, framework_group if ref.is_a?(StructCore::Specfile::Target::FrameworkReference)
-					@target_ref_component.process ref, target_dsl, dsl if ref.is_a?(StructCore::Specfile::Target::TargetReference)
+					@target_ref_component.process ref, target_dsl, dsl, dsl.frameworks_group, embed_phase if ref.is_a?(StructCore::Specfile::Target::TargetReference)
 				}
 			end
 		end
