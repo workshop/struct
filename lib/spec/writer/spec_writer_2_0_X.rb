@@ -11,7 +11,7 @@ module StructCore
 	class Specwriter20X
 		# @param version [Semantic::Version]
 		def can_write_version(version)
-			version.major == 2 && version.minor.zero?
+			version.major == 2
 		end
 
 		# @param spec [StructCore::Specfile]
@@ -34,7 +34,7 @@ module StructCore
 			project_directory = File.dirname(path)
 
 			spec_hash = {}
-			spec_hash['version'] = '2.0.0'
+			spec_hash['version'] = '2.1.0'
 
 			configurations = {}
 			spec.configurations.each { |config|
@@ -145,13 +145,6 @@ module StructCore
 				raise StandardError.new 'Error: Invalid target object. Target object must have at least one configuration.'
 			end
 
-			profiles = target.configurations.map { |config|
-				config.profiles
-			}
-			unless profiles.all? { |profile| profile == profiles[0] }
-				raise StandardError.new 'Error: Invalid target object. Profiles across every configuration must be identical.'
-			end
-
 			unless spec_hash.key? 'targets'
 				spec_hash['targets'] = {}
 			end
@@ -172,8 +165,6 @@ module StructCore
 			config_hash = {}
 
 			if configuration.source.nil?
-				config_hash['profiles'] = configuration.profiles
-
 				unless configuration.overrides == nil || configuration.overrides.keys.length == 0
 					config_hash['overrides'] = configuration.overrides
 				end
@@ -206,29 +197,13 @@ module StructCore
 
 			target_hash['type'] = target.type.sub('com.apple.product-type.', ':') unless target.type.nil?
 
-			# Try to reconcile configuration blocks into shorthand first.
-			# We determine if we should write shorthand with the following rules:
-			# - Only two profiles are specified
-			# - One of these two profiles is a platform profile
-			# - The other of these two profiles is a type profile
 			profiles = target.configurations[0].profiles
 
 			platform_profile = profiles.find { |profile|
 				profile.start_with? 'platform:'
 			}
 
-			expected_profile = (target.type || '').sub('com.apple.product-type.', '')
-			type_profile = profiles.find { |profile|
-				profile == expected_profile
-			}
-
-			if profiles.length == 2 && platform_profile != nil && type_profile != nil
-				# If using shorthand, specify the platform
-				target_hash['platform'] = platform_profile.sub('platform:', '')
-			elsif profiles.length > 0
-				# Otherwise, specify the full list of configuration profiles
-				target_hash['profiles'] = profiles
-			end
+			target_hash['platform'] = platform_profile.sub('platform:', '') unless platform_profile.nil?
 
 			# When outputting configuration settings, first determine if every configuration's settings
 			# are identical. If this is the case output the singular 'configuration' block, otherwise
