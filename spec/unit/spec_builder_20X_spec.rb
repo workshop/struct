@@ -429,6 +429,16 @@ RSpec.describe StructCore::SpecBuilder do
 				expect(proj.targets[1].references[0]).to be_an_instance_of(StructCore::Specfile::Target::TargetReference)
 				expect(proj.targets[1].references[0].settings['codeSignOnCopy']).to be_truthy
 			end
+
+			it 'builds a 2.2.0 Specfile with prebuild & postbuild run scripts' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_20X/spec_builder_20X_test_51.rb')
+
+				proj = StructCore::SpecBuilder.build project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.variants[0].targets[0].prebuild_run_scripts.count).to eq(1)
+				expect(proj.variants[0].targets[0].postbuild_run_scripts.count).to eq(1)
+				expect(proj.targets[0].postbuild_run_scripts.count).to eq(1)
+			end
 		end
 	end
 end

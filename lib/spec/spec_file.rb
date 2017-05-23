@@ -115,11 +115,17 @@ module StructCore
 			end
 
 			class RunScript
-				def initialize(script_path)
+				def initialize(script_path, inputs = [], outputs = [], shell = nil)
 					@script_path = script_path
+					@inputs = inputs
+					@outputs = outputs
+					@shell = shell
 				end
 
 				attr_accessor :script_path
+				attr_accessor :inputs
+				attr_accessor :outputs
+				attr_accessor :shell
 			end
 
 			# @param target_name [String]

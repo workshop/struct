@@ -571,6 +571,17 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.targets[1].references[0]).to be_an_instance_of(StructCore::Specfile::Target::TargetReference)
 				expect(proj.targets[1].references[0].settings['codeSignOnCopy']).to be_truthy
 			end
+
+			it 'parses a 2.2.0 specfile with prebuild & postbuild run scripts' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_20X/spec_parser_20X_test_48.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser20X.new
+
+				proj = parser.parse StructCore::SPEC_VERSION_220, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.variants[0].targets[0].prebuild_run_scripts.count).to eq(1)
+				expect(proj.targets[0].postbuild_run_scripts.count).to eq(1)
+			end
 		end
 	end
 end

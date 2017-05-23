@@ -1,8 +1,10 @@
 require 'semantic'
 require_relative '../../utils/xcconfig_parser'
+require_relative '../../utils/type_helpers'
 
 module StructCore
 	class Specparser20X
+		include TypeHelpers
 		# @param version [Semantic::Version]
 		def can_parse_version(version)
 			version.major == 2
@@ -241,9 +243,24 @@ module StructCore
 
 		def parse_run_scripts_list(scripts, project_base_dir)
 			scripts.map { |s|
-				next nil if s.start_with? '/' # Script file should be relative to project
-				next nil unless File.exist? File.join(project_base_dir, s)
-				Specfile::Target::RunScript.new s
+				if s.is_a? String
+					next nil if s.start_with? '/' # Script file should be relative to project
+					next nil unless File.exist? File.join(project_base_dir, s)
+					Specfile::Target::RunScript.new s
+				elsif s.is_a?(Hash) && @spec_version.minor >= 2
+					next nil unless s.key?('script')
+					script = s['script']
+					next nil if script.start_with? '/' # Script file should be relative to project
+					next nil unless File.exist? File.join(project_base_dir, script)
+
+					inputs = typed_default s['inputs'], Array, []
+					outputs = typed_default s['outputs'], Array, []
+					shell = typed_default s['shell'], String, nil
+
+					Specfile::Target::RunScript.new script, inputs, outputs, shell
+				else
+					puts Paint['Warning: Invalid script found for target. Ignoring...', :yellow]
+				end
 			}.compact
 		end
 
