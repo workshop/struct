@@ -209,7 +209,8 @@ module StructCore
 			end
 
 			raw_references.map { |raw_reference|
-				if raw_reference.is_a?(Hash)
+				next parse_raw_reference raw_references unless raw_reference.is_a? Hash
+				if raw_reference.key?('location')
 					path = raw_reference['location']
 
 					unless File.exist? File.join(project_base_dir, path)
@@ -217,20 +218,25 @@ module StructCore
 						next nil
 					end
 
-					if raw_reference['frameworks'].nil?
-						next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if path.end_with? '.framework'
-						next Specfile::Target::LocalLibraryReference.new(path, raw_reference)
-					end
+					next Specfile::Target::FrameworkReference.new(path, raw_reference) unless raw_reference['frameworks'].nil?
+					next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if path.end_with? '.framework'
+					next Specfile::Target::LocalLibraryReference.new(path, raw_reference)
 
-					next Specfile::Target::FrameworkReference.new(path, raw_reference)
+				elsif raw_reference.key?('target') && @spec_version.minor >= 2
+					next Specfile::Target::TargetReference.new(raw_reference['target'], raw_reference)
 				else
-					# De-symbolise :sdkroot:-prefixed entries
-					ref = raw_reference.to_s
-					next Specfile::Target::TargetReference.new(raw_reference) unless ref.start_with? 'sdkroot:'
-					next Specfile::Target::SystemFrameworkReference.new(raw_reference.sub('sdkroot:', '').sub('.framework', '')) if ref.end_with? '.framework'
-					next Specfile::Target::SystemLibraryReference.new(raw_reference.sub('sdkroot:', ''))
+					puts Paint["Warning: Invalid reference found for target #{target_name}. Ignoring...", :yellow]
+					next nil
 				end
 			}.compact
+		end
+
+		def parse_raw_reference(raw_reference)
+			# De-symbolise :sdkroot:-prefixed entries
+			ref = raw_reference.to_s
+			return Specfile::Target::TargetReference.new(raw_reference) unless ref.start_with? 'sdkroot:'
+			return Specfile::Target::SystemFrameworkReference.new(raw_reference.sub('sdkroot:', '').sub('.framework', '')) if ref.end_with? '.framework'
+			Specfile::Target::SystemLibraryReference.new(raw_reference.sub('sdkroot:', ''))
 		end
 
 		def parse_run_scripts_list(scripts, project_base_dir)
@@ -413,7 +419,8 @@ module StructCore
 			end
 
 			raw_references.map { |raw_reference|
-				if raw_reference.is_a?(Hash)
+				next parse_raw_reference raw_reference unless raw_reference.is_a? Hash
+				if raw_reference.key?('location')
 					path = raw_reference['location']
 
 					unless !path.nil? && File.exist?(File.join(project_base_dir, path))
@@ -427,12 +434,11 @@ module StructCore
 					end
 
 					next Specfile::Target::FrameworkReference.new(path, raw_reference)
+				elsif raw_reference.key?('target') && @spec_version.minor >= 2
+					next Specfile::Target::TargetReference.new(raw_reference['target'], raw_reference)
 				else
-					# De-symbolise :sdkroot:-prefixed entries
-					ref = raw_reference.to_s
-					next Specfile::Target::TargetReference.new(raw_reference) unless ref.start_with? 'sdkroot:'
-					next Specfile::Target::SystemFrameworkReference.new(raw_reference.sub('sdkroot:', '').sub('.framework', '')) if ref.end_with? '.framework'
-					next Specfile::Target::SystemLibraryReference.new(raw_reference.sub('sdkroot:', ''))
+					puts Paint["Warning: Invalid reference found for target #{target_name}. Ignoring...", :yellow]
+					next nil
 				end
 			}.compact
 		end

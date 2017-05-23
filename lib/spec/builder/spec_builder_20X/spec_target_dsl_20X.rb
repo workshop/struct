@@ -120,9 +120,18 @@ module StructCore
 			@target.references << StructCore::Specfile::Target::SystemLibraryReference.new(reference) unless reference.end_with? '.framework'
 		end
 
-		def target_reference(reference = nil)
+		def target_reference(reference = nil, settings = nil)
 			return unless reference.is_a?(String) && !reference.empty?
-			@target.references << StructCore::Specfile::Target::TargetReference.new(reference)
+			settings ||= {}
+			reference = StructCore::Specfile::Target::TargetReference.new(reference)
+
+			if @project.version.minor >= 2
+				# Convert any keys to hashes
+				reference.settings = settings
+				reference.settings = reference.settings.map { |k, v| [k.to_s, v] }.to_h
+			end
+
+			@target.references << reference
 		end
 
 		def framework_reference(reference = nil, settings = nil)

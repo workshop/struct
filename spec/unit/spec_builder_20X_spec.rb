@@ -410,6 +410,25 @@ RSpec.describe StructCore::SpecBuilder do
 				expect(proj.schemes[0].test_action.code_coverage_enabled).to be_truthy
 				expect(proj.schemes[0].test_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
 			end
+
+			it 'builds a 2.1.0 Specfile with a target reference' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_20X/spec_builder_20X_test_49.rb')
+
+				proj = StructCore::SpecBuilder.build project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[1].references.count).to eq(1)
+				expect(proj.targets[1].references[0]).to be_an_instance_of(StructCore::Specfile::Target::TargetReference)
+			end
+
+			it 'builds a 2.1.0 Specfile with a target reference' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_20X/spec_builder_20X_test_50.rb')
+
+				proj = StructCore::SpecBuilder.build project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets[1].references.count).to eq(1)
+				expect(proj.targets[1].references[0]).to be_an_instance_of(StructCore::Specfile::Target::TargetReference)
+				expect(proj.targets[1].references[0].settings['codeSignOnCopy']).to be_truthy
+			end
 		end
 	end
 end

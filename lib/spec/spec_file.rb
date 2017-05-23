@@ -49,11 +49,13 @@ module StructCore
 			end
 
 			class TargetReference
-				def initialize(target_name)
+				def initialize(target_name, settings = {})
 					@target_name = target_name
+					@settings = settings
 				end
 
 				attr_accessor :target_name
+				attr_accessor :settings
 			end
 
 			class SystemFrameworkReference
