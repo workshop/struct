@@ -164,6 +164,8 @@ variants:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: APP_VARIANT_BETA
 schemes:
   iOSTest:
+    analyze:
+     build_configuration: debug
     archive:
       name: iOSTest.xcarchive
       reveal: true

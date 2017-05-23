@@ -548,8 +548,9 @@ module StructCore
 				launch_action = parse_scheme_launch_action opts['launch'], name
 				archive_action = parse_scheme_archive_action opts['archive'], name
 				profile_action = parse_scheme_profile_action opts['profile'], name
+				analyze_action = parse_scheme_analyze_action opts['analyze']
 
-				StructCore::Specfile::Scheme.new name, build_action, test_action, launch_action, archive_action, profile_action
+				StructCore::Specfile::Scheme.new name, build_action, test_action, launch_action, archive_action, profile_action, analyze_action
 			}
 		end
 
@@ -678,6 +679,14 @@ module StructCore
 			end
 
 			StructCore::Specfile::Scheme::ProfileAction.new opts['target'], inherit_environment, build_configuration
+		end
+
+		def parse_scheme_analyze_action(opts)
+			return nil if opts.nil? || @spec_version.minor < 2
+
+			build_configuration = nil
+			build_configuration = opts['build_configuration'] if opts.key? 'build_configuration'
+			StructCore::Specfile::Scheme::AnalyzeAction.new build_configuration
 		end
 
 		private :parse_configurations

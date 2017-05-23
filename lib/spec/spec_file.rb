@@ -213,16 +213,17 @@ module StructCore
 		end
 
 		class Scheme
-			def initialize(name, build_action = nil, test_action = nil, launch_action = nil, archive_action = nil, profile_action = nil)
+			def initialize(name, build_action = nil, test_action = nil, launch_action = nil, archive_action = nil, profile_action = nil, analyze_action = nil)
 				@name = name
 				@build_action = build_action
 				@test_action = test_action
 				@launch_action = launch_action
 				@archive_action = archive_action
 				@profile_action = profile_action
+				@analyze_action = analyze_action
 			end
 
-			attr_accessor :name, :profile_action, :build_action, :test_action, :launch_action, :archive_action
+			attr_accessor :name, :profile_action, :build_action, :test_action, :launch_action, :archive_action, :analyze_action
 
 			class BuildAction
 				def initialize(targets = [], parallel = false, build_implicit = false)
@@ -289,6 +290,14 @@ module StructCore
 				end
 
 				attr_accessor :inherit_environment, :target_name, :build_configuration
+			end
+
+			class AnalyzeAction
+				def initialize(build_configuration = nil)
+					@build_configuration = build_configuration
+				end
+
+				attr_accessor :build_configuration
 			end
 		end
 
