@@ -25,7 +25,7 @@ module StructCore
 						ref.is_a?(Specfile::Target::TargetReference)
 					}.map { |ref|
 						target_map[ref.target_name]
-					}.select { |ref_target|
+					}.compact.select { |ref_target|
 						ref_target.configurations[0].profiles.include?('watchkit2-extension') ||
 							ref_target.configurations[0].profiles.include?('application.watchapp2')
 					}
