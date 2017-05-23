@@ -1,6 +1,6 @@
 ---
 # The project spec version number - this is for struct to identify this spec's schema
-version: 2.1.0
+version: 2.2.0
 # Project-level configurations and build settings. You can add as many as you want here.
 # If you do add another configuration that's not one of debug, release, you must specify
 # its type as either 'debug' or 'release'.
@@ -90,7 +90,12 @@ targets:
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTest
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
     scripts:
-    - scripts/sample.sh
+    - script: scripts/sample.sh
+      shell: /bin/bash
+      inputs:
+      - ABC
+      outputs:
+      - DEF
   iOSTestTests:
     sources: iOSTestTests
     references:

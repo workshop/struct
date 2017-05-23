@@ -1,5 +1,5 @@
 ---
-version: 1.2.0
+version: 2.2.0
 configurations:
   debug:
     profiles:
@@ -23,4 +23,7 @@ variants:
     My app:
       scripts:
         prebuild:
-        - pre.sh
+        - script: pre.sh
+          inputs: $(PROJECT_DIR)
+          outputs: ABC
+          shell: /bin/sh

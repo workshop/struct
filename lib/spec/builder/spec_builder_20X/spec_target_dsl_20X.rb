@@ -1,6 +1,7 @@
 require 'deep_clone'
 require_relative 'spec_target_configuration_dsl_20X'
 require_relative 'spec_target_project_ref_dsl_20X'
+require_relative 'spec_target_script_dsl_20X'
 require_relative '../../../utils/ruby_2_0_monkeypatches'
 
 module StructCore
@@ -174,19 +175,49 @@ module StructCore
 			@target.file_excludes << glob
 		end
 
-		def script_prebuild(script_path = nil)
+		def script_prebuild(script_path = nil, &block)
 			return unless script_path.is_a?(String) && !script_path.empty?
-			@target.prebuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
+			script = StructCore::Specfile::Target::RunScript.new(script_path)
+
+			if !block.nil? && @project.version.minor >= 2
+				dsl = SpecTargetScriptDSL20X.new
+				@current_scope = dsl
+				dsl.script = script
+				block.call
+				@current_scope = nil
+			end
+
+			@target.prebuild_run_scripts << script
 		end
 
-		def script(script_path = nil)
+		def __script(script_path = nil, &block)
 			return unless script_path.is_a?(String) && !script_path.empty?
-			@target.postbuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
+			script = StructCore::Specfile::Target::RunScript.new(script_path)
+
+			if !block.nil? && @project.version.minor >= 2
+				dsl = SpecTargetScriptDSL20X.new
+				@current_scope = dsl
+				dsl.script = script
+				block.call
+				@current_scope = nil
+			end
+
+			@target.postbuild_run_scripts << script
 		end
 
-		def script_postbuild(script_path = nil)
+		def script_postbuild(script_path = nil, &block)
 			return unless script_path.is_a?(String) && !script_path.empty?
-			@target.postbuild_run_scripts << StructCore::Specfile::Target::RunScript.new(script_path)
+			script = StructCore::Specfile::Target::RunScript.new(script_path)
+
+			if !block.nil? && @project.version.minor >= 2
+				dsl = SpecTargetScriptDSL20X.new
+				@current_scope = dsl
+				dsl.script = script
+				block.call
+				@current_scope = nil
+			end
+
+			@target.postbuild_run_scripts << script
 		end
 
 		def source_options(glob = nil, flags = nil)
@@ -199,8 +230,12 @@ module StructCore
 		end
 
 		def method_missing(method, *args, &block)
-			return if @current_scope.nil?
-			@current_scope.send(method, *args, &block)
+			if @current_scope.nil? && method == :script
+				send('__script', *args, &block)
+			else
+				return if @current_scope.nil?
+				@current_scope.send(method, *args, &block)
+			end
 		end
 	end
 end
