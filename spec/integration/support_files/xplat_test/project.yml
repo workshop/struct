@@ -1,0 +1,34 @@
+---
+version: 2.2.0
+configurations:
+  debug:
+    profiles:
+    - general:debug
+    - ios:debug
+  release:
+    profiles:
+    - general:release
+    - ios:release
+targets:
+  My app:
+    sources:
+      ios:
+      - MyApp
+      mac:
+      - MyApp
+    references:
+      ios:
+      - sdkroot:UIKit.framework
+      mac:
+      - sdkroot:AppKit.framework
+    platform:
+    - ios
+    - mac
+    type: ":application"
+    configuration:
+      ios:
+        INFOPLIST_FILE: Info-iOS.plist
+        PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
+      mac:
+        INFOPLIST_FILE: Info-macOS.plist
+        PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp

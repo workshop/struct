@@ -7,12 +7,16 @@ RSpec.describe StructCore::Processor::ProjectComponent do
 				@configs_stub = instance_double('StructCore::Processor::ConfigurationsComponent')
 				@targets_stub = instance_double('StructCore::Processor::TargetsComponent')
 				@variants_stub = instance_double('StructCore::Processor::VariantsComponent')
+				@schemes_stub = instance_double('StructCore::Processor::SchemesComponent')
+				@xplat_stub = instance_double('StructCore::Processor::TargetCrossPlatformComponent')
 				@project_component = StructCore::Processor::ProjectComponent.new(
 					nil,
 					'',
 					@configs_stub,
 					@targets_stub,
-					@variants_stub
+					@variants_stub,
+					@schemes_stub,
+					@xplat_stub
 				)
 			end
 
@@ -42,19 +46,25 @@ RSpec.describe StructCore::Processor::ProjectComponent do
 				@configs_stub = instance_double('StructCore::Processor::ConfigurationsComponent')
 				@targets_stub = instance_double('StructCore::Processor::TargetsComponent')
 				@variants_stub = instance_double('StructCore::Processor::VariantsComponent')
+				@schemes_stub = instance_double('StructCore::Processor::SchemesComponent')
+				@xplat_stub = instance_double('StructCore::Processor::TargetCrossPlatformComponent')
 				@configs_stub_ret = [1, 2, 3]
 				@targets_stub_ret = [2, 3, 4]
 
 				allow(@configs_stub).to receive(:process).and_return(@configs_stub_ret)
 				allow(@targets_stub).to receive(:process).and_return(@targets_stub_ret)
 				allow(@variants_stub).to receive(:process).and_return([])
+				allow(@schemes_stub).to receive(:process).and_return([])
+				allow(@xplat_stub).to receive(:process).and_return([])
 
 				@project_component = StructCore::Processor::ProjectComponent.new(
 					:spec,
 					'',
 					@configs_stub,
 					@targets_stub,
-					@variants_stub
+					@variants_stub,
+					@schemes_stub,
+					@xplat_stub
 				)
 			end
 
@@ -115,10 +125,14 @@ RSpec.describe StructCore::Processor::ProjectComponent do
 				@configs_stub = instance_double('StructCore::Processor::ConfigurationsComponent')
 				@targets_stub = instance_double('StructCore::Processor::TargetsComponent')
 				@variants_stub = instance_double('StructCore::Processor::VariantsComponent')
+				@schemes_stub = instance_double('StructCore::Processor::SchemesComponent')
+				@xplat_stub = instance_double('StructCore::Processor::TargetCrossPlatformComponent')
 
 				allow(@configs_stub).to receive(:process).and_return([])
 				allow(@targets_stub).to receive(:process).and_return([])
 				allow(@variants_stub).to receive(:process).and_return([])
+				allow(@schemes_stub).to receive(:process).and_return([])
+				allow(@xplat_stub).to receive(:process).and_return([])
 				allow(StructCore::PodAssistant).to receive(:apply_pod_configuration)
 
 				@project_component = StructCore::Processor::ProjectComponent.new(
@@ -126,7 +140,9 @@ RSpec.describe StructCore::Processor::ProjectComponent do
 					'',
 					@configs_stub,
 					@targets_stub,
-					@variants_stub
+					@variants_stub,
+					@schemes_stub,
+					@xplat_stub
 				)
 			end
 

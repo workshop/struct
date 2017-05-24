@@ -58,7 +58,7 @@ module StructCore
 			' one project configuration before declaring your target.') if target.configurations.empty?
 			raise StandardError.new('Invalid Specfile. The number of target configurations did not match '\
 			'the number of project configurations. Please ensure you have declared enough target configurations '\
-			'and that these configurations are valid.') unless target.configurations.count == spec_config_count
+			'and that these configurations are valid.') unless target.configurations.count == spec_config_count || target.cross_platform?
 		end
 	end
 end

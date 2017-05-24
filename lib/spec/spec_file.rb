@@ -48,6 +48,26 @@ module StructCore
 				attr_accessor :source
 			end
 
+			class PlatformScopedConfiguration
+				def initialize(platform, configuration)
+					@platform = platform
+					@configuration = configuration
+				end
+
+				attr_accessor :platform
+				attr_accessor :configuration
+			end
+
+			class PlatformScopedReference
+				def initialize(platform, reference)
+					@platform = platform
+					@reference = reference
+				end
+
+				attr_accessor :platform
+				attr_accessor :reference
+			end
+
 			class TargetReference
 				def initialize(target_name, settings = {})
 					@target_name = target_name
@@ -128,13 +148,33 @@ module StructCore
 				attr_accessor :shell
 			end
 
+			class PlatformScopedSource
+				def initialize(platform, source_dir)
+					@platform = platform
+					@source_dir = source_dir
+				end
+
+				attr_accessor :platform
+				attr_accessor :source_dir
+			end
+
+			class PlatformScopedResource
+				def initialize(platform, res_dir)
+					@platform = platform
+					@res_dir = res_dir
+				end
+
+				attr_accessor :platform
+				attr_accessor :res_dir
+			end
+
 			# @param target_name [String]
 			# @param target_type [String]
 			# @param source_dir [Array<String>]
 			# @param configurations [Array<StructCore::Specfile::Target::Configuration>]
 			# @param references [Array<StructCore::Specfile::Target::FrameworkReference>]
 			# @param options [Array<StructCore::Specfile::Target::FileOption>]
-			# @param res_dir [Array<String>]
+			# @param res_dir [Array<String|StructCore::Specfile::Target::PlatformScopedResource>]
 			# @param file_excludes [Array<String>]
 			# @param postbuild_run_scripts [Array<StructCore::Specfile::Target::RunScript>]
 			# @param prebuild_run_scripts [Array<StructCore::Specfile::Target::RunScript>]
@@ -162,6 +202,11 @@ module StructCore
 				@file_excludes = file_excludes || []
 				@postbuild_run_scripts = postbuild_run_scripts || []
 				@prebuild_run_scripts = prebuild_run_scripts || []
+
+				@res_dir = @res_dir.map { |s|
+					return s unless s.is_a? StructCore::Specfile::Target::PlatformScopedSource
+					StructCore::Specfile::Target::PlatformScopedResource.new s.platform, s.source_dir
+				}
 			end
 
 			attr_accessor :name
@@ -181,6 +226,13 @@ module StructCore
 
 			def run_scripts
 				@postbuild_run_scripts
+			end
+
+			def cross_platform?
+				configurations.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedConfiguration) } ||
+				res_dir.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedResource) } ||
+				references.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedReference) } ||
+				source_dir.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedSource) }
 			end
 		end
 

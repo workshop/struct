@@ -1,0 +1,24 @@
+spec '2.2.0' do
+  configuration('debug') do end
+  configuration('release') do end
+  target('My app') do
+    type ':application'
+
+	platform 'ios' do
+		source_dir 'sources'
+		system_reference 'UIKit.framework'
+		configuration do
+			override 'INFOPLIST_FILE', 'Info-iOS.plist'
+			override 'PRODUCT_BUNDLE_IDENTIFIER', 'uk.lyptt.MyApp'
+		end
+	end
+	platform 'mac' do
+		source_dir 'sources'
+		system_reference 'AppKit.framework'
+		configuration do
+			override 'INFOPLIST_FILE', 'Info-iOS.plist'
+			override 'PRODUCT_BUNDLE_IDENTIFIER', 'uk.lyptt.MyApp'
+		end
+	end
+  end
+end

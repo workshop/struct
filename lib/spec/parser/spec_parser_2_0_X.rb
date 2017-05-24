@@ -1,10 +1,12 @@
 require 'semantic'
 require_relative '../../utils/xcconfig_parser'
 require_relative '../../utils/type_helpers'
+require_relative './parser_20X/utils'
 
 module StructCore
 	class Specparser20X
 		include TypeHelpers
+		include Utils20X
 		# @param version [Semantic::Version]
 		def can_parse_version(version)
 			version.major == 2
@@ -128,25 +130,52 @@ module StructCore
 			[raw_type, "platform:#{raw_platform}"].compact
 		end
 
+		def parse_platform_variant_target_configuration_list(platform, configurations, valid_config_names, base_overrides, profiles)
+			parse_variant_target_configuration_list(configurations, valid_config_names, base_overrides, profiles[platform]).map { |config|
+				Specfile::Target::PlatformScopedConfiguration.new platform, config
+			}
+		end
+
+		def parse_variant_target_configuration_list(configurations, valid_config_names, base_overrides, profiles)
+			configurations.select { |n, _| n != '$base' }.map { |config_name, config|
+				next nil unless valid_config_names.include? config_name
+
+				if %w(ios mac tv watch).include?(config_name) && @spec_version.minor >= 2
+					next parse_platform_variant_target_configuration_list config_name, config, valid_config_names, base_overrides, profiles
+				end
+
+				next Specfile::Target::Configuration.new(config_name, base_overrides, profiles, config) if config.is_a?(String)
+				next Specfile::Target::Configuration.new(config_name, config.merge(base_overrides), profiles)
+			}.compact
+		end
+
 		def parse_variant_target_configurations(target_opts, valid_config_names, profiles)
 			# Parse target configurations
 			configurations = nil
 			if target_opts.key? 'configurations'
 				base_overrides = target_opts['configurations']['$base'] || {}
-				configurations = target_opts['configurations'].select { |n, _| n != '$base' }.map { |config_name, config|
-					next nil unless valid_config_names.include? config_name
-
-					next Specfile::Target::Configuration.new(config_name, base_overrides, profiles, config) if config.is_a?(String)
-					next Specfile::Target::Configuration.new(config_name, config.merge(base_overrides), profiles)
-				}.compact
+				configurations = parse_variant_target_configuration_list target_opts['configurations'], valid_config_names, base_overrides, profiles
 			elsif target_opts.key?('configuration') && target_opts['configuration'].is_a?(String)
 				configurations = valid_config_names.map { |name|
 					Specfile::Target::Configuration.new(name, {}, profiles, target_opts['configuration'])
 				}
-			elsif target_opts.key?('configuration')
-				configurations = valid_config_names.map { |name|
-					Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
-				}
+			elsif target_opts.key?('configuration') && target_opts['configuration'].is_a?(Hash)
+				if %w(ios mac tv watch).any? { |s| target_opts['configuration'].key? s } && @spec_version.minor >= 2
+					configurations = []
+					target_opts['configuration'].each { |platform, overrides|
+						configurations << valid_config_names.map { |name|
+							Specfile::Target::Configuration.new(name, overrides, profiles[platform])
+						}.map { |config|
+							Specfile::Target::PlatformScopedConfiguration.new platform, config
+						}
+
+						configurations = nil if configurations.empty?
+					}.flatten
+				else
+					configurations = valid_config_names.map { |name|
+						Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
+					}
+				end
 			end
 
 			configurations
@@ -167,12 +196,26 @@ module StructCore
 			target_sources_dir
 		end
 
+		def parse_variant_target_resource_list(raw_res, project_base_dir)
+			if raw_res.is_a?(Hash)
+				raw_res.map { |platform, res|
+					[].unshift(*parse_variant_target_resource_list(res, project_base_dir)).flatten.map { |r|
+						StructCore::Specfile::Target::PlatformScopedResource.new platform, r
+					}
+				}.flatten
+			elsif raw_res.is_a?(Array)
+				raw_res.map { |r| File.join(project_base_dir, r) }
+			else
+				File.join(project_base_dir, raw_res)
+			end
+		end
+
 		def parse_variant_target_resources(target_opts, project_base_dir)
 			# Parse target resources
-			target_resources_dir = nil
-			target_resources_dir = File.join(project_base_dir, target_opts['i18n-resources']) if target_opts.key? 'i18n-resources'
+			return nil unless target_opts.key? 'i18n-resources'
+			raw_res = target_opts['i18n-resources']
 
-			target_resources_dir
+			parse_variant_target_resource_list raw_res, project_base_dir
 		end
 
 		def parse_variant_target_file_excludes(target_opts, target_name)
@@ -201,17 +244,9 @@ module StructCore
 			}
 		end
 
-		def parse_variant_target_references(target_opts, target_name, project_base_dir)
-			return [] unless target_opts.key? 'references'
-			raw_references = target_opts['references']
-
-			unless raw_references.is_a?(Array)
-				puts Paint["Warning: Key 'references' for target #{target_name} is not an array. Ignoring...", :yellow]
-				return []
-			end
-
-			raw_references.map { |raw_reference|
-				next parse_raw_reference raw_references unless raw_reference.is_a? Hash
+		def parse_variant_target_reference_list(references, target_name, project_base_dir)
+			references.map { |raw_reference|
+				next parse_raw_reference references unless raw_reference.is_a? Hash
 				if raw_reference.key?('location')
 					path = raw_reference['location']
 
@@ -231,6 +266,26 @@ module StructCore
 					next nil
 				end
 			}.compact
+		end
+
+		def parse_variant_target_references(target_opts, target_name, project_base_dir)
+			return [] unless target_opts.key? 'references'
+			raw_references = target_opts['references']
+
+			if raw_references.is_a?(Hash) && @spec_version.minor >= 2
+				return raw_references.map { |platform, references|
+					parse_variant_target_reference_list(references, target_name, project_base_dir).map { |ref|
+						Specfile::Target::PlatformScopedReference.new platform, ref
+					}
+				}.flatten
+			end
+
+			unless raw_references.is_a?(Array)
+				puts Paint["Warning: Key 'references' for target #{target_name} is not an array. Ignoring...", :yellow]
+				return []
+			end
+
+			parse_variant_target_reference_list raw_references, target_name, project_base_dir
 		end
 
 		def parse_raw_reference(raw_reference)
@@ -326,13 +381,13 @@ module StructCore
 			[raw_type, type]
 		end
 
-		def parse_target_profiles(target_opts, target_name, raw_type)
-			unless target_opts['platform'].is_a?(String)
+		def parse_target_profile(platform, target_name, raw_type)
+			unless platform.is_a?(String)
 				puts Paint["Warning: Target #{target_name} does not specify a platform. Ignoring target."]
 				return nil
 			end
 
-			raw_platform = target_opts['platform']
+			raw_platform = platform
 			unless %w(ios mac watch tv).include? raw_platform
 				puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{raw_platform}'. Ignoring target...", :yellow]
 				return nil
@@ -341,28 +396,65 @@ module StructCore
 			[raw_type, "platform:#{raw_platform}"]
 		end
 
+		def parse_target_profiles(target_opts, target_name, raw_type)
+			if target_opts['platform'].is_a?(Array) && @spec_version.minor >= 2
+				return target_opts['platform'].map { |platform|
+					profiles = parse_target_profile platform, target_name, raw_type
+					[platform, profiles]
+				}.to_h
+			end
+
+			parse_target_profile target_opts['platform'], target_name, raw_type
+		end
+
+		def parse_platform_target_configuration_list(platform, configurations, valid_config_names, base_overrides, target_name, profiles)
+			parse_target_configuration_list(configurations, valid_config_names, base_overrides, target_name, profiles[platform]).map { |config|
+				Specfile::Target::PlatformScopedConfiguration.new platform, config
+			}
+		end
+
+		def parse_target_configuration_list(configurations, valid_config_names, base_overrides, target_name, profiles)
+			configurations.select { |n, _| n != '$base' }.map do |config_name, config|
+				if %w(ios mac tv watch).include?(config_name) && @spec_version.minor >= 2
+					next parse_platform_target_configuration_list config_name, config, valid_config_names, base_overrides, target_name, profiles
+				end
+
+				unless valid_config_names.include? config_name
+					puts Paint["Warning: Config name #{config_name} for target #{target_name} was not defined in this spec. Ignoring target...", :yellow]
+					return nil
+				end
+
+				next Specfile::Target::Configuration.new(config_name, base_overrides, profiles, config) if config.is_a?(String)
+				next Specfile::Target::Configuration.new(config_name, config.merge(base_overrides), profiles)
+			end
+		end
+
 		def parse_target_configurations(target_opts, target_name, profiles, valid_config_names)
 			# Parse target configurations
 			if target_opts.key?('configurations') && target_opts['configurations'].is_a?(Hash)
 				base_overrides = target_opts['configurations']['$base'] || {}
 
-				configurations = target_opts['configurations'].select { |n, _| n != '$base' }.map do |config_name, config|
-					unless valid_config_names.include? config_name
-						puts Paint["Warning: Config name #{config_name} for target #{target_name} was not defined in this spec. Ignoring target...", :yellow]
-						return nil
-					end
-
-					next Specfile::Target::Configuration.new(config_name, base_overrides, profiles, config) if config.is_a?(String)
-					next Specfile::Target::Configuration.new(config_name, config.merge(base_overrides), profiles)
-				end
+				configurations = parse_target_configuration_list(target_opts['configurations'], valid_config_names, base_overrides, target_name, profiles).flatten
 			elsif target_opts.key?('configuration') && target_opts['configuration'].is_a?(String)
 				configurations = valid_config_names.map { |name|
 					Specfile::Target::Configuration.new(name, {}, profiles, target_opts['configuration'])
 				}
-			elsif target_opts.key?('configuration')
-				configurations = valid_config_names.map { |name|
-					Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
-				}
+			elsif target_opts.key?('configuration') && target_opts['configuration'].is_a?(Hash)
+				if %w(ios mac tv watch).any? { |s| target_opts['configuration'].key? s } && @spec_version.minor >= 2
+					configurations = []
+					target_opts['configuration'].each { |platform, overrides|
+						configurations << valid_config_names.map { |name|
+							Specfile::Target::Configuration.new(name, overrides, profiles[platform])
+						}.map { |config|
+							Specfile::Target::PlatformScopedConfiguration.new platform, config
+						}
+					}
+					configurations.flatten!
+				else
+					configurations = valid_config_names.map { |name|
+						Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)
+					}
+				end
 			else
 				configurations = valid_config_names.map { |name|
 					Specfile::Target::Configuration.new(name, {}, profiles)
@@ -370,6 +462,20 @@ module StructCore
 			end
 
 			configurations
+		end
+
+		def parse_target_source_list(sources, project_base_dir)
+			if sources.is_a?(Hash)
+				sources.map { |platform, srcs|
+					[].unshift(*parse_target_source_list(srcs, project_base_dir)).flatten.map { |s|
+						StructCore::Specfile::Target::PlatformScopedSource.new platform, s
+					}
+				}.flatten
+			elsif sources.is_a?(Array)
+				sources.map { |src| File.join(project_base_dir, src) }
+			else
+				[File.join(project_base_dir, sources)]
+			end
 		end
 
 		def parse_target_sources(target_opts, target_name, project_base_dir)
@@ -382,22 +488,33 @@ module StructCore
 			target_sources_dir = nil
 
 			if target_opts.key? 'sources'
-				target_sources_dir = target_opts['sources'].map { |src| File.join(project_base_dir, src) } if target_opts['sources'].is_a?(Array)
-				target_sources_dir = [File.join(project_base_dir, target_opts['sources'])] if target_sources_dir.nil?
-				target_sources_dir = target_sources_dir.select { |dir| Dir.exist? dir }
+				target_sources_dir = parse_target_source_list target_opts['sources'], project_base_dir
 				target_sources_dir = nil unless target_sources_dir.count > 0
 			end
 
 			target_sources_dir
 		end
 
+		def parse_target_resource_list(raw_res, project_base_dir)
+			if raw_res.is_a?(Hash)
+				raw_res.map { |platform, res|
+					[].unshift(*parse_target_resource_list(res, project_base_dir)).flatten.map { |r|
+						StructCore::Specfile::Target::PlatformScopedResource.new platform, r
+					}
+				}.flatten
+			elsif raw_res.is_a?(Array)
+				raw_res.map { |r| File.join(project_base_dir, r) }
+			else
+				File.join(project_base_dir, raw_res)
+			end
+		end
+
 		def parse_target_resources(target_opts, project_base_dir, target_sources_dir)
 			# Parse target resources
-			target_resources_dir = nil
-			target_resources_dir = File.join(project_base_dir, target_opts['i18n-resources']) if target_opts.key? 'i18n-resources'
-			target_resources_dir = target_sources_dir if target_resources_dir.nil?
+			return target_sources_dir unless target_opts.key? 'i18n-resources'
+			raw_res = target_opts['i18n-resources']
 
-			target_resources_dir
+			parse_target_resource_list(raw_res, project_base_dir) || target_sources_dir
 		end
 
 		def parse_target_excludes(target_opts, target_name)
@@ -426,16 +543,8 @@ module StructCore
 			}
 		end
 
-		def parse_target_references(target_opts, target_name, project_base_dir)
-			return [] unless target_opts.key? 'references'
-			raw_references = target_opts['references']
-
-			unless raw_references.is_a?(Array)
-				puts Paint["Warning: Key 'references' for target #{target_name} is not an array. Ignoring...", :yellow]
-				return []
-			end
-
-			raw_references.map { |raw_reference|
+		def parse_target_reference_list(references, target_name, project_base_dir)
+			references.map { |raw_reference|
 				next parse_raw_reference raw_reference unless raw_reference.is_a? Hash
 				if raw_reference.key?('location')
 					path = raw_reference['location']
@@ -458,6 +567,26 @@ module StructCore
 					next nil
 				end
 			}.compact
+		end
+
+		def parse_target_references(target_opts, target_name, project_base_dir)
+			return [] unless target_opts.key? 'references'
+			raw_references = target_opts['references']
+
+			if raw_references.is_a?(Hash) && @spec_version.minor >= 2
+				return raw_references.map { |platform, references|
+					parse_target_reference_list(references, target_name, project_base_dir).map { |ref|
+						Specfile::Target::PlatformScopedReference.new platform, ref
+					}
+				}.flatten
+			end
+
+			unless raw_references.is_a?(Array)
+				puts Paint["Warning: Key 'references' for target #{target_name} is not an array. Ignoring...", :yellow]
+				return []
+			end
+
+			parse_target_reference_list raw_references, target_name, project_base_dir
 		end
 
 		def parse_target_scripts(target_opts, project_base_dir)
@@ -492,8 +621,8 @@ module StructCore
 			profiles = parse_target_profiles target_opts, target_name, raw_type
 			configurations = parse_target_configurations target_opts, target_name, profiles, valid_config_names
 
-			unless configurations.count == valid_config_names.count
-				puts Paint["Warning: Missing configurations for target #{target_name}. Expected #{valid_config_names.count}, found: #{configurations.count}. Ignoring target...", :yellow]
+			unless configurations_valid? configurations, valid_config_names
+				puts Paint["Warning: Missing configurations for target #{target_name}. Ignoring target...", :yellow]
 				return nil
 			end
 

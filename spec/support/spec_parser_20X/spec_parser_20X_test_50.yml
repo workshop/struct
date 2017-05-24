@@ -1,0 +1,33 @@
+---
+version: 2.2.0
+configurations:
+  debug:
+  release:
+targets:
+  my-target:
+    sources:
+      ios: support_files/abc
+      mac: support_files/def
+    i18n-resources:
+      ios: support_files/abc
+      mac: support_files/def
+    references:
+      ios:
+      - sdkroot:UIKit.framework
+      mac:
+      - sdkroot:AppKit.framework
+    platform:
+    - ios
+    - mac
+    type: ":application"
+    configuration:
+      ios:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_FILE: MyApp-ios/Info-iOS.plist
+        PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
+        IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      mac:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_FILE: MyApp-mac/Info-macOS.plist
+        PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
+        MACOSX_DEPLOYMENT_TARGET: '10.12'

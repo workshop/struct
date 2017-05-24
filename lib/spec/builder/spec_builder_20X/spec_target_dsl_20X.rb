@@ -16,6 +16,8 @@ module StructCore
 			@project = nil
 			@current_scope = nil
 			@base_overrides = {}
+			@platform_context = nil
+			@using_platform_contexts = false
 		end
 
 		attr_accessor :project_configurations
@@ -53,18 +55,32 @@ module StructCore
 			@target.type = @type
 		end
 
-		def platform(platform = nil)
+		def platform(platform = nil, &block)
+			if @using_platform_contexts && block.nil?
+				puts Paint["Warning: Cross platform targets cannot specify platforms without providing a resource block. Ignoring '#{platform}'...", :yellow]
+				return
+			end
 			return unless platform.is_a?(String) || platform.is_a?(Symbol)
-			# TODO: Add support for 'tvos'
 			platform = platform.to_s if platform.is_a?(Symbol)
-			unless %w(ios mac watch).include? platform
-				puts Paint["Warning: Target #{target_name} specifies unrecognised platform '#{platform}'. Ignoring...", :yellow]
+			unless %w(ios mac watch tv).include? platform
+				puts Paint["Warning: Target #{@target.name} specifies unrecognised platform '#{platform}'. Ignoring...", :yellow]
 				return
 			end
 
-			@profiles << "platform:#{platform}"
+			unless !block.nil? && @project.version.minor >= 2
+				@profiles << "platform:#{platform}"
+				return
+			end
+
+			@using_platform_contexts = true
+			@profiles = @profiles.select { |p| !p.include? 'platform:' }
+
+			@platform_context = platform
+			block.call
+			@platform_context = nil
 		end
 
+		# rubocop:disable Metrics/AbcSize
 		def configuration(name = nil, &block)
 			dsl = StructCore::SpecTargetConfigurationDSL20X.new
 			@current_scope = dsl
@@ -77,11 +93,13 @@ module StructCore
 				config = dsl.configuration
 				config.settings.merge! @base_overrides
 				config.profiles = @profiles if config.source.nil? || config.source.empty?
-				@target.configurations = @project_configurations.map { |project_config|
+				@target.configurations = @target.configurations.unshift(*@project_configurations.map { |project_config|
 					target_config = DeepClone.clone config
 					target_config.name = project_config.name
-					target_config
-				}
+					next target_config if @platform_context.nil?
+					target_config.profiles << "platform:#{@platform_context}"
+					StructCore::Specfile::Target::PlatformScopedConfiguration.new @platform_context, target_config
+				})
 			else
 				dsl.configuration = StructCore::Specfile::Target::Configuration.new name, {}, []
 				block.call
@@ -92,7 +110,9 @@ module StructCore
 				config.profiles = @profiles if config.source.nil? || config.source.empty?
 
 				unless config.name == '$base'
-					@target.configurations << config
+					@target.configurations << config if @platform_context.nil?
+					config.profiles << "platform:#{@platform_context}"
+					@target.configurations << StructCore::Specfile::Target::PlatformScopedConfiguration.new(@platform_context, config) unless @platform_context.nil?
 					return
 				end
 
@@ -104,21 +124,30 @@ module StructCore
 				}
 			end
 		end
+		# rubocop:enable Metrics/AbcSize
 
 		def source_dir(path = nil)
 			return unless path.is_a?(String) && !path.empty?
-			@target.source_dir << File.join(@project_base_dir, path)
+			@target.source_dir << File.join(@project_base_dir, path) if @platform_context.nil?
+			@target.source_dir << StructCore::Specfile::Target::PlatformScopedSource.new(@platform_context, File.join(@project_base_dir, path)) unless @platform_context.nil?
 		end
 
 		def i18n_resource_dir(path = nil)
 			return unless path.is_a?(String) && !path.empty?
-			@target.res_dir << File.join(@project_base_dir, path)
+			@target.res_dir << File.join(@project_base_dir, path) if @platform_context.nil?
+			@target.res_dir << StructCore::Specfile::Target::PlatformScopedSource.new(@platform_context, File.join(@project_base_dir, path)) unless @platform_context.nil?
 		end
 
 		def system_reference(reference = nil)
 			return unless reference.is_a?(String) && !reference.empty?
-			@target.references << StructCore::Specfile::Target::SystemFrameworkReference.new(reference.sub('.framework', '')) if reference.end_with? '.framework'
-			@target.references << StructCore::Specfile::Target::SystemLibraryReference.new(reference) unless reference.end_with? '.framework'
+			ref = nil
+			ref = StructCore::Specfile::Target::SystemFrameworkReference.new(reference.sub('.framework', '')) if reference.end_with? '.framework'
+			ref = StructCore::Specfile::Target::SystemLibraryReference.new(reference) unless reference.end_with? '.framework'
+
+			return if ref.nil?
+
+			@target.references << ref if @platform_context.nil?
+			@target.references << StructCore::Specfile::Target::PlatformScopedReference.new(@platform_context, ref) unless @platform_context.nil?
 		end
 
 		def target_reference(reference = nil, settings = nil)
@@ -132,7 +161,8 @@ module StructCore
 				reference.settings = reference.settings.map { |k, v| [k.to_s, v] }.to_h
 			end
 
-			@target.references << reference
+			@target.references << reference if @platform_context.nil?
+			@target.references << StructCore::Specfile::Target::PlatformScopedReference.new(@platform_context, reference) unless @platform_context.nil?
 		end
 
 		def framework_reference(reference = nil, settings = nil)
@@ -143,14 +173,17 @@ module StructCore
 
 			# Convert any keys to hashes
 			reference.settings = reference.settings.map { |k, v| [k.to_s, v] }.to_h
-			@target.references << reference
+
+			@target.references << reference if @platform_context.nil?
+			@target.references << StructCore::Specfile::Target::PlatformScopedReference.new(@platform_context, reference) unless @platform_context.nil?
 		end
 
 		def library_reference(reference = nil)
 			return unless reference.is_a?(String) && !reference.empty?
 			reference = StructCore::Specfile::Target::LocalLibraryReference.new(reference, {})
 
-			@target.references << reference
+			@target.references << reference if @platform_context.nil?
+			@target.references << StructCore::Specfile::Target::PlatformScopedReference.new(@platform_context, reference) unless @platform_context.nil?
 		end
 
 		def project_framework_reference(project = nil, &block)
@@ -163,7 +196,11 @@ module StructCore
 			dsl.reference = StructCore::Specfile::Target::FrameworkReference.new(project, settings)
 			dsl.instance_eval(&block)
 
-			@target.references << dsl.reference unless dsl.reference.nil? || dsl.reference.settings['frameworks'].empty?
+			return if dsl.reference.nil? || dsl.reference.settings['frameworks'].empty?
+			ref = dsl.reference
+
+			@target.references << ref if @platform_context.nil?
+			@target.references << StructCore::Specfile::Target::PlatformScopedReference.new(@platform_context, ref) unless @platform_context.nil?
 		end
 
 		def include_cocoapods

@@ -1,0 +1,68 @@
+---
+version: 2.2.0
+configurations:
+  debug:
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+  release:
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+  appstore:
+    type: release
+    overrides:
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+targets:
+  MyApp:
+    sources:
+      ios:
+      - MyApp
+      - MyApp-ios
+      mac:
+      - MyApp
+      - MyApp-mac
+    i18n-resources:
+      ios: MyApp-resources/ios-lproj
+      mac: MyApp-resources/mac-lproj
+    references:
+      ios:
+      - sdkroot:UIKit.framework
+      mac:
+      - sdkroot:AppKit.framework
+    platform:
+    - ios
+    - mac
+    type: ":application"
+    configuration:
+      ios:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_FILE: MyApp-ios/Info-iOS.plist
+        PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
+        IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      mac:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_FILE: MyApp-mac/Info-macOS.plist
+        PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
+        MACOSX_DEPLOYMENT_TARGET: '10.12'
+  MyAppTests:
+    sources: MyAppTests
+    references:
+    - MyApp-iOS
+    type: ":bundle.unit-test"
+    platform: ios
+    type: ":bundle.unit-test"
+    configuration:
+      TEST_HOST: "$(BUILT_PRODUCTS_DIR)/MyApp-iOS.app/MyApp-iOS"
+      INFOPLIST_FILE: MyAppTests/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyAppTests
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+  MyAppUITests:
+    sources: MyAppUITests
+    references:
+    - MyApp-iOS
+    platform: ios
+    type: ":bundle.ui-testing"
+    configuration:
+      INFOPLIST_FILE: MyAppUITests/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyAppUITests
+      TEST_TARGET_NAME: MyApp
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
