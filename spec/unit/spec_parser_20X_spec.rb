@@ -628,6 +628,16 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.schemes[0].test_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
 				expect(proj.schemes[0].test_action.build_configuration).to eq('debug')
 			end
+
+			it 'parses a 2.2.0 specfile that contains schemes' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_20X/spec_parser_20X_test_50.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser20X.new
+
+				proj = parser.parse StructCore::SPEC_VERSION_220, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.targets.count).to eq(1)
+			end
 		end
 	end
 end
