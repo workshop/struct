@@ -1,5 +1,5 @@
 ---
-version: 2.0.0
+version: 2.2.0
 configurations:
   debug:
   release:
@@ -12,6 +12,10 @@ targets:
       - "**/*.md"
     references:
     - sdkroot:UIKit.framework
+    - broadcastUIExtension
+    - broadcastUploadExtension
+    - broadcastUploadExtensionUI
+    - tvServicesExtension
     platform: tv
     type: ":application"
     configuration:
@@ -19,3 +23,41 @@ targets:
       ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME: LaunchImage
       INFOPLIST_FILE: tvOSTest/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.tvOSTest
+  broadcastUIExtension:
+    sources: broadcastUIExtension
+    references:
+    - sdkroot:UIKit.framework
+    - sdkroot:ReplayKit.framework
+    platform: tv
+    type: ":tv-broadcast-extension"
+    configuration:
+      INFOPLIST_FILE: broadcastUIExtension/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.tvOSTest.broadcastUIExtension
+  broadcastUploadExtension:
+    sources: broadcastUploadExtension
+    references:
+    - sdkroot:ReplayKit.framework
+    platform: tv
+    type: ":tv-broadcast-extension"
+    configuration:
+      INFOPLIST_FILE: broadcastUploadExtension/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.tvOSTest.broadcastUploadExtension
+  broadcastUploadExtensionUI:
+    sources: broadcastUploadExtensionUI
+    references:
+    - sdkroot:UIKit.framework
+    - sdkroot:ReplayKit.framework
+    platform: tv
+    type: ":tv-broadcast-extension"
+    configuration:
+      INFOPLIST_FILE: broadcastUploadExtensionUI/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.tvOSTest.broadcastUploadExtensionUI
+  tvServicesExtension:
+    sources: tvServicesExtension
+    references:
+    - sdkroot:TVServices.framework
+    platform: tv
+    type: ":tv-broadcast-extension"
+    configuration:
+      INFOPLIST_FILE: tvServicesExtension/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.tvOSTest.tvServicesExtension
