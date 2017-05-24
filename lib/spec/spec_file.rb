@@ -148,6 +148,16 @@ module StructCore
 				attr_accessor :shell
 			end
 
+			class PlatformScopedSource
+				def initialize(platform, source_dir)
+					@platform = platform
+					@source_dir = source_dir
+				end
+
+				attr_accessor :platform
+				attr_accessor :source_dir
+			end
+
 			class PlatformScopedResource
 				def initialize(platform, res_dir)
 					@platform = platform

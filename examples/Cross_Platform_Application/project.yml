@@ -13,12 +13,16 @@ configurations:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
 targets:
   MyApp:
-    sources: MyApp
-    i18n-resources:
+    sources:
       ios:
-        MyApp/ios-lproj
+      - MyApp
+      - MyApp-ios
       mac:
-        MyApp/mac-lproj
+      - MyApp
+      - MyApp-mac
+    i18n-resources:
+      ios: MyApp-resources/ios-lproj
+      mac: MyApp-resources/mac-lproj
     references:
       ios:
       - sdkroot:UIKit.framework
@@ -31,14 +35,14 @@ targets:
     configuration:
       ios:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        INFOPLIST_FILE: MyApp/Info-iOS.plist
+        INFOPLIST_FILE: MyApp-ios/Info-iOS.plist
         PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
         IPHONEOS_DEPLOYMENT_TARGET: '9.1'
       mac:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        INFOPLIST_FILE: MyApp/Info-macOS.plist
+        INFOPLIST_FILE: MyApp-mac/Info-macOS.plist
         PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyApp
-        MACOSX_DEPLOYMENT_TARGET: '9.1'
+        MACOSX_DEPLOYMENT_TARGET: '10.12'
   MyAppTests:
     sources: MyAppTests
     references:
@@ -47,7 +51,7 @@ targets:
     platform: ios
     type: ":bundle.unit-test"
     configuration:
-      TEST_HOST: "$(BUILT_PRODUCTS_DIR)/MyApp.app/MyApp"
+      TEST_HOST: "$(BUILT_PRODUCTS_DIR)/MyApp-iOS.app/MyApp-iOS"
       INFOPLIST_FILE: MyAppTests/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.MyAppTests
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'

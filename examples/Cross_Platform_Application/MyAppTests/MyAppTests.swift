@@ -1,15 +1,15 @@
 //
-//  iOSTestTests.swift
-//  iOSTestTests
+//  MyAppTests.swift
+//  MyAppTests
 //
 //  Created by Rhys Cox on 02/12/2016.
 //  Copyright © 2016 Rhys Cox. All rights reserved.
 //
 
 import XCTest
-@testable import iOSTest
+@testable import MyApp_iOS
 
-class iOSTestTests: XCTestCase {
+class MyAppTests: XCTestCase {
     
     override func setUp() {
         super.setUp()

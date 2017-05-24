@@ -26,12 +26,15 @@ module StructCore
 			end
 
 			# rubocop:disable Metrics/AbcSize
+			# rubocop:disable Metrics/MethodLength
+			# rubocop:disable Metrics/BlockLength
 			# @param original_target [StructCore::Specfile::Target]
 			# @param project [StructCore::Specfile]
 			def process_target(original_target, project)
 				platforms = original_target.configurations.select { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedConfiguration) }.map(&:platform)
 				platforms.unshift(*original_target.res_dir.select { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedResource) }.map(&:platform))
 				platforms.unshift(*original_target.references.select { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedReference) }.map(&:platform))
+				platforms.unshift(*original_target.source_dir.select { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedSource) }.map(&:platform))
 
 				platforms.uniq!
 
@@ -51,14 +54,24 @@ module StructCore
 					target.configurations = target.configurations.select { |c|
 						!c.is_a?(StructCore::Specfile::Target::PlatformScopedConfiguration) || c.platform == platform
 					}.map { |c|
-						next c unless c.is_a?(StructCore::Specfile::Target::PlatformScopedConfiguration)
-						c.configuration
+						configuration = nil
+						configuration = c unless c.is_a?(StructCore::Specfile::Target::PlatformScopedConfiguration)
+						configuration = c.configuration if configuration.nil?
+						configuration = DeepClone.clone configuration
+
+						inject_configuration configuration, platform
 					}
 					target.res_dir = target.res_dir.select { |r|
 						!r.is_a?(StructCore::Specfile::Target::PlatformScopedResource) || r.platform == platform
 					}.map { |r|
 						next r unless r.is_a?(StructCore::Specfile::Target::PlatformScopedResource)
 						r.res_dir
+					}
+					target.source_dir = target.source_dir.select { |s|
+						!s.is_a?(StructCore::Specfile::Target::PlatformScopedSource) || s.platform == platform
+					}.map { |s|
+						next s unless s.is_a?(StructCore::Specfile::Target::PlatformScopedSource)
+						s.source_dir
 					}
 					target.references = target.references.select { |r|
 						!r.is_a?(StructCore::Specfile::Target::PlatformScopedReference) || r.platform == platform
@@ -71,6 +84,20 @@ module StructCore
 				})
 			end
 			# rubocop:enable Metrics/AbcSize
+			# rubocop:enable Metrics/MethodLength
+			# rubocop:enable Metrics/BlockLength
+
+			def inject_configuration(configuration, platform)
+				configuration.settings ||= {}
+
+				conditions = configuration.settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] || []
+				conditions = conditions.split(' ') if conditions.is_a?(String)
+				conditions << "PLATFORM_#{platform.upcase}"
+
+				configuration.settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = conditions
+
+				configuration
+			end
 		end
 	end
 end

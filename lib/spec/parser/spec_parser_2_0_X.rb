@@ -464,6 +464,20 @@ module StructCore
 			configurations
 		end
 
+		def parse_target_source_list(sources, project_base_dir)
+			if sources.is_a?(Hash)
+				sources.map { |platform, srcs|
+					[].unshift(*parse_target_source_list(srcs, project_base_dir)).flatten.map { |s|
+						StructCore::Specfile::Target::PlatformScopedSource.new platform, s
+					}
+				}.flatten
+			elsif sources.is_a?(Array)
+				sources.map { |src| File.join(project_base_dir, src) }
+			else
+				[File.join(project_base_dir, sources)]
+			end
+		end
+
 		def parse_target_sources(target_opts, target_name, project_base_dir)
 			# Parse target sources
 			unless target_opts.key? 'sources'
@@ -474,9 +488,7 @@ module StructCore
 			target_sources_dir = nil
 
 			if target_opts.key? 'sources'
-				target_sources_dir = target_opts['sources'].map { |src| File.join(project_base_dir, src) } if target_opts['sources'].is_a?(Array)
-				target_sources_dir = [File.join(project_base_dir, target_opts['sources'])] if target_sources_dir.nil?
-				target_sources_dir = target_sources_dir.select { |dir| Dir.exist? dir }
+				target_sources_dir = parse_target_source_list target_opts['sources'], project_base_dir
 				target_sources_dir = nil unless target_sources_dir.count > 0
 			end
 
@@ -485,8 +497,8 @@ module StructCore
 
 		def parse_target_resource_list(raw_res, project_base_dir)
 			if raw_res.is_a?(Hash)
-				target_resources_dir.map { |platform, res|
-					[].unshift(*parse_variant_target_resource_list(res, project_base_dir)).flatten.map { |r|
+				raw_res.map { |platform, res|
+					[].unshift(*parse_target_resource_list(res, project_base_dir)).flatten.map { |r|
 						StructCore::Specfile::Target::PlatformScopedResource.new platform, r
 					}
 				}.flatten
@@ -502,7 +514,7 @@ module StructCore
 			return target_sources_dir unless target_opts.key? 'i18n-resources'
 			raw_res = target_opts['i18n-resources']
 
-			parse_variant_target_resource_list(raw_res, project_base_dir) || target_sources_dir
+			parse_target_resource_list(raw_res, project_base_dir) || target_sources_dir
 		end
 
 		def parse_target_excludes(target_opts, target_name)
