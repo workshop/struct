@@ -40,6 +40,7 @@ module StructCore
 
 			# @param project [StructCore::Specfile]
 			# @param dsl [Xcodeproj::Project]
+			# rubocop:disable Metrics/AbcSize
 			def process_spec_schemes(project, dsl)
 				(project.schemes || []).map { |scheme|
 					scheme_dsl = Xcodeproj::XCScheme.new
@@ -55,6 +56,7 @@ module StructCore
 					[scheme_dsl, scheme.name, dsl.path.to_s]
 				}
 			end
+			# rubocop:enable Metrics/AbcSize
 
 			def process_scheme_configurations(scheme_dsl, project)
 				# Resolve default build_configuration values to the spec's build configuration names
