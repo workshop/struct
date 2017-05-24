@@ -10,11 +10,7 @@ module StructCore
 
 			# @param project [StructCore::Specfile]
 			def process(project)
-				xplat_targets = project.targets.select { |t|
-					t.configurations.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedConfiguration) } ||
-					t.res_dir.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedResource) } ||
-					t.references.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedReference) }
-				}
+				xplat_targets = project.targets.select(&:cross_platform?)
 
 				return if xplat_targets.empty?
 

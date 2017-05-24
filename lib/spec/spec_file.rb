@@ -222,6 +222,13 @@ module StructCore
 			def run_scripts
 				@postbuild_run_scripts
 			end
+
+			def cross_platform?
+				configurations.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedConfiguration) } ||
+				res_dir.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedResource) } ||
+				references.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedReference) } ||
+				source_dir.any? { |c| c.is_a?(StructCore::Specfile::Target::PlatformScopedSource) }
+			end
 		end
 
 		class Variant
