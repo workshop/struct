@@ -449,7 +449,7 @@ module StructCore
 							Specfile::Target::PlatformScopedConfiguration.new platform, config
 						}
 					}
-					configurations
+					configurations.flatten!
 				else
 					configurations = valid_config_names.map { |name|
 						Specfile::Target::Configuration.new(name, target_opts['configuration'], profiles)

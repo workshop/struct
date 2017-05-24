@@ -3,6 +3,7 @@ require_relative 'configurations'
 require_relative 'targets'
 require_relative 'variants'
 require_relative 'schemes'
+require_relative 'target_cross_platform'
 require_relative '../../cocoapods/pod_assistant'
 require 'paint'
 
@@ -11,17 +12,19 @@ module StructCore
 		class ProjectComponent
 			include ProcessorComponent
 
-			def initialize(structure, working_directory, configurations_component = nil, targets_component = nil, variants_component = nil, schemes_component = nil)
+			def initialize(structure, working_directory, configurations_component = nil, targets_component = nil, variants_component = nil, schemes_component = nil, xplat_component = nil)
 				super(structure, working_directory)
 				@configurations_component = configurations_component
 				@targets_component = targets_component
 				@variants_component = variants_component
 				@schemes_component = schemes_component
+				@xplat_component = xplat_component
 
 				@configurations_component ||= ConfigurationsComponent.new @structure, @working_directory
 				@targets_component ||= TargetsComponent.new @structure, @working_directory
 				@variants_component ||= VariantsComponent.new @structure, @working_directory
 				@schemes_component ||= SchemesComponent.new @structure, @working_directory
+				@xplat_component ||= TargetCrossPlatformComponent.new @structure, @working_directory
 			end
 
 			def process(project, selected_variants = [])
@@ -58,6 +61,7 @@ module StructCore
 				projects = []
 				projects = [['project', project]] if project.variants.empty?
 				projects = @variants_component.process(project, selected_variants) unless project.variants.empty?
+				projects.each { |_, p| @xplat_component.process p }
 
 				schemes = []
 

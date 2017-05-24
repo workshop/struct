@@ -45,4 +45,5 @@ module StructCore
 		'Debug' => :debug,
 		'Release' => :release
 	}.freeze
+	XC_PRETTY_PLATFORM_NAME_MAP = { 'ios' => 'iOS', 'mac' => 'macOS', 'watch' => 'watchOS', 'tv' => 'tvOS' }.freeze
 end
