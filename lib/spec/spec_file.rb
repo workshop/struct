@@ -48,6 +48,26 @@ module StructCore
 				attr_accessor :source
 			end
 
+			class PlatformScopedConfiguration
+				def initialize(platform, configuration)
+					@platform = platform
+					@configuration = configuration
+				end
+
+				attr_accessor :platform
+				attr_accessor :configuration
+			end
+
+			class PlatformScopedReference
+				def initialize(platform, reference)
+					@platform = platform
+					@reference = reference
+				end
+
+				attr_accessor :platform
+				attr_accessor :reference
+			end
+
 			class TargetReference
 				def initialize(target_name, settings = {})
 					@target_name = target_name
@@ -128,13 +148,23 @@ module StructCore
 				attr_accessor :shell
 			end
 
+			class PlatformScopedResource
+				def initialize(platform, res_dir)
+					@platform = platform
+					@res_dir = res_dir
+				end
+
+				attr_accessor :platform
+				attr_accessor :res_dir
+			end
+
 			# @param target_name [String]
 			# @param target_type [String]
 			# @param source_dir [Array<String>]
 			# @param configurations [Array<StructCore::Specfile::Target::Configuration>]
 			# @param references [Array<StructCore::Specfile::Target::FrameworkReference>]
 			# @param options [Array<StructCore::Specfile::Target::FileOption>]
-			# @param res_dir [Array<String>]
+			# @param res_dir [Array<String|StructCore::Specfile::Target::PlatformScopedResource>]
 			# @param file_excludes [Array<String>]
 			# @param postbuild_run_scripts [Array<StructCore::Specfile::Target::RunScript>]
 			# @param prebuild_run_scripts [Array<StructCore::Specfile::Target::RunScript>]
