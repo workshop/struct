@@ -16,3 +16,37 @@ lane :build do |options|
     }
   )
 end
+lane :buildios do |options|
+  recreate_schemes(
+    project: options[:project]
+  )
+  xcodebuild(
+    project: options[:project],
+    scheme: "My app-iOS",
+    configuration: "debug",
+    clean: true,
+    build: true,
+    destination: "generic/platform=iOS",
+    build_settings: {
+      "CODE_SIGNING_REQUIRED" => "NO",
+      "CODE_SIGN_IDENTITY" => ""
+    }
+  )
+end
+lane :buildmac do |options|
+  recreate_schemes(
+    project: options[:project]
+  )
+  xcodebuild(
+    project: options[:project],
+    scheme: "My app-macOS",
+    configuration: "debug",
+    clean: true,
+    build: true,
+    destination: "generic/platform=MacOSX",
+    build_settings: {
+      "CODE_SIGNING_REQUIRED" => "NO",
+      "CODE_SIGN_IDENTITY" => ""
+    }
+  )
+end

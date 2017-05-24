@@ -1,0 +1,38 @@
+spec '2.2.0' do
+	configuration 'debug' do
+		override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+	end
+	configuration 'release' do
+		override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+	end
+	configuration 'appstore' do
+		override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+		type 'release'
+	end
+
+	target 'MyApp' do
+		type :application
+		platform 'ios' do
+			source_dir 'MyApp'
+			source_dir 'MyApp-ios'
+
+			configuration 'debug' do
+			 override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+			end
+			configuration 'release' do
+				override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+			end
+			configuration 'appstore' do
+				override 'IPHONEOS_DEPLOYMENT_TARGET', '9.1'
+			end
+		end
+		platform 'mac' do
+			source_dir 'MyApp'
+			source_dir 'MyApp-mac'
+
+			configuration 'debug' do end
+			configuration 'release' do end
+			configuration 'appstore' do end
+		end
+	end
+end

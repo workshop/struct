@@ -202,6 +202,11 @@ module StructCore
 				@file_excludes = file_excludes || []
 				@postbuild_run_scripts = postbuild_run_scripts || []
 				@prebuild_run_scripts = prebuild_run_scripts || []
+
+				@res_dir = @res_dir.map { |s|
+					return s unless s.is_a? StructCore::Specfile::Target::PlatformScopedSource
+					StructCore::Specfile::Target::PlatformScopedResource.new s.platform, s.source_dir
+				}
 			end
 
 			attr_accessor :name

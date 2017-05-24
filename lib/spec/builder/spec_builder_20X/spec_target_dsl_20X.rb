@@ -93,13 +93,13 @@ module StructCore
 				config = dsl.configuration
 				config.settings.merge! @base_overrides
 				config.profiles = @profiles if config.source.nil? || config.source.empty?
-				@target.configurations = @project_configurations.map { |project_config|
+				@target.configurations = @target.configurations.unshift(*@project_configurations.map { |project_config|
 					target_config = DeepClone.clone config
 					target_config.name = project_config.name
 					next target_config if @platform_context.nil?
-					config.profiles << "platform:#{@platform_context}"
+					target_config.profiles << "platform:#{@platform_context}"
 					StructCore::Specfile::Target::PlatformScopedConfiguration.new @platform_context, target_config
-				}
+				})
 			else
 				dsl.configuration = StructCore::Specfile::Target::Configuration.new name, {}, []
 				block.call

@@ -34,6 +34,16 @@ xcode-select --install
 fastlane build
 ```
 Builds the test
+### buildios
+```
+fastlane buildios
+```
+
+### buildmac
+```
+fastlane buildmac
+```
+
 
 ----
 
