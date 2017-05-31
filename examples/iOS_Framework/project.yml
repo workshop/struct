@@ -1,5 +1,5 @@
 ---
-version: 1.2.1
+version: 2.2.0
 configurations:
   debug:
     overrides:
@@ -8,6 +8,18 @@ configurations:
     overrides:
       IPHONEOS_DEPLOYMENT_TARGET: '9.1'
 targets:
+  MyApp:
+    sources: App
+    platform: ios
+    type: ":application"
+    references:
+    - target: FrameworkExample
+      copy: true
+      codeSignOnCopy: true
+    configuration:
+      INFOPLIST_FILE: App/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.App
+      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
   FrameworkExample:
     sources: FrameworkExample
     platform: ios

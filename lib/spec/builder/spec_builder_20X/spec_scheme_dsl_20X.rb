@@ -28,6 +28,14 @@ module StructCore
 			@scheme.archive_action = StructCore::Specfile::Scheme::ArchiveAction.new opts[:name], reveal, build_configuration
 		end
 
+		def analyze(opts = {})
+			return unless @project.version.minor >= 2
+			build_configuration = nil
+			build_configuration = opts[:build_configuration] if opts.key? :build_configuration
+
+			@scheme.analyze_action = StructCore::Specfile::Scheme::AnalyzeAction.new build_configuration
+		end
+
 		def build(&block)
 			return if block.nil?
 			dsl = StructCore::SpecSchemeBuildDSL20X.new

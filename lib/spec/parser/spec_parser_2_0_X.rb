@@ -1,8 +1,10 @@
 require 'semantic'
 require_relative '../../utils/xcconfig_parser'
+require_relative '../../utils/type_helpers'
 
 module StructCore
 	class Specparser20X
+		include TypeHelpers
 		# @param version [Semantic::Version]
 		def can_parse_version(version)
 			version.major == 2
@@ -209,7 +211,8 @@ module StructCore
 			end
 
 			raw_references.map { |raw_reference|
-				if raw_reference.is_a?(Hash)
+				next parse_raw_reference raw_references unless raw_reference.is_a? Hash
+				if raw_reference.key?('location')
 					path = raw_reference['location']
 
 					unless File.exist? File.join(project_base_dir, path)
@@ -217,27 +220,47 @@ module StructCore
 						next nil
 					end
 
-					if raw_reference['frameworks'].nil?
-						next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if path.end_with? '.framework'
-						next Specfile::Target::LocalLibraryReference.new(path, raw_reference)
-					end
+					next Specfile::Target::FrameworkReference.new(path, raw_reference) unless raw_reference['frameworks'].nil?
+					next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if path.end_with? '.framework'
+					next Specfile::Target::LocalLibraryReference.new(path, raw_reference)
 
-					next Specfile::Target::FrameworkReference.new(path, raw_reference)
+				elsif raw_reference.key?('target') && @spec_version.minor >= 2
+					next Specfile::Target::TargetReference.new(raw_reference['target'], raw_reference)
 				else
-					# De-symbolise :sdkroot:-prefixed entries
-					ref = raw_reference.to_s
-					next Specfile::Target::TargetReference.new(raw_reference) unless ref.start_with? 'sdkroot:'
-					next Specfile::Target::SystemFrameworkReference.new(raw_reference.sub('sdkroot:', '').sub('.framework', '')) if ref.end_with? '.framework'
-					next Specfile::Target::SystemLibraryReference.new(raw_reference.sub('sdkroot:', ''))
+					puts Paint["Warning: Invalid reference found for target #{target_name}. Ignoring...", :yellow]
+					next nil
 				end
 			}.compact
 		end
 
+		def parse_raw_reference(raw_reference)
+			# De-symbolise :sdkroot:-prefixed entries
+			ref = raw_reference.to_s
+			return Specfile::Target::TargetReference.new(raw_reference) unless ref.start_with? 'sdkroot:'
+			return Specfile::Target::SystemFrameworkReference.new(raw_reference.sub('sdkroot:', '').sub('.framework', '')) if ref.end_with? '.framework'
+			Specfile::Target::SystemLibraryReference.new(raw_reference.sub('sdkroot:', ''))
+		end
+
 		def parse_run_scripts_list(scripts, project_base_dir)
 			scripts.map { |s|
-				next nil if s.start_with? '/' # Script file should be relative to project
-				next nil unless File.exist? File.join(project_base_dir, s)
-				Specfile::Target::RunScript.new s
+				if s.is_a? String
+					next nil if s.start_with? '/' # Script file should be relative to project
+					next nil unless File.exist? File.join(project_base_dir, s)
+					Specfile::Target::RunScript.new s
+				elsif s.is_a?(Hash) && @spec_version.minor >= 2
+					next nil unless s.key?('script')
+					script = s['script']
+					next nil if script.start_with? '/' # Script file should be relative to project
+					next nil unless File.exist? File.join(project_base_dir, script)
+
+					inputs = typed_default s['inputs'], Array, []
+					outputs = typed_default s['outputs'], Array, []
+					shell = typed_default s['shell'], String, nil
+
+					Specfile::Target::RunScript.new script, inputs, outputs, shell
+				else
+					puts Paint['Warning: Invalid script found for target. Ignoring...', :yellow]
+				end
 			}.compact
 		end
 
@@ -413,7 +436,8 @@ module StructCore
 			end
 
 			raw_references.map { |raw_reference|
-				if raw_reference.is_a?(Hash)
+				next parse_raw_reference raw_reference unless raw_reference.is_a? Hash
+				if raw_reference.key?('location')
 					path = raw_reference['location']
 
 					unless !path.nil? && File.exist?(File.join(project_base_dir, path))
@@ -427,12 +451,11 @@ module StructCore
 					end
 
 					next Specfile::Target::FrameworkReference.new(path, raw_reference)
+				elsif raw_reference.key?('target') && @spec_version.minor >= 2
+					next Specfile::Target::TargetReference.new(raw_reference['target'], raw_reference)
 				else
-					# De-symbolise :sdkroot:-prefixed entries
-					ref = raw_reference.to_s
-					next Specfile::Target::TargetReference.new(raw_reference) unless ref.start_with? 'sdkroot:'
-					next Specfile::Target::SystemFrameworkReference.new(raw_reference.sub('sdkroot:', '').sub('.framework', '')) if ref.end_with? '.framework'
-					next Specfile::Target::SystemLibraryReference.new(raw_reference.sub('sdkroot:', ''))
+					puts Paint["Warning: Invalid reference found for target #{target_name}. Ignoring...", :yellow]
+					next nil
 				end
 			}.compact
 		end
@@ -525,8 +548,9 @@ module StructCore
 				launch_action = parse_scheme_launch_action opts['launch'], name
 				archive_action = parse_scheme_archive_action opts['archive'], name
 				profile_action = parse_scheme_profile_action opts['profile'], name
+				analyze_action = parse_scheme_analyze_action opts['analyze']
 
-				StructCore::Specfile::Scheme.new name, build_action, test_action, launch_action, archive_action, profile_action
+				StructCore::Specfile::Scheme.new name, build_action, test_action, launch_action, archive_action, profile_action, analyze_action
 			}
 		end
 
@@ -655,6 +679,14 @@ module StructCore
 			end
 
 			StructCore::Specfile::Scheme::ProfileAction.new opts['target'], inherit_environment, build_configuration
+		end
+
+		def parse_scheme_analyze_action(opts)
+			return nil if opts.nil? || @spec_version.minor < 2
+
+			build_configuration = nil
+			build_configuration = opts['build_configuration'] if opts.key? 'build_configuration'
+			StructCore::Specfile::Scheme::AnalyzeAction.new build_configuration
 		end
 
 		private :parse_configurations

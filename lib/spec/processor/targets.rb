@@ -14,11 +14,11 @@ module StructCore
 				@target_component = TargetComponent.new(@structure, @working_directory)
 			end
 
-			def process(project, dsl = nil)
+			def process(project, dsl = nil, sources_cache = nil)
 				output = []
 
 				output = process_xc_targets project if structure == :spec
-				output = process_spec_targets project, dsl if structure == :xcodeproj && !dsl.nil?
+				output = process_spec_targets project, dsl, sources_cache if structure == :xcodeproj && !dsl.nil?
 
 				output
 			end
@@ -30,7 +30,7 @@ module StructCore
 				}.compact
 			end
 
-			def process_spec_targets(project, dsl)
+			def process_spec_targets(project, dsl, sources_cache = nil)
 				embed_component = TargetEmbedsComponent.new(@structure, @working_directory, project)
 
 				project.targets.map { |target|
@@ -42,7 +42,7 @@ module StructCore
 				}.compact.each { |data|
 					target, target_dsl = data
 					embed_component.register target, target_dsl
-					@target_component.process target, target_dsl, dsl
+					@target_component.process target, target_dsl, dsl, sources_cache
 				}
 
 				embed_component.process dsl

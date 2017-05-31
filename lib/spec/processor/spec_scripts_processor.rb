@@ -24,8 +24,8 @@ module StructCore
 		def post_generate(spec, xcodeproj)
 			return unless spec.is_a?(StructCore::Specfile) && xcodeproj.is_a?(Xcodeproj::Project)
 			return if spec.post_generate_script.nil?
-			execute_script_file spec.post_generate_script.script_path, spec, xcodeproj if spec.pre_generate_script.is_a?(StructCore::Specfile::HookScript)
-			execute_script_block spec.post_generate_script.block, spec, xcodeproj if spec.pre_generate_script.is_a?(StructCore::Specfile::HookBlockScript)
+			execute_script_file spec.post_generate_script.script_path, spec, xcodeproj if spec.post_generate_script.is_a?(StructCore::Specfile::HookScript)
+			execute_script_block spec.post_generate_script.block, spec, xcodeproj if spec.post_generate_script.is_a?(StructCore::Specfile::HookBlockScript)
 		end
 
 		def execute_script_file(script_path, *args)

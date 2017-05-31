@@ -19,7 +19,8 @@ module StructCore
 				local_ref_component = nil,
 				local_lib_ref_component = nil,
 				subproj_ref_component = nil,
-				target_ref_component = nil
+				target_ref_component = nil,
+				platform_component = nil
 			)
 				super(structure, working_directory)
 				@system_ref_component = system_ref_component
@@ -28,6 +29,7 @@ module StructCore
 				@local_lib_ref_component = local_lib_ref_component
 				@subproj_ref_component = subproj_ref_component
 				@target_ref_component = target_ref_component
+				@platform_component = platform_component
 
 				@system_ref_component ||= TargetSystemFrameworkReferenceComponent.new(@structure, @working_directory)
 				@system_lib_ref_component ||= TargetSystemLibraryReferenceComponent.new(@structure, @working_directory)
@@ -35,6 +37,7 @@ module StructCore
 				@local_lib_ref_component ||= TargetLocalLibraryReferenceComponent.new(@structure, @working_directory)
 				@subproj_ref_component ||= TargetFrameworkReferenceComponent.new(@structure, @working_directory)
 				@target_ref_component ||= TargetTargetReferenceComponent.new(@structure, @working_directory)
+				@platform_component ||= TargetPlatformComponent.new(@structure, @working_directory)
 			end
 
 			def process(target, target_dsl = nil, dsl = nil)
@@ -86,13 +89,16 @@ module StructCore
 					target_dsl.build_phases.insert(target_dsl.build_phases.count, embed_phase)
 				end
 
+				core_framework = StructCore::XC_PLATFORM_CORE_SYSTEM_FRAMEWORK_MAP[@platform_component.process_spec_target(target)]
+				target_dsl.add_system_framework(core_framework) unless core_framework.nil?
+
 				target.references.each { |ref|
 					@system_ref_component.process ref, target_dsl, dsl.frameworks_group if ref.is_a?(StructCore::Specfile::Target::SystemFrameworkReference)
 					@system_lib_ref_component.process ref, target_dsl, dsl.frameworks_group if ref.is_a?(StructCore::Specfile::Target::SystemLibraryReference)
 					@local_ref_component.process ref, target_dsl, framework_group, embed_phase if ref.is_a?(StructCore::Specfile::Target::LocalFrameworkReference)
 					@local_lib_ref_component.process ref, target_dsl, framework_group if ref.is_a?(StructCore::Specfile::Target::LocalLibraryReference)
 					@subproj_ref_component.process ref, target, target_dsl, framework_group if ref.is_a?(StructCore::Specfile::Target::FrameworkReference)
-					@target_ref_component.process ref, target_dsl, dsl if ref.is_a?(StructCore::Specfile::Target::TargetReference)
+					@target_ref_component.process ref, target_dsl, dsl, dsl.frameworks_group, embed_phase if ref.is_a?(StructCore::Specfile::Target::TargetReference)
 				}
 			end
 		end

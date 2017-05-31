@@ -49,11 +49,13 @@ module StructCore
 			end
 
 			class TargetReference
-				def initialize(target_name)
+				def initialize(target_name, settings = {})
 					@target_name = target_name
+					@settings = settings
 				end
 
 				attr_accessor :target_name
+				attr_accessor :settings
 			end
 
 			class SystemFrameworkReference
@@ -113,11 +115,17 @@ module StructCore
 			end
 
 			class RunScript
-				def initialize(script_path)
+				def initialize(script_path, inputs = [], outputs = [], shell = nil)
 					@script_path = script_path
+					@inputs = inputs
+					@outputs = outputs
+					@shell = shell
 				end
 
 				attr_accessor :script_path
+				attr_accessor :inputs
+				attr_accessor :outputs
+				attr_accessor :shell
 			end
 
 			# @param target_name [String]
@@ -205,16 +213,17 @@ module StructCore
 		end
 
 		class Scheme
-			def initialize(name, build_action = nil, test_action = nil, launch_action = nil, archive_action = nil, profile_action = nil)
+			def initialize(name, build_action = nil, test_action = nil, launch_action = nil, archive_action = nil, profile_action = nil, analyze_action = nil)
 				@name = name
 				@build_action = build_action
 				@test_action = test_action
 				@launch_action = launch_action
 				@archive_action = archive_action
 				@profile_action = profile_action
+				@analyze_action = analyze_action
 			end
 
-			attr_accessor :name, :profile_action, :build_action, :test_action, :launch_action, :archive_action
+			attr_accessor :name, :profile_action, :build_action, :test_action, :launch_action, :archive_action, :analyze_action
 
 			class BuildAction
 				def initialize(targets = [], parallel = false, build_implicit = false)
@@ -281,6 +290,14 @@ module StructCore
 				end
 
 				attr_accessor :inherit_environment, :target_name, :build_configuration
+			end
+
+			class AnalyzeAction
+				def initialize(build_configuration = nil)
+					@build_configuration = build_configuration
+				end
+
+				attr_accessor :build_configuration
 			end
 		end
 

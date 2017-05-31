@@ -13,7 +13,6 @@ module StructCore
 		GIT_CONTENT_REPOSITORY_BASE = 'https://raw.githubusercontent.com/lyptt/struct/master'.freeze
 
 		# There's not much sense refactoring this to be tiny methods.
-		# rubocop:disable Metrics/AbcSize
 		# rubocop:disable Metrics/PerceivedComplexity
 		# rubocop:disable Metrics/MethodLength
 		def self.run
@@ -67,7 +66,6 @@ module StructCore
 
 			print changelog, local_gem_version
 		end
-		# rubocop:enable Metrics/AbcSize
 		# rubocop:enable Metrics/PerceivedComplexity
 		# rubocop:enable Metrics/MethodLength
 

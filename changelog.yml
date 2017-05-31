@@ -138,3 +138,12 @@ versions:
     'Release' in your project configuration.
   2.1.1:
   - Fixed migration issues with Spec 2.0.0 and 2.1.0
+  2.2.0:
+  - Spec 2.2.0 is here! Support for linking and embedding framework targets to an
+    application target within the same project has been added. Also, inputs and
+    outputs can now be specified for target scripts, and the analyze phase in a
+    scheme can now be defined.
+  - tvOS is now supported
+  - Shared source files between targets are now supported
+  - An issue where the product file extension was not correctly defined for certain
+    product types has been fixed

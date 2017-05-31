@@ -12,11 +12,11 @@ module StructCore
 				@source_component = TargetSourceComponent.new(@structure, @working_directory)
 			end
 
-			def process(target, target_dsl = nil, dsl = nil)
+			def process(target, target_dsl = nil, dsl = nil, sources_cache = nil)
 				output = []
 
 				output = process_xc_sources target, target_dsl if structure == :spec && !target_dsl.nil?
-				output = process_spec_sources target, target_dsl, dsl if structure == :xcodeproj && !target_dsl.nil? && !dsl.nil?
+				output = process_spec_sources target, target_dsl, dsl, sources_cache if structure == :xcodeproj && !target_dsl.nil? && !dsl.nil?
 
 				output
 			end
@@ -53,7 +53,7 @@ module StructCore
 			# @param target [StructCore::Specfile::Target]
 			# @param target_dsl [Xcodeproj::Project::Object::PBXNativeTarget]
 			# @param dsl [Xcodeproj::Project]
-			def process_spec_sources(target, target_dsl, dsl)
+			def process_spec_sources(target, target_dsl, dsl, sources_cache)
 				all_source_files = glob_sources(target).reject { |file|
 					target.file_excludes.any? { |exclude|
 						File.fnmatch(exclude, file.slice(@working_directory.length + 1..-1), File::FNM_PATHNAME | File::FNM_EXTGLOB)
@@ -77,7 +77,7 @@ module StructCore
 						source_group = create_group source_group, group_components.drop(1)
 					end
 
-					file_dsl = @source_component.process file, target_dsl, source_group
+					file_dsl = @source_component.process file, target_dsl, source_group, sources_cache
 					flags_component.process file_dsl if file_dsl.is_a?(Xcodeproj::Project::Object::PBXBuildFile)
 				}
 			end

@@ -20,7 +20,7 @@ module StructCore
 
 			# @param target [StructCore::Specfile::Target]
 			def process_spec_target(target)
-				XC_PRODUCT_TYPE_UTI_INV[target.type]
+				target.type
 			end
 		end
 	end
