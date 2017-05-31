@@ -3,6 +3,20 @@ require 'fastlane'
 
 RSpec.describe StructCore::SpecProcessor do
 	describe '#process' do
+		it 'can write a working project with shared source files' do
+			next if should_stub_tests_on_incompatible_os
+			destination = Dir.mktmpdir
+			copy_support_files File.join(File.dirname(__FILE__), 'support_files', 'shared_source'), destination
+
+			expect { StructCore::SpecProcessor.new(File.join(destination, 'project.yml')).process }.to_not raise_error
+
+			project_file = File.join destination, 'project.xcodeproj'
+			Fastlane.load_actions
+			Dir.chdir(File.join(File.dirname(__FILE__), 'support_files')) {
+				expect { Fastlane::LaneManager.cruise_lane(nil, 'build', {:project => project_file}, {}) }.to_not raise_error
+			}
+		end
+
 		it 'can write a working project with generation hooks' do
 			next if should_stub_tests_on_incompatible_os
 			destination = Dir.mktmpdir

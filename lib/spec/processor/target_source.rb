@@ -34,7 +34,9 @@ module StructCore
 
 				return add_source_reference(file, target_dsl) if file.end_with?('.framework', '.a')
 
-				native_file = group_dsl.new_file File.basename(file)
+				native_file = target_dsl.project.reference_for_path source
+				native_file = group_dsl.new_file File.basename(file) if native_file.nil?
+
 				build_file = nil
 				if file.end_with? '.swift', '.m', '.mm'
 					target_dsl.source_build_phase.files_references << native_file

@@ -1,0 +1,26 @@
+---
+version: 2.2.0
+configurations:
+  debug:
+  release:
+targets:
+  My app:
+    type: ":application"
+    platform: ios
+    sources:
+    - sources
+    configuration:
+      INFOPLIST_FILE: Info.plist
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: PLATFORM_IOS
+    references:
+    - 'sdkroot:UIKit.framework'
+  My app-macOS:
+    type: ":application"
+    platform: mac
+    sources:
+    - sources
+    configuration:
+      INFOPLIST_FILE: Info-Mac.plist
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: PLATFORM_MAC
+    references:
+    - 'sdkroot:AppKit.framework'
