@@ -19,10 +19,10 @@ module StructCore
 				@scripts_component = TargetScriptsComponent.new(@structure, @working_directory)
 			end
 
-			def process(target, target_dsl = nil, dsl = nil)
+			def process(target, target_dsl = nil, dsl = nil, sources_cache = nil)
 				output = nil
 				output = process_xc_target target, target_dsl if structure == :spec && !target_dsl.nil?
-				output = process_spec_target target, target_dsl, dsl if structure == :xcodeproj && !target_dsl.nil? && !dsl.nil?
+				output = process_spec_target target, target_dsl, dsl, sources_cache if structure == :xcodeproj && !target_dsl.nil? && !dsl.nil?
 
 				output
 			end
@@ -40,9 +40,9 @@ module StructCore
 			# @param target [StructCore::Specfile::Target]
 			# @param target_dsl [Xcodeproj::Project::PBXNativeTarget]
 			# @param dsl [Xcodeproj::Project]
-			def process_spec_target(target, target_dsl, dsl)
+			def process_spec_target(target, target_dsl, dsl, sources_cache = nil)
 				@configurations_component.process target, target_dsl, dsl
-				@sources_component.process target, target_dsl, dsl
+				@sources_component.process target, target_dsl, dsl, sources_cache
 				@resources_component.process target, target_dsl, dsl
 				@references_component.process target, target_dsl, dsl
 				@scripts_component.process target, target_dsl, dsl

@@ -4,6 +4,7 @@ require_relative 'targets'
 require_relative 'variants'
 require_relative 'schemes'
 require_relative '../../cocoapods/pod_assistant'
+require_relative 'target_sources_cache'
 require 'paint'
 
 module StructCore
@@ -65,13 +66,15 @@ module StructCore
 					name, proj = proj_data
 					puts Paint["Processing project '#{name}'..."]
 
+					sources_cache = TargetSourcesCache.new
+
 					StructCore::PodAssistant.apply_pod_configuration proj, working_directory
 
 					dsl = Xcodeproj::Project.new File.join(working_directory, "#{name}.xcodeproj")
 					dsl.root_object.attributes['Struct.Version'] = version.to_s
 					dsl.build_configurations.clear
 					@configurations_component.process proj, dsl
-					@targets_component.process proj, dsl
+					@targets_component.process proj, dsl, sources_cache
 
 					schemes.unshift(*@schemes_component.process(project, dsl))
 					ProcessorOutput.new(dsl, File.join(working_directory, "#{name}.xcodeproj"))

@@ -10,6 +10,7 @@ module StructCore
 			def initialize(structure, working_directory)
 				super(structure, working_directory)
 				@type_component = TargetTypeComponent.new(@structure, @working_directory)
+				@platform_component = TargetPlatformComponent.new(@structure, @working_directory)
 			end
 
 			def process(target, dsl = nil)
@@ -63,6 +64,24 @@ module StructCore
 				# Build phases
 				native_target.build_phases << dsl.new(Xcodeproj::Project::Object::PBXSourcesBuildPhase)
 				native_target.build_phases << dsl.new(Xcodeproj::Project::Object::PBXFrameworksBuildPhase)
+
+				xc_platform_name = @platform_component.process(target).to_s
+
+				# Monkeypatch Xcodeproj's broken implementations of methods
+				native_target.define_singleton_method(:platform_name) do
+					case xc_platform_name
+					when 'ios'
+						:ios
+					when 'mac'
+						:osx
+					when 'tv'
+						:tvos
+					when 'watch'
+						:watchos
+					else
+						raise 'Invalid platform found'
+					end
+				end
 
 				native_target
 			end

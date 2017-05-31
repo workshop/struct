@@ -1,15 +1,20 @@
 require_relative 'processor_component'
+require_relative 'target_sources_cache'
 
 module StructCore
 	module Processor
 		class TargetSourceComponent
 			include ProcessorComponent
 
-			def process(source, target_dsl = nil, group_dsl = nil)
+			def initialize(structure, working_directory)
+				super(structure, working_directory)
+			end
+
+			def process(source, target_dsl = nil, group_dsl = nil, sources_cache = nil)
 				output = nil
 
 				output = process_xc_source source if structure == :spec
-				output = process_spec_source source, target_dsl, group_dsl if structure == :xcodeproj && !target_dsl.nil? && !group_dsl.nil?
+				output = process_spec_source source, target_dsl, group_dsl, sources_cache || TargetSourcesCache.new if structure == :xcodeproj && !target_dsl.nil? && !group_dsl.nil?
 
 				output
 			end
@@ -25,7 +30,7 @@ module StructCore
 			# @param source [String]
 			# @param target_dsl [Xcodeproj::Project::Object::PBXNativeTarget]
 			# @param group_dsl [Xcodeproj::Project::Object::PBXGroup]
-			def process_spec_source(source, target_dsl, group_dsl)
+			def process_spec_source(source, target_dsl, group_dsl, sources_cache)
 				file = source.sub(@working_directory, '')
 				file[0] = '' if file.start_with? '/'
 
@@ -33,9 +38,7 @@ module StructCore
 				rel_file[0] = '' if rel_file.start_with? '/'
 
 				return add_source_reference(file, target_dsl) if file.end_with?('.framework', '.a')
-
-				native_file = target_dsl.project.reference_for_path source
-				native_file = group_dsl.new_file File.basename(file) if native_file.nil?
+				native_file = sources_cache.ref source, file, group_dsl
 
 				build_file = nil
 				if file.end_with? '.swift', '.m', '.mm'
