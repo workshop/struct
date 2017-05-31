@@ -72,7 +72,6 @@ module StructCore
 					dsl.build_configurations.clear
 					@configurations_component.process proj, dsl
 					@targets_component.process proj, dsl
-					dsl.predictabilize_uuids
 
 					schemes.unshift(*@schemes_component.process(project, dsl))
 					ProcessorOutput.new(dsl, File.join(working_directory, "#{name}.xcodeproj"))

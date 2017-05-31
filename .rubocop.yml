@@ -121,9 +121,9 @@ Lint/Debugger:
 Style/MethodDefParentheses:
   Enabled: false
 
-# We'll try to reduce this over time
+# AbcSize seems broken, it actively punishes you for using Ruby's conventions.
 Metrics/AbcSize:
-  Max: 38
+  Enabled: false
 
 # We'll try to reduce this over time
 Metrics/CyclomaticComplexity:

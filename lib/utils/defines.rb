@@ -45,4 +45,23 @@ module StructCore
 		'Debug' => :debug,
 		'Release' => :release
 	}.freeze
+	XC_PRODUCT_UTI_EXTENSIONS = {
+		'com.apple.product-type.application' => 'app',
+		'com.apple.product-type.framework' => 'framework',
+		'com.apple.product-type.library.dynamic' => 'dylib',
+		'com.apple.product-type.library.static' => 'a',
+		'com.apple.product-type.bundle' => 'bundle',
+		'com.apple.product-type.bundle.ocunit-test' => 'octest',
+		'com.apple.product-type.bundle.unit-test' => 'xctest',
+		'com.apple.product-type.bundle.ui-testing' => 'xctest',
+		'com.apple.product-type.app_extension' => 'appex',
+		'com.apple.product-type.watchkit2-extension' => 'appex',
+		'com.apple.product-type.application.watchapp2' => 'app'
+	}.freeze
+	XC_PLATFORM_CORE_SYSTEM_FRAMEWORK_MAP = {
+		mac: 'Cocoa',
+		ios: 'Foundation',
+		watch: 'Foundation',
+		tv: 'Foundation'
+	}.freeze
 end

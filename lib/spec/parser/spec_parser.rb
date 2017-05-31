@@ -34,7 +34,6 @@ module StructCore
 
 		# There's not much sense refactoring this to be tiny methods.
 		# rubocop:disable Metrics/PerceivedComplexity
-		# rubocop:disable Metrics/AbcSize
 		# @param path [String]
 		def parse(path)
 			register_defaults if @parsers.empty?
@@ -72,6 +71,5 @@ module StructCore
 			parser.parse(spec_version, spec_hash, filename)
 		end
 		# rubocop:enable Metrics/PerceivedComplexity
-		# rubocop:enable Metrics/AbcSize
 	end
 end
