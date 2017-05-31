@@ -65,22 +65,11 @@ module StructCore
 				native_target.build_phases << dsl.new(Xcodeproj::Project::Object::PBXSourcesBuildPhase)
 				native_target.build_phases << dsl.new(Xcodeproj::Project::Object::PBXFrameworksBuildPhase)
 
-				xc_platform_name = @platform_component.process(target).to_s
+				xc_platform_name = @platform_component.process(target)
 
 				# Monkeypatch Xcodeproj's broken implementations of methods
 				native_target.define_singleton_method(:platform_name) do
-					case xc_platform_name
-					when 'ios'
-						:ios
-					when 'mac'
-						:osx
-					when 'tv'
-						:tvos
-					when 'watch'
-						:watchos
-					else
-						raise 'Invalid platform found'
-					end
+					xc_platform_name
 				end
 
 				native_target
