@@ -177,7 +177,7 @@ module StructCore
 			attr_writer :name
 
 			def name
-				config = @configurations.find { |c|
+				config = (@configurations || []).find { |c|
 					c.settings.key? 'PRODUCT_NAME'
 				}
 
