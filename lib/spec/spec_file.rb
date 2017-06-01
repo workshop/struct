@@ -174,9 +174,7 @@ module StructCore
 			attr_accessor :prebuild_run_scripts
 			attr_accessor :postbuild_run_scripts
 
-			def name=(n)
-				@name = n
-			end
+			attr_writer :name
 
 			def name
 				config = @configurations.find { |c|
