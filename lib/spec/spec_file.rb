@@ -37,7 +37,7 @@ module StructCore
 			class Configuration
 				def initialize(name, settings = {}, profiles = [], source = nil)
 					@name = name
-					@settings = settings
+					@settings = settings || {}
 					@profiles = profiles || []
 					@source = source
 				end
@@ -164,7 +164,6 @@ module StructCore
 				@prebuild_run_scripts = prebuild_run_scripts || []
 			end
 
-			attr_accessor :name
 			attr_accessor :type
 			attr_accessor :source_dir
 			attr_accessor :configurations
@@ -174,6 +173,20 @@ module StructCore
 			attr_accessor :file_excludes
 			attr_accessor :prebuild_run_scripts
 			attr_accessor :postbuild_run_scripts
+
+			def name=(n)
+				@name = n
+			end
+
+			def name
+				config = @configurations.find { |c|
+					c.settings.key? 'PRODUCT_NAME'
+				}
+
+				return @name if config.nil?
+				product_name = config.settings['PRODUCT_NAME']
+				product_name || @name
+			end
 
 			def run_scripts=(s)
 				@postbuild_run_scripts = s
