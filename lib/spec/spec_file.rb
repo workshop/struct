@@ -178,7 +178,7 @@ module StructCore
 
 			def name
 				config = (@configurations || []).find { |c|
-					c.settings.key? 'PRODUCT_NAME'
+					(c.settings || {}).key? 'PRODUCT_NAME'
 				}
 
 				return @name if config.nil?
