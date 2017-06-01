@@ -147,3 +147,5 @@ versions:
   - Shared source files between targets are now supported
   - An issue where the product file extension was not correctly defined for certain
     product types has been fixed
+  2.2.1:
+  - Added support for overriding target names with the PRODUCT_NAME build setting
