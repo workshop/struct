@@ -1,5 +1,5 @@
 ---
-latest: 2.1.1
+latest: 2.2.0
 versions:
   0.1.4:
   - Added parse command to easily see spec parsing output
@@ -140,9 +140,9 @@ versions:
   - Fixed migration issues with Spec 2.0.0 and 2.1.0
   2.2.0:
   - Spec 2.2.0 is here! Support for linking and embedding framework targets to an
-    application target within the same project has been added. Also, inputs and
-    outputs can now be specified for target scripts, and the analyze phase in a
-    scheme can now be defined.
+    application target within the same project has been added. Also, inputs and outputs
+    can now be specified for target scripts, and the analyze phase in a scheme can
+    now be defined.
   - tvOS is now supported
   - Shared source files between targets are now supported
   - An issue where the product file extension was not correctly defined for certain
