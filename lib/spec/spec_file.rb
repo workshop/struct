@@ -164,6 +164,7 @@ module StructCore
 				@prebuild_run_scripts = prebuild_run_scripts || []
 			end
 
+			attr_accessor :name
 			attr_accessor :type
 			attr_accessor :source_dir
 			attr_accessor :configurations
@@ -174,9 +175,7 @@ module StructCore
 			attr_accessor :prebuild_run_scripts
 			attr_accessor :postbuild_run_scripts
 
-			attr_writer :name
-
-			def name
+			def product_name
 				config = (@configurations || []).find { |c|
 					(c.settings || {}).key? 'PRODUCT_NAME'
 				}
