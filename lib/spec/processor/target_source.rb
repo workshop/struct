@@ -41,7 +41,7 @@ module StructCore
 				native_file = sources_cache.ref source, file, group_dsl
 
 				build_file = nil
-				if file.end_with? '.swift', '.m', '.mm'
+				if file.end_with? '.swift', '.m', '.mm', '.c', '.cpp', '.cxx'
 					target_dsl.source_build_phase.files_references << native_file
 					build_file = target_dsl.add_file_references([native_file]).first
 				elsif target_dsl.product_reference.path.end_with?('.framework') && file.end_with?('.h')
