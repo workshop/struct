@@ -24,11 +24,15 @@ module StructCore
 				subproj_group = target_dsl.project.frameworks_group.groups.find { |g| g.display_name == '$subproj' }
 				subproj_group = target_dsl.project.frameworks_group.new_group '$subproj', nil, '<group>' if subproj_group.nil?
 
-				subproj = subproj_group.new_file ref.project_path
+				subproj = subproj_group.new_file File.realpath(ref.project_path)
 				remote_project = Xcodeproj::Project.open ref.project_path
 
-				ref.settings['frameworks'].each { |f_opts|
+				(ref.settings['frameworks'] || []).each { |f_opts|
 					add_remote_framework remote_project, subproj, target, group_dsl, target_dsl, f_opts, ref
+				}
+
+				(ref.settings['libraries'] || []).each { |f_opts|
+					add_remote_library remote_project, subproj, target, group_dsl, target_dsl, f_opts, ref
 				}
 			end
 
@@ -65,6 +69,30 @@ module StructCore
 					framework_build_file = embed_phase.add_file_reference framework
 					framework_build_file.settings = { 'ATTRIBUTES' => attributes }
 				end
+
+				target_dsl.frameworks_build_phase.add_file_reference framework
+			end
+
+			def find_remote_lib_target(remote_project, target, requestedlib)
+				remote_project.targets.select { |t|
+					next nil if target.configurations.empty?
+					profile_name = nil
+					profile_name = "platform:#{t.platform_name}" unless t.platform_name.nil?
+					libname = (t.product_reference.path || '').sub('lib', '').sub('.a', '')
+					next libname == requestedlib && t.product_type == 'com.apple.product-type.library.static' && target.configurations.first.profiles.include?(profile_name)
+				}.compact.first
+			end
+
+			def add_remote_library(remote_project, subproj, target, group_dsl, target_dsl, f_opts, ref)
+				remote_target = find_remote_lib_target remote_project, target, f_opts
+				return if remote_target.nil?
+
+				framework = subproj.file_reference_proxies.select { |p| p.path == remote_target.product_reference.path }.first
+
+				framework_path = File.expand_path framework.path, File.dirname(ref.project_path)
+				group_dsl.new_file framework_path
+
+				target_dsl.add_dependency remote_target
 
 				target_dsl.frameworks_build_phase.add_file_reference framework
 			end
