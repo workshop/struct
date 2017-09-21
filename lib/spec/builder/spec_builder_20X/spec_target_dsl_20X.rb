@@ -158,12 +158,13 @@ module StructCore
 
 			settings = {}
 			settings['frameworks'] = []
+			settings['targets'] = []
 
 			dsl = StructCore::SpecTargetProjectRefDSL20X.new
 			dsl.reference = StructCore::Specfile::Target::FrameworkReference.new(project, settings)
 			dsl.instance_eval(&block)
 
-			@target.references << dsl.reference unless dsl.reference.nil? || dsl.reference.settings['frameworks'].empty?
+			@target.references << dsl.reference unless dsl.reference.nil? || (dsl.reference.settings['frameworks'].empty? && dsl.reference.settings['targets'].empty?)
 		end
 
 		def include_cocoapods

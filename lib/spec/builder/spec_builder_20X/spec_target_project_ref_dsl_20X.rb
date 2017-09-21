@@ -23,6 +23,15 @@ module StructCore
 			@reference.settings['frameworks'] << target
 		end
 
+		def target(name = nil)
+			unless name.is_a?(String) && !name.empty?
+				@reference = nil
+				return
+			end
+
+			@reference.settings['targets'] << name
+		end
+
 		def respond_to_missing?(_, _)
 			true
 		end
