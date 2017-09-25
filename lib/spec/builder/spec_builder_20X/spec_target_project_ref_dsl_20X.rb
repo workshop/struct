@@ -1,5 +1,3 @@
-require_relative '../../../utils/ruby_2_0_monkeypatches'
-
 module StructCore
 	class SpecTargetProjectRefDSL20X
 		def initialize
