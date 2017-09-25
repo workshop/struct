@@ -1,5 +1,5 @@
 ---
-latest: 2.2.1
+latest: 3.0.0
 versions:
   0.1.4:
   - Added parse command to easily see spec parsing output
@@ -152,15 +152,11 @@ versions:
   3.0.0:
   - Struct 3.0 is here! There's a few breaking changes in this release to allow Struct
     to move forward with the latest improvements in Xcode, Swift and Ruby.
-  - Xcode 9 and Swift 4.0 support has landed! The default Swift version is now 4.0, and
-    Struct now includes additional project settings introduced in Xcode 9.
-
-    All of the default deployment targets now target the latest releases of each
-    supported platform.
-
-    Xcode 8 is unsupported as of Struct 3.0.0, however critical bug fixes will be
-    released for Struct 2 until the next major Xcode release.
+  - |-
+    Xcode 9 and Swift 4.0 support has landed! The default Swift version is now 4.0, and Struct now includes additional project settings introduced in Xcode 9.
+    All of the default deployment targets now target the latest releases of each supported platform.
+    Xcode 8 is unsupported as of Struct 3.0.0, however critical bug fixes will be released for Struct 2 until the next major Xcode release.
   - Ruby 2.2.0 is now the minimum version of Ruby for Struct, following the existing
     strategy of supporting the latest macOS's pre-installed version of Ruby. As such,
-    if you currently use the system Ruby in Sierra, please either upgrade to
-    High Sierra, or use RVM to maintain your current Ruby version.
+    if you currently use the system Ruby in Sierra, please either upgrade to High
+    Sierra, or use RVM to maintain your current Ruby version.
