@@ -1,4 +1,5 @@
 require_relative 'processor_component'
+require_relative '../../utils/xcodeproj_monkeypatches'
 
 module StructCore
 	module Processor
@@ -24,7 +25,7 @@ module StructCore
 				subproj_group = target_dsl.project.frameworks_group.groups.find { |g| g.display_name == '$subproj' }
 				subproj_group = target_dsl.project.frameworks_group.new_group '$subproj', nil, '<group>' if subproj_group.nil?
 
-				subproj = subproj_group.new_file ref.project_path
+				subproj = subproj_group.new_reference ref.project_path, :group
 				remote_project = Xcodeproj::Project.open ref.project_path
 
 				ref.settings['frameworks'].each { |f_opts|

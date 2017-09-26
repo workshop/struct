@@ -6,13 +6,13 @@ configurations:
     - general:debug
     - ios:debug
     overrides:
-      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IPHONEOS_DEPLOYMENT_TARGET: '11.0'
   release:
     profiles:
     - general:release
     - ios:release
     overrides:
-      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IPHONEOS_DEPLOYMENT_TARGET: '11.0'
 targets:
   My app:
     sources: app
@@ -25,7 +25,7 @@ targets:
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       INFOPLIST_FILE: app/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.app
-      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IPHONEOS_DEPLOYMENT_TARGET: '11.0'
   watch-app:
     sources: watch-app
     type: ":application.watchapp2"
@@ -35,7 +35,7 @@ targets:
     configuration:
       INFOPLIST_FILE: watch-app/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.app.watch-app
-      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IPHONEOS_DEPLOYMENT_TARGET: '11.0'
       IBSC_MODULE: watch-extension
   watch-extension:
     sources: watch-extension
