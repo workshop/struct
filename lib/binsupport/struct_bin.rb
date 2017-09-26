@@ -175,7 +175,13 @@ module StructCore
 				quit(-1)
 			end
 
-
+			STDOUT.sync = true
+			IO.popen("./#{script_path} 2>&1") do |pipe|
+				pipe.sync = true
+				while (str = pipe.gets)
+					puts str
+				end
+			end
 		end
 
 		private_class_method :do_parse
