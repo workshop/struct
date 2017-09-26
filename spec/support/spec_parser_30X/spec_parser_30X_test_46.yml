@@ -1,0 +1,16 @@
+---
+version: 3.0.0
+configurations:
+  my-configuration:
+    overrides:
+      OVERRIDE: 1
+    type: debug
+targets:
+  my-framework-target:
+    type: ":framework"
+    sources: 'support_files/def'
+  my-target:
+    type: ":application"
+    sources: 'support_files/abc'
+    references:
+    - my-framework-target

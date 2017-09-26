@@ -1,0 +1,49 @@
+---
+version: 3.0.0
+configurations:
+  debug:
+  release:
+targets:
+  my-target:
+    type: ":application"
+    sources: support_files/abc
+scripts:
+  pre-generate: support_files/pre-generate.rb
+  post-generate: support_files/post-generate.rb
+schemes:
+  my-target:
+    analyze:
+      build_configuration: debug
+    archive:
+      name: MyApp.xcarchive
+      reveal: true
+      build_configuration: debug
+    build:
+      parallel: true
+      build_implicit: true
+      targets:
+        my-target:
+          archiving_enabled: true
+          running_enabled: true
+          profiling_enabled: true
+          testing_enabled: true
+          analyzing_enabled: true
+    test:
+      build_configuration: debug
+      targets:
+      - my-target
+      inherit_launch_arguments: true
+      code_coverage_enabled: true
+      environment:
+        OS_ACTIVITY_MODE: disable
+    launch:
+      simulate_location: true
+      target: my-target
+      arguments: -AppleLanguages (en-GB)
+      environment:
+        OS_ACTIVITY_MODE: disable
+      build_configuration: debug
+    profile:
+      target: my-target
+      inherit_environment: true
+      build_configuration: debug

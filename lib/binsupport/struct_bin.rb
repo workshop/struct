@@ -33,6 +33,9 @@ module StructCore
 					o.on 'm', 'migrate', 'migrates an Xcode project and its files to a specfile (beta)' do
 						return do_migrate o
 					end
+					o.on 'r', 'run-script', 'runs a script from a spec file' do
+						return do_migrate o
+					end
 					o.on '-v', '--version', 'print the version' do
 						puts StructCore::VERSION
 						quit(0)
@@ -42,41 +45,8 @@ module StructCore
 				puts err
 			end
 
-			parse_deprecated_commands
 			puts opts
 			quit(0)
-		end
-
-		# TODO: Remove any deprecated invocations completely in Struct 2.0.0
-		# rubocop:disable Style/RedundantBegin
-		def self.parse_deprecated_commands
-			begin
-				_ = Slop.parse do |o|
-					o.on '--parse' do
-						warn_deprecated_invocation('--parse', 'parse')
-						return do_parse o
-					end
-					o.on '-w', '--watch' do
-						warn_deprecated_invocation('--watch', 'watch')
-						return do_watch o
-					end
-					o.on '-g', '--generate' do
-						warn_deprecated_invocation('--generate', 'generate')
-						return do_generate o
-					end
-					o.on '-m', '--migrate' do
-						warn_deprecated_invocation('--migrate', 'migrate')
-						return do_migrate o
-					end
-				end
-			rescue StandardError => _
-			end
-		end
-		# rubocop:enable Style/RedundantBegin
-
-		# TODO: Remove this in Struct 2.0.0 and remove any deprecated invocations completely
-		def self.warn_deprecated_invocation(command, new_command)
-			puts Paint["Warning: 'struct #{command}' is deprecated. Please switch to using 'struct #{new_command}'. 'struct #{command}' will be removed in Struct 2.0.0", :red]
 		end
 
 		def self.do_parse(_)
@@ -116,7 +86,7 @@ module StructCore
 		end
 
 		def self.do_generate(_)
-			args = ARGV.select { |item| !%w(-g --generate g generate).include? item }
+			args = ARGV.select { |item| !%w(g generate).include? item }
 			options = args.select { |item| item.start_with? '--' }
 			selected_variants = args.select { |item| !item.start_with? '--' }
 
@@ -143,7 +113,7 @@ module StructCore
 		end
 
 		def self.do_migrate(_)
-			args = ARGV.select { |item| item != '-m' && item != '--migrate' }
+			args = ARGV.select { |item| item != 'm' && item != 'migrate' }
 
 			mopts = Slop.parse(args) do |o|
 				o.string '-p', '--path', 'specifies the path of the xcode project to migrate'
@@ -161,6 +131,51 @@ module StructCore
 
 			StructCore::SpecProcessor.new(mopts[:path], mopts.dry_run?).process
 			quit(0)
+		end
+
+		def self.do_run_script
+			args = ARGV.select { |item| !%w(r run-script).include? item }
+			if args.empty?
+				puts Paint['Please provide the name of a script in your spec file', :red]
+				quit(-1)
+			end
+
+			script = args[0]
+
+			directory = Dir.pwd
+
+			project_file = nil
+			project_file = File.join(directory, 'project.yml') if File.exist? File.join(directory, 'project.yml')
+			project_file = File.join(directory, 'project.yaml') if File.exist? File.join(directory, 'project.yaml')
+			project_file = File.join(directory, 'project.json') if File.exist? File.join(directory, 'project.json')
+			project_file = File.join(directory, 'Specfile') if File.exist? File.join(directory, 'Specfile')
+
+			if project_file.nil?
+				puts Paint['Could not find project.yml or project.json in the current directory', :red]
+				quit(-1)
+			end
+
+			begin
+				spec = nil
+				spec = StructCore::Specfile.parse project_file unless project_file.end_with?('Specfile')
+				spec = StructCore::SpecBuilder.build project_file if project_file.end_with?('Specfile')
+			rescue StandardError => err
+				puts Paint[err, :red]
+				quit(-1)
+			end
+
+			unless (spec.scripts || {}).key? script
+				puts Paint['Please provide the name of a script in your spec file', :red]
+				quit(-1)
+			end
+
+			script_path = spec.scripts[script].script_path || ''
+			unless File.exist? File.join(directory, script_path)
+				puts Paint["Script path for script: '#{script}' is invalid", :red]
+				quit(-1)
+			end
+
+
 		end
 
 		private_class_method :do_parse

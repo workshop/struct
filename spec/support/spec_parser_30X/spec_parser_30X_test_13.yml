@@ -1,0 +1,11 @@
+---
+version: 3.0.0
+configurations:
+  my-configuration:
+    overrides:
+      OVERRIDE: 1
+    type: debug
+targets:
+  my-target:
+    type: ":application"
+    sources: 'support_files/spec_parser_30X_test_12/abc'

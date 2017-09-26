@@ -1,0 +1,12 @@
+---
+version: 3.0.0
+configurations:
+  debug:
+    source: support_files/config.xcconfig
+  release:
+    source: support_files/config-release.xcconfig
+targets:
+  My app:
+    type: ":application"
+    sources: 'support_files/abc'
+    configuration: support_files/config.xcconfig

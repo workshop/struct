@@ -1,0 +1,15 @@
+---
+version: 3.0.0
+configurations:
+  my-configuration:
+    overrides:
+      OVERRIDE: 1
+    type: debug
+targets:
+  my-target:
+    type: ":application"
+    sources: 'support_files/abc'
+    references:
+    - location: 'support_files/local_project.xcodeproj'
+      frameworks:
+      - abc

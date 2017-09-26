@@ -318,9 +318,10 @@ module StructCore
 		# @param variants [Array<StructCore::Specfile::Variant>]
 		# @param pre_generate_script [StructCore::Specfile::HookScript, StructCore::Specfile::HookBlockScript]
 		# @param post_generate_script [StructCore::Specfile::HookScript, StructCore::Specfile::HookBlockScript]
+		# @param scripts [Hash<String,StructCore::Specfile::HookScript>]
 		def initialize(
 			version = LATEST_SPEC_VERSION, targets = [], configurations = [], variants = [], base_dir = Dir.pwd,
-			includes_pods = false, pre_generate_script = nil, post_generate_script = nil, schemes = []
+			includes_pods = false, pre_generate_script = nil, post_generate_script = nil, schemes = [], scripts = {}
 		)
 			@version = LATEST_SPEC_VERSION
 			@version = version if version.is_a?(Semantic::Version)
@@ -332,6 +333,7 @@ module StructCore
 			@includes_pods = includes_pods
 			@pre_generate_script = pre_generate_script
 			@post_generate_script = post_generate_script
+			@scripts = scripts
 			@schemes = schemes
 		end
 
@@ -355,5 +357,6 @@ module StructCore
 		attr_accessor :pre_generate_script
 		attr_accessor :post_generate_script
 		attr_accessor :schemes
+		attr_accessor :scripts
 	end
 end
