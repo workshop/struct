@@ -1,5 +1,5 @@
 require 'slop'
-require 'version'
+require_relative '../version'
 require 'paint'
 require 'awesome_print'
 require 'inquirer'

@@ -23,6 +23,11 @@ module StructCore
 		def parse_configurations(spec_hash)
 			valid_configuration_names = []
 			configurations = spec_hash['configurations'].map { |name, config|
+				if config.nil?
+					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
+					next nil
+				end
+
 				unless config.key?('profiles') && config['profiles'].is_a?(Array) && config['profiles'].count > 0
 					puts Paint["Warning: Configuration with name '#{name}' was skipped as it was invalid"]
 					next nil
