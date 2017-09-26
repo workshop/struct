@@ -84,6 +84,13 @@ module StructCore
 			@spec_file.post_generate_script = StructCore::Specfile::HookBlockScript.new block
 		end
 
+		def __spec_script(name = nil, location = nil)
+			return unless name.is_a?(String) && !name.empty? && location.is_a?(String) && !location.empty?
+
+			@spec_file.scripts ||= {}
+			@spec_file.scripts[name] = StructCore::Specfile::HookScript.new location
+		end
+
 		def respond_to_missing?(_, _)
 			true
 		end
@@ -97,6 +104,8 @@ module StructCore
 				send('__spec_variant', *args, &block)
 			elsif @current_scope.nil? && method == :scheme
 				send('__spec_scheme', *args, &block)
+			elsif @current_scope.nil? && method == :script
+				send('__spec_script', *args, &block)
 			else
 				@current_scope.send(method, *args, &block)
 			end

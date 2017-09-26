@@ -482,6 +482,14 @@ RSpec.describe StructCore::SpecBuilder do
 				expect(proj.schemes[0].test_action.code_coverage_enabled).to be_truthy
 				expect(proj.schemes[0].test_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
 			end
+
+			it 'builds a Specfile with other run scripts' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_builder_30X/spec_builder_30X_test_53.rb')
+
+				proj = StructCore::SpecBuilder.build project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.scripts.count).to eq(1)
+			end
 		end
 	end
 end

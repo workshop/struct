@@ -587,6 +587,16 @@ RSpec.describe StructCore::Specparser30X do
 				expect(proj.schemes[0].test_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
 				expect(proj.schemes[0].test_action.build_configuration).to eq('debug')
 			end
+
+			it 'parses a specfile with prebuild & postbuild run scripts' do
+				project_file = File.join(File.dirname(__FILE__), '../support/spec_parser_30X/spec_parser_30X_test_50.yml')
+				test_hash = YAML.load_file project_file
+				parser = StructCore::Specparser30X.new
+
+				proj = parser.parse StructCore::SPEC_VERSION_300, test_hash, project_file
+				expect(proj).to be_an StructCore::Specfile
+				expect(proj.scripts.count).to eq(1)
+			end
 		end
 	end
 end

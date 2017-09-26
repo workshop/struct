@@ -1,0 +1,15 @@
+---
+version: 3.0.0
+configurations:
+  my-configuration:
+    overrides:
+      OVERRIDE: 1
+    type: debug
+scripts:
+  a: support_files/script.sh
+targets:
+  my-target:
+    type: ":application"
+    sources: support_files/abc
+    scripts:
+    - support_files/script.sh
