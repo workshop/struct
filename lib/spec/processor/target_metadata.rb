@@ -46,7 +46,7 @@ module StructCore
 				native_target = dsl.new(Xcodeproj::Project::Object::PBXNativeTarget)
 				dsl.targets << native_target
 				native_target.name = target.name
-				native_target.product_name = target.name
+				native_target.product_name = target.product_name
 				native_target.product_type = product_type
 				native_target.build_configuration_list = dsl.new(Xcodeproj::Project::Object::XCConfigurationList)
 				native_target.build_configuration_list.default_configuration_is_visible = '0'
