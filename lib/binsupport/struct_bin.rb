@@ -34,7 +34,7 @@ module StructCore
 						return do_migrate o
 					end
 					o.on 'r', 'run-script', 'runs a script from a spec file' do
-						return do_migrate o
+						return do_run_script o
 					end
 					o.on '-v', '--version', 'print the version' do
 						puts StructCore::VERSION
@@ -133,7 +133,7 @@ module StructCore
 			quit(0)
 		end
 
-		def self.do_run_script
+		def self.do_run_script(_)
 			args = ARGV.select { |item| !%w(r run-script).include? item }
 			if args.empty?
 				puts Paint['Please provide the name of a script in your spec file', :red]
@@ -170,13 +170,13 @@ module StructCore
 			end
 
 			script_path = spec.scripts[script].script_path || ''
-			unless File.exist? File.join(directory, script_path)
+			unless File.exist? script_path
 				puts Paint["Script path for script: '#{script}' is invalid", :red]
 				quit(-1)
 			end
 
 			STDOUT.sync = true
-			IO.popen("./#{script_path} 2>&1") do |pipe|
+			IO.popen("#{script_path} 2>&1") do |pipe|
 				pipe.sync = true
 				while (str = pipe.gets)
 					puts str
