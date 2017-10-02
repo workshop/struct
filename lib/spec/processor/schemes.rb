@@ -48,7 +48,7 @@ module StructCore
 					scheme_dsl.test_action = @test_action_component.process scheme.test_action, scheme_dsl.test_action, dsl.targets unless scheme.test_action.nil?
 					scheme_dsl.archive_action = @archive_action_component.process scheme.archive_action, scheme_dsl.archive_action unless scheme.archive_action.nil?
 					scheme_dsl.profile_action = @profile_action_component.process scheme.profile_action, scheme_dsl.profile_action, dsl.targets unless scheme.profile_action.nil?
-					scheme_dsl.launch_action = @launch_action_component.process scheme.launch_action, scheme_dsl.launch_action, dsl.targets unless scheme.profile_action.nil?
+					scheme_dsl.launch_action = @launch_action_component.process scheme.launch_action, scheme_dsl.launch_action, dsl.targets unless scheme.launch_action.nil?
 					scheme_dsl.analyze_action = @analyze_action_component.process scheme.analyze_action, scheme_dsl.analyze_action unless scheme.analyze_action.nil?
 
 					process_scheme_configurations scheme_dsl, project

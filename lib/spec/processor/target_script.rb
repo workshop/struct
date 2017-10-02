@@ -34,7 +34,7 @@ module StructCore
 				script_phase.name = script_name
 				script_phase.shell_script = script
 				script_phase.input_paths = script_inputs unless script_inputs.empty?
-				script_phase.output_paths = script_inputs unless script_outputs.empty?
+				script_phase.output_paths = script_outputs unless script_outputs.empty?
 				script_phase.shell_path = script_shell unless script_shell.nil?
 
 				target_dsl.build_phases.unshift script_phase if script_type == :prebuild
