@@ -159,3 +159,8 @@ versions:
     strategy of supporting the latest macOS's pre-installed version of Ruby. As such,
     if you currently use the system Ruby in Sierra, please either upgrade to High
     Sierra, or use RVM to maintain your current Ruby version.
+  3.1.0:
+  - Fixed a bug which would cause launch actions in a scheme to not be generated
+    when an archive action is not also defined in that scheme
+  - Fixed nil dereference issues with configuration blocks
+  - Added support for .c, .cpp and .cxx source files (thanks @steveholt55!)
