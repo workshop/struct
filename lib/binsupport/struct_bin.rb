@@ -42,41 +42,8 @@ module StructCore
 				puts err
 			end
 
-			parse_deprecated_commands
 			puts opts
 			quit(0)
-		end
-
-		# TODO: Remove any deprecated invocations completely in Struct 2.0.0
-		# rubocop:disable Style/RedundantBegin
-		def self.parse_deprecated_commands
-			begin
-				_ = Slop.parse do |o|
-					o.on '--parse' do
-						warn_deprecated_invocation('--parse', 'parse')
-						return do_parse o
-					end
-					o.on '-w', '--watch' do
-						warn_deprecated_invocation('--watch', 'watch')
-						return do_watch o
-					end
-					o.on '-g', '--generate' do
-						warn_deprecated_invocation('--generate', 'generate')
-						return do_generate o
-					end
-					o.on '-m', '--migrate' do
-						warn_deprecated_invocation('--migrate', 'migrate')
-						return do_migrate o
-					end
-				end
-			rescue StandardError => _
-			end
-		end
-		# rubocop:enable Style/RedundantBegin
-
-		# TODO: Remove this in Struct 2.0.0 and remove any deprecated invocations completely
-		def self.warn_deprecated_invocation(command, new_command)
-			puts Paint["Warning: 'struct #{command}' is deprecated. Please switch to using 'struct #{new_command}'. 'struct #{command}' will be removed in Struct 2.0.0", :red]
 		end
 
 		def self.do_parse(_)
