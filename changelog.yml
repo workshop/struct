@@ -166,3 +166,5 @@ versions:
     an archive action is not also defined in that scheme
   - Fixed nil dereference issues with configuration blocks
   - Added support for .c, .cpp and .cxx source files (thanks @steveholt55!)
+  3.1.1:
+  - Fixed a bug which caused incorrect generation of projects inside dot-folders
