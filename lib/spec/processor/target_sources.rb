@@ -34,7 +34,7 @@ module StructCore
 						!file.include?('.bundle/') &&
 						!file.include?('.xcdatamodeld/') &&
 						!file.include?('.framework/') &&
-						!file.end_with?('Info.plist') &&
+						File.basename(file) != 'Info.plist' &&
 						!file.include?('.lproj') &&
 						!file.end_with?('.xib') &&
 						!file.end_with?('.storyboard') &&
@@ -94,7 +94,7 @@ module StructCore
 							!file.include?('.bundle/') &&
 							!file.include?('.xcdatamodeld/') &&
 							!file.include?('.framework/') &&
-							!file.end_with?('Info.plist') &&
+							File.basename(file) != 'Info.plist' &&
 							!file.include?('.lproj') &&
 							File.basename(file).include?('.')
 					}.uniq.select { |f|
