@@ -168,3 +168,6 @@ versions:
   - Added support for .c, .cpp and .cxx source files (thanks @steveholt55!)
   3.1.1:
   - Fixed a bug which caused incorrect generation of projects inside dot-folders
+  3.1.2:
+  - Fixed a bug which prevented plist files ending in 'Info.plist' from being
+    included in projects
