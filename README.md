@@ -7,6 +7,7 @@
 [![Build status](https://api.travis-ci.org/workshop/struct.svg?branch=master)](https://travis-ci.org/workshop/struct)
 [![Coverage Status](https://coveralls.io/repos/github/workshop/struct/badge.svg)](https://coveralls.io/github/workshop/struct)
 [![Chat on Gitter](https://img.shields.io/gitter/room/workshop/Lobby.svg)](https://gitter.im/workshop/Lobby)
+[![Help Contribute to Open Source](https://www.codetriage.com/lyptt/struct/badges/users.svg)](https://www.codetriage.com/lyptt/struct)
 
 `struct` is a tool for iOS and Mac developers to automate the creation and management of Xcode projects.
 
