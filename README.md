@@ -9,6 +9,14 @@
 [![Chat on Gitter](https://img.shields.io/gitter/room/workshop/Lobby.svg)](https://gitter.im/workshop/Lobby)
 [![Help Contribute to Open Source](https://www.codetriage.com/lyptt/struct/badges/users.svg)](https://www.codetriage.com/lyptt/struct)
 
+# Current state of the repository
+
+At present I'm working for a company that enforces a catch-all ownership of any IP created during employment. As such, I'm currently unable to contribute to this repository without causing the ownership of this project to transfer to that company.
+
+Contributions are readily welcomed, and if any developers wish to help maintain this repository then please feel free to get in touch.
+
+# Introduction
+
 `struct` is a tool for iOS and Mac developers to automate the creation and management of Xcode projects.
 
 Ever lamented over your unorganised project files? `struct` solves that by _making your filesystem be your project structure_. How it is on disk is how it is in your project. Simple.
