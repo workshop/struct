@@ -7,6 +7,15 @@
 [![Build status](https://api.travis-ci.org/workshop/struct.svg?branch=master)](https://travis-ci.org/workshop/struct)
 [![Coverage Status](https://coveralls.io/repos/github/workshop/struct/badge.svg)](https://coveralls.io/github/workshop/struct)
 [![Chat on Gitter](https://img.shields.io/gitter/room/workshop/Lobby.svg)](https://gitter.im/workshop/Lobby)
+[![Help Contribute to Open Source](https://www.codetriage.com/lyptt/struct/badges/users.svg)](https://www.codetriage.com/lyptt/struct)
+
+# Current state of the repository
+
+At present I'm working for a company that enforces a catch-all ownership of any IP created during employment. As such, I'm currently unable to contribute to this repository without causing the ownership of this project to transfer to that company.
+
+Contributions are readily welcomed, and if any developers wish to help maintain this repository then please feel free to get in touch.
+
+# Introduction
 
 `struct` is a tool for iOS and Mac developers to automate the creation and management of Xcode projects.
 

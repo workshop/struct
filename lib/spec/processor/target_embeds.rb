@@ -28,7 +28,8 @@ module StructCore
 					}.compact.select { |ref_target|
 						ref_target.configurations[0].profiles.include?('watchkit2-extension') ||
 						ref_target.configurations[0].profiles.include?('application.watchapp2') ||
-						ref_target.configurations[0].profiles.include?('tv-broadcast-extension')
+						ref_target.configurations[0].profiles.include?('tv-broadcast-extension') ||
+						ref_target.configurations[0].profiles.include?('app-extension')
 					}
 
 					@target_map[target.name] = embedded_targets
@@ -77,11 +78,17 @@ module StructCore
 						embed_application_watchapp2 embedded_target, embedded_native_target, embed_watch_content_phase
 						embed_watchkit2_extension embedded_target, embedded_native_target, embed_app_extensions_phase
 						embed_tv_broadcast_extension embedded_target, embedded_native_target, embed_app_extensions_phase
+						embed_application_extension embedded_target, embedded_native_target, embed_app_extensions_phase
 					}
 
 					native_target.build_phases.insert(native_target.build_phases.count, embed_watch_content_phase) unless embed_watch_content_phase.files.empty?
 					native_target.build_phases.insert(native_target.build_phases.count, embed_app_extensions_phase) unless embed_app_extensions_phase.files.empty?
 				}
+			end
+
+			def embed_application_extension(embedded_target, embedded_native_target, embed_watch_content_phase)
+				return unless embedded_target.configurations[0].profiles.include? 'app-extension'
+				embed_watch_content_phase.add_file_reference embedded_native_target.product_reference
 			end
 
 			def embed_application_watchapp2(embedded_target, embedded_native_target, embed_watch_content_phase)

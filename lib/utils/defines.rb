@@ -54,7 +54,7 @@ module StructCore
 		'com.apple.product-type.bundle.ocunit-test' => 'octest',
 		'com.apple.product-type.bundle.unit-test' => 'xctest',
 		'com.apple.product-type.bundle.ui-testing' => 'xctest',
-		'com.apple.product-type.app_extension' => 'appex',
+		'com.apple.product-type.app-extension' => 'appex',
 		'com.apple.product-type.watchkit2-extension' => 'appex',
 		'com.apple.product-type.application.watchapp2' => 'app'
 	}.freeze
