@@ -45,7 +45,7 @@ module StructCore
 					scheme_dsl = Xcodeproj::XCScheme.new
 
 					scheme_dsl.build_action = @build_action_component.process scheme.build_action, scheme_dsl.build_action, dsl.targets unless scheme.build_action.nil?
-					scheme_dsl.test_action = @test_action_component.process scheme.test_action, scheme_dsl.test_action, dsl.targets unless scheme.test_action.nil?
+					scheme_dsl.test_action = @test_action_component.process dsl, scheme.test_action, scheme_dsl.test_action, dsl.targets unless scheme.test_action.nil?
 					scheme_dsl.archive_action = @archive_action_component.process scheme.archive_action, scheme_dsl.archive_action unless scheme.archive_action.nil?
 					scheme_dsl.profile_action = @profile_action_component.process scheme.profile_action, scheme_dsl.profile_action, dsl.targets unless scheme.profile_action.nil?
 					scheme_dsl.launch_action = @launch_action_component.process scheme.launch_action, scheme_dsl.launch_action, dsl.targets unless scheme.launch_action.nil?
