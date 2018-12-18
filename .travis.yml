@@ -6,5 +6,5 @@ env:
 os:
   - linux
   - osx
-osx_image: xcode9
+osx_image: xcode10.1
 before_install: gem update bundler
