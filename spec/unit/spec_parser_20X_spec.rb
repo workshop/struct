@@ -498,7 +498,7 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.schemes[0].profile_action.build_configuration).to be_falsey
 				expect(proj.schemes[0].test_action.build_configuration).to eq('debug')
 				expect(proj.schemes[0].test_action.targets.count).to eq(1)
-				expect(proj.schemes[0].test_action.targets[0]).to eq('my-target')
+				expect(proj.schemes[0].test_action.targets[0]).to eq({"name"=>"my-target"})
 				expect(proj.schemes[0].test_action.inherit_launch_arguments).to be_truthy
 				expect(proj.schemes[0].test_action.code_coverage_enabled).to be_truthy
 				expect(proj.schemes[0].test_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
@@ -542,7 +542,7 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.schemes[0].profile_action.build_configuration).to eq('debug')
 				expect(proj.schemes[0].test_action.build_configuration).to eq('debug')
 				expect(proj.schemes[0].test_action.targets.count).to eq(1)
-				expect(proj.schemes[0].test_action.targets[0]).to eq('my-target')
+				expect(proj.schemes[0].test_action.targets[0]).to eq({"name"=>"my-target"})
 				expect(proj.schemes[0].test_action.inherit_launch_arguments).to be_truthy
 				expect(proj.schemes[0].test_action.code_coverage_enabled).to be_truthy
 				expect(proj.schemes[0].test_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
@@ -622,7 +622,7 @@ RSpec.describe StructCore::Specparser20X do
 				expect(proj.schemes[0].profile_action.build_configuration).to eq('debug')
 				expect(proj.schemes[0].test_action.build_configuration).to eq('debug')
 				expect(proj.schemes[0].test_action.targets.count).to eq(1)
-				expect(proj.schemes[0].test_action.targets[0]).to eq('my-target')
+				expect(proj.schemes[0].test_action.targets[0]).to eq({"name"=>"my-target", "location"=>"some/path"})
 				expect(proj.schemes[0].test_action.inherit_launch_arguments).to be_truthy
 				expect(proj.schemes[0].test_action.code_coverage_enabled).to be_truthy
 				expect(proj.schemes[0].test_action.environment['OS_ACTIVITY_MODE']).to eq('disable')
