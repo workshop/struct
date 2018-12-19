@@ -34,12 +34,12 @@ module StructCore
 						!file.include?('.bundle/') &&
 						!file.include?('.xcdatamodeld/') &&
 						!file.include?('.framework/') &&
-						!file.end_with?('Info.plist') &&
+						File.basename(file) != 'Info.plist' &&
 						!file.include?('.lproj') &&
 						!file.end_with?('.xib') &&
 						!file.end_with?('.storyboard') &&
 						!file.end_with?('.strings') &&
-						file.include?('.')
+						File.basename(file).include?('.')
 				})
 
 				process_xc_build_flags target, target_dsl
@@ -94,9 +94,9 @@ module StructCore
 							!file.include?('.bundle/') &&
 							!file.include?('.xcdatamodeld/') &&
 							!file.include?('.framework/') &&
-							!file.end_with?('Info.plist') &&
+							File.basename(file) != 'Info.plist' &&
 							!file.include?('.lproj') &&
-							file.include?('.')
+							File.basename(file).include?('.')
 					}.uniq.select { |f|
 						source_files_minus_dir.count(f.sub(source_dir, '')).zero?
 					}

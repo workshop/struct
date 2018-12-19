@@ -262,7 +262,15 @@ module StructCore
 			class TestAction
 				def initialize(build_configuration, targets = [], inherit_launch_arguments = false, code_coverage_enabled = false, environment = {})
 					@build_configuration = build_configuration
-					@targets = targets
+					normalized_targets = (targets || []).map do |target|
+						if target.is_a? String
+							{ 'name' => target }
+						else
+							target
+						end
+					end
+
+					@targets = normalized_targets
 					@inherit_launch_arguments = inherit_launch_arguments
 					@code_coverage_enabled = code_coverage_enabled
 					@environment = environment

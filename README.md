@@ -2,11 +2,19 @@
 
 # Struct
 [![Latest Gem Release](https://img.shields.io/gem/v/struct.svg)](https://rubygems.org/gems/struct) 
-[![Git Version](https://img.shields.io/github/tag/workshop/struct.svg)](https://github.com/workshop/struct/releases/tag/3.0.0)
-[![Git Version](https://img.shields.io/github/commits-since/workshop/struct/3.0.0.svg)](https://github.com/workshop/struct/commits/master)
-[![Build status](https://api.travis-ci.org/workshop/struct.svg?branch=master)](https://travis-ci.org/workshop/struct)
-[![Coverage Status](https://coveralls.io/repos/github/workshop/struct/badge.svg)](https://coveralls.io/github/workshop/struct)
-[![Chat on Gitter](https://img.shields.io/gitter/room/workshop/Lobby.svg)](https://gitter.im/workshop/Lobby)
+[![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/3.2.0)
+[![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/3.2.0.svg)](https://github.com/lyptt/struct/commits/master)
+[![Build status](https://api.travis-ci.org/lyptt/struct.svg?branch=master)](https://travis-ci.org/lyptt/struct)
+[![Coverage Status](https://coveralls.io/repos/github/lyptt/struct/badge.svg)](https://coveralls.io/github/lyptt/struct)
+[![Help Contribute to Open Source](https://www.codetriage.com/lyptt/struct/badges/users.svg)](https://www.codetriage.com/lyptt/struct)
+
+# Current state of the repository
+
+At present I'm working for a company that enforces a catch-all ownership of any IP created during employment. As such, I'm currently unable to contribute to this repository without causing the ownership of this project to transfer to that company.
+
+Contributions are readily welcomed, and if any developers wish to help maintain this repository then please feel free to get in touch.
+
+# Introduction
 
 `struct` is a tool for iOS and Mac developers to automate the creation and management of Xcode projects.
 
@@ -55,7 +63,7 @@ _You may need to use sudo when using the system-provided Ruby_
 
 Get started with adding `struct` to your app:
 
-[Create your first spec file](https://github.com/workshop/struct/wiki/Quick-Start)
+[Create your first spec file](https://github.com/lyptt/struct/wiki/Quick-Start)
 
 ## Available Commands
 
@@ -75,4 +83,4 @@ Other commands can be discovered by viewing help:
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/workshop/struct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/lyptt/struct.

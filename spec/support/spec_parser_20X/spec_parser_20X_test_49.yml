@@ -31,7 +31,8 @@ schemes:
     test:
       build_configuration: debug
       targets:
-      - my-target
+      - name: my-target
+        location: some/path
       inherit_launch_arguments: true
       code_coverage_enabled: true
       environment:
