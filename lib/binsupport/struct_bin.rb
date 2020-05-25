@@ -38,8 +38,8 @@ module StructCore
 						quit(0)
 					end
 				end
-			# rescue StandardError => err
-			# 	puts err
+			rescue StandardError => err
+				puts err
 			end
 
 			puts opts
@@ -64,9 +64,9 @@ module StructCore
 				spec = nil
 				spec = StructCore::Specfile.parse project_file unless project_file.end_with?('Specfile')
 				spec = StructCore::SpecBuilder.build project_file if project_file.end_with?('Specfile')
-			# rescue StandardError => err
-			# 	puts Paint[err, :red]
-			# 	quit(-1)
+			rescue StandardError => err
+				puts Paint[err, :red]
+				quit(-1)
 			end
 
 			ap spec, raw: true
@@ -76,8 +76,8 @@ module StructCore
 		def self.do_watch(_)
 			begin
 				StructCore::Watcher.watch(Dir.pwd)
-			# rescue SystemExit, Interrupt
-			# 	quit(0)
+			rescue SystemExit, Interrupt
+				quit(0)
 			end
 			quit(0)
 		end
@@ -101,9 +101,9 @@ module StructCore
 
 			begin
 				StructCore::SpecProcessor.new(project_file, options.include?('--dry-run'), selected_variants).process
-			# rescue StandardError => err
-			# 	puts Paint[err, :red]
-			# 	quit(-1)
+			rescue StandardError => err
+				puts Paint[err, :red]
+				quit(-1)
 			end
 
 			quit(0)

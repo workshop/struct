@@ -34,9 +34,6 @@ module StructCore
 				file = source.sub(@working_directory, '')
 				file = file.slice(1, file.length) if file.start_with? '/'
 
-				rel_file = file.sub(group_dsl.path, '')
-				rel_file = rel_file.slice(1, rel_file.length) if rel_file.start_with? '/'
-
 				return add_source_reference(file, target_dsl) if file.end_with?('.framework', '.a')
 				native_file = sources_cache.ref source, file, group_dsl
 
