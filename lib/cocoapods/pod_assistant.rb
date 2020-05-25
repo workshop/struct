@@ -26,13 +26,18 @@ module StructCore
 
 				check_lock_script_path = File.join(File.dirname(__FILE__), '../../res/run_script_phases/cp_check_pods_manifest.lock.sh')
 				check_lock_script = StructCore::Specfile::Target::RunScript.new(check_lock_script_path)
-				embed_frameworks = StructCore::Specfile::Target::RunScript.new("Pods/Target Support Files/Pods-#{target.name}/Pods-#{target.name}-frameworks.sh")
-				copy_resources = StructCore::Specfile::Target::RunScript.new("Pods/Target Support Files/Pods-#{target.name}/Pods-#{target.name}-resources.sh")
 
 				target.references.push pod_ref
 				target.prebuild_run_scripts << check_lock_script
-				target.postbuild_run_scripts << embed_frameworks
-				target.postbuild_run_scripts << copy_resources
+
+				if File.exist? File.join(project_dir, "Pods/Target Support Files/Pods-#{target.name}/Pods-#{target.name}-frameworks.sh")
+					embed_frameworks = StructCore::Specfile::Target::RunScript.new("Pods/Target Support Files/Pods-#{target.name}/Pods-#{target.name}-frameworks.sh")
+					target.postbuild_run_scripts << embed_frameworks
+				end
+				if File.exist? File.join(project_dir, "Pods/Target Support Files/Pods-#{target.name}/Pods-#{target.name}-resources.sh")
+					copy_resources = StructCore::Specfile::Target::RunScript.new("Pods/Target Support Files/Pods-#{target.name}/Pods-#{target.name}-resources.sh")
+					target.postbuild_run_scripts << copy_resources
+				end
 			}
 		end
 

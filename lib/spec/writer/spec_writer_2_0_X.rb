@@ -247,12 +247,12 @@ module StructCore
 					obj.merge!(ref.settings || {})
 
 					local_path = ref.framework_path.sub(project_directory, '')
-					local_path[0] = '' if local_path.start_with? '/'
+					local_path = local_path.slice(1, local_path.length) if local_path.start_with? '/'
 					obj['location'] = local_path
 				elsif ref.is_a? StructCore::Specfile::Target::LocalLibraryReference
 					obj = {}
 					local_path = ref.library_path.sub(project_directory, '')
-					local_path[0] = '' if local_path.start_with? '/'
+					local_path = local_path.slice(1, local_path.length) if local_path.start_with? '/'
 					obj['location'] = local_path
 				else
 					nil
@@ -273,7 +273,7 @@ module StructCore
 			unless target.prebuild_run_scripts.length == 0
 				run_scripts = target.prebuild_run_scripts.map { |s|
 					local_path = s.script_path.sub(project_directory, '')
-					local_path[0] = '' if local_path.start_with? '/'
+					local_path = local_path.slice(1, local_path.length) if local_path.start_with? '/'
 					local_path
 				}
 
@@ -284,7 +284,7 @@ module StructCore
 			unless target.postbuild_run_scripts.length == 0
 				run_scripts = target.postbuild_run_scripts.map { |s|
 					local_path = s.script_path.sub(project_directory, '')
-					local_path[0] = '' if local_path.start_with? '/'
+					local_path = local_path.slice(1, local_path.length) if local_path.start_with? '/'
 					local_path
 				}
 

@@ -66,6 +66,12 @@ module Xcodeproj
 					FileReferencesFactory.struct__new_reference(self, path, source_tree)
 				end
 			end
+
+			class PBXNativeTarget < AbstractTarget
+				def clear_phases
+					@build_phases = []
+				end
+			end
 		end
 	end
 end

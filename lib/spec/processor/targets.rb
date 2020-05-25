@@ -37,7 +37,6 @@ module StructCore
 					# Pre-create all target DSL objects before they're filled in, as this allows us to resolve target refs
 					target_dsl = @target_metadata_component.process(target, dsl)
 					next nil if target_dsl.nil?
-
 					[target, target_dsl]
 				}.compact.each { |data|
 					target, target_dsl = data

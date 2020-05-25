@@ -11,17 +11,17 @@ configurations:
     # applied, any settings here will be applied on top. This may be useful to provide
     # defaults for code signing for example.
     overrides:
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
     # Instead of overrides, you can also specify the location of an xcconfig
     # file. This will be used to configure the project instead.
     # source: config/debug.xcconfig
   release:
     overrides:
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
   appstore:
     type: release
     overrides:
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
 # Build targets. Currently any kind of target should be supported, however only common
 # types have been tested.
 targets:
@@ -88,7 +88,7 @@ targets:
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       INFOPLIST_FILE: iOSTest/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTest
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
     scripts:
     - script: scripts/sample.sh
       shell: /bin/bash
@@ -107,7 +107,7 @@ targets:
       TEST_HOST: "$(BUILT_PRODUCTS_DIR)/iOSTest.app/iOSTest"
       INFOPLIST_FILE: iOSTestTests/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTestTests
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
   iOSTestUITests:
     sources: iOSTestUITests
     references:
@@ -118,7 +118,7 @@ targets:
       INFOPLIST_FILE: iOSTestUITests/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTestUITests
       TEST_TARGET_NAME: iOSTest
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
 # Project variants allow you to generate multiple xcode projects from one spec file.
 # Each variant will output an equivalent project file, e.g. 'dev.xcodeproj' and 'beta.xcodeproj'.
 #

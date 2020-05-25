@@ -2,17 +2,11 @@
 
 # Struct
 [![Latest Gem Release](https://img.shields.io/gem/v/struct.svg)](https://rubygems.org/gems/struct) 
-[![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/3.2.0)
-[![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/3.2.0.svg)](https://github.com/lyptt/struct/commits/master)
+[![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/3.2.1)
+[![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/3.2.1.svg)](https://github.com/lyptt/struct/commits/master)
 [![Build status](https://api.travis-ci.org/lyptt/struct.svg?branch=master)](https://travis-ci.org/lyptt/struct)
 [![Coverage Status](https://coveralls.io/repos/github/lyptt/struct/badge.svg)](https://coveralls.io/github/lyptt/struct)
 [![Help Contribute to Open Source](https://www.codetriage.com/lyptt/struct/badges/users.svg)](https://www.codetriage.com/lyptt/struct)
-
-# Current state of the repository
-
-At present I'm working for a company that enforces a catch-all ownership of any IP created during employment. As such, I'm currently unable to contribute to this repository without causing the ownership of this project to transfer to that company.
-
-Contributions are readily welcomed, and if any developers wish to help maintain this repository then please feel free to get in touch.
 
 # Introduction
 
@@ -50,7 +44,7 @@ You can find documented examples of the project specification in the examples fo
 
 ## Installation
 
-`struct` requires a minimum of Ruby 2.2.0, which is available in macOS High Sierra.
+`struct` requires a minimum of Ruby 2.6.3, which is available in macOS Catalina.
 You can install a higher version of Ruby with [RVM](https://rvm.io/) on an older macOS version.
 
 Install `struct` from Rubygems:

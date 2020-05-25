@@ -1,5 +1,5 @@
 ---
-version: 1.3.0
+version: 3.0.0
 configurations:
   debug:
     profiles:
@@ -16,5 +16,6 @@ targets:
     sources: sources
     configuration:
       INFOPLIST_FILE: Info.plist
+      LIBRARY_SEARCH_PATHS: "$(PROJECT_DIR)"
     references:
-    - location: library.a
+    - location: libtest.a

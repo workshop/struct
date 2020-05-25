@@ -30,7 +30,7 @@ module StructCore
 				return nil if source.settings.nil? || source.settings['COMPILER_FLAGS'].nil?
 
 				path = source.real_path.to_s.sub(@working_directory, '')
-				path[0] = '' if path.start_with? '/'
+				path = path.slice(1, path.length) if path.start_with? '/'
 
 				StructCore::Specfile::Target::FileOption.new(path, source.settings['COMPILER_FLAGS'])
 			end

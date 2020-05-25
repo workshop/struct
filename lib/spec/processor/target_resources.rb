@@ -66,7 +66,7 @@ module StructCore
 				lproj_variant_files = []
 				lfiles.map { |lfile|
 					new_lfile = lfile.sub(res_dir, '')
-					new_lfile[0] = '' if new_lfile.start_with? '/'
+					new_lfile = new_lfile.slice(1, new_lfile.length) if new_lfile.start_with? '/'
 					next new_lfile
 				}.each { |lfile|
 					lfile_components = lfile.split('/')

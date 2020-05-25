@@ -105,7 +105,7 @@ module StructCore
 
 				# : at the start of the type is shorthand for 'com.apple.product-type.'
 				if type.start_with? ':'
-					type[0] = ''
+					type = type.slice(1, type.length)
 					raw_type = type
 					type = "com.apple.product-type.#{type}"
 				else
@@ -316,7 +316,7 @@ module StructCore
 			type = type.to_s if type.is_a?(Symbol)
 			# : at the start of the type is shorthand for 'com.apple.product-type.'
 			if type.start_with? ':'
-				type[0] = ''
+				type.slice!(0)
 				raw_type = type
 				type = "com.apple.product-type.#{type}"
 			else

@@ -22,7 +22,7 @@ module StructCore
 			# @param source [Xcodeproj::Project::Object::PBXFileReference]
 			def process_xc_source(source)
 				path = source.real_path.to_s.sub(@working_directory, '')
-				path[0] = '' if path.start_with? '/'
+				path = path.slice(1, path.length) if path.start_with? '/'
 
 				path
 			end
@@ -32,10 +32,7 @@ module StructCore
 			# @param group_dsl [Xcodeproj::Project::Object::PBXGroup]
 			def process_spec_source(source, target_dsl, group_dsl, sources_cache)
 				file = source.sub(@working_directory, '')
-				file[0] = '' if file.start_with? '/'
-
-				rel_file = file.sub(group_dsl.path, '')
-				rel_file[0] = '' if rel_file.start_with? '/'
+				file = file.slice(1, file.length) if file.start_with? '/'
 
 				return add_source_reference(file, target_dsl) if file.end_with?('.framework', '.a')
 				native_file = sources_cache.ref source, file, group_dsl
