@@ -7,4 +7,4 @@ os:
   - linux
   - osx
 osx_image: xcode11.1
-before_install: gem update bundler
+before_install: gem uninstall bundler && gem install bundler --version 1.11.2
