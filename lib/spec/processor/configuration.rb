@@ -57,7 +57,7 @@ module StructCore
 
 			def extract_xcconfig_path(base_configuration_reference, project_dir)
 				path = base_configuration_reference.hierarchy_path
-				path[0] = '' if path.start_with? '/'
+				path = path.slice(1, path.length) if path.start_with? '/'
 
 				source_path = File.join(project_dir, path)
 

@@ -1,10 +1,10 @@
 language: ruby
 rvm:
-  - 2.2.0
+  - 2.6.3
 env:
   CI=1
 os:
   - linux
   - osx
-osx_image: xcode9
-before_install: gem update bundler
+osx_image: xcode11.1
+before_install: gem install bundler --version 1.11.2

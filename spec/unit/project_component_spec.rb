@@ -72,7 +72,7 @@ RSpec.describe StructCore::Processor::ProjectComponent do
 
 			it 'uses the provided spec version when version metadata is present in the xcode project' do
 				project = Xcodeproj::Project.new('abc.xcodeproj')
-				project.root_object.attributes = { "Struct.Version" => "1.2.1" }
+				project.root_object.attributes = { "Struct.Version" => "3.0.0" }
 
 				spec = nil
 				expect { spec = @project_component.process(project, []).first }.to_not raise_error
@@ -80,7 +80,7 @@ RSpec.describe StructCore::Processor::ProjectComponent do
 				spec = spec.dsl
 				expect(spec).to be_truthy
 
-				expect(spec.version).to eq(StructCore::SPEC_VERSION_121)
+				expect(spec.version).to eq(StructCore::SPEC_VERSION_300)
 			end
 
 			it 'uses the latest spec version when invalid version metadata is present in the xcode project' do

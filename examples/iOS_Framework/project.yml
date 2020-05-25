@@ -3,10 +3,10 @@ version: 2.2.0
 configurations:
   debug:
     overrides:
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
   release:
     overrides:
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
 targets:
   MyApp:
     sources: App
@@ -19,7 +19,7 @@ targets:
     configuration:
       INFOPLIST_FILE: App/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.App
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
   FrameworkExample:
     sources: FrameworkExample
     platform: ios
@@ -27,7 +27,7 @@ targets:
     configuration:
       INFOPLIST_FILE: FrameworkExample/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.FrameworkExample
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
   FrameworkExampleTests:
     sources: FrameworkExampleTests
     references:
@@ -37,7 +37,7 @@ targets:
     configuration:
       INFOPLIST_FILE: FrameworkExampleTests/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.FrameworkExampleTests
-      IPHONEOS_DEPLOYMENT_TARGET: '9.1'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
       FRAMEWORK_SEARCH_PATHS:
       - $(inherited)
       - $(BUILT_PRODUCTS_DIR)

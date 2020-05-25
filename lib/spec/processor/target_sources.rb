@@ -65,7 +65,7 @@ module StructCore
 				all_source_files.each { |file|
 					source_dir = File.dirname file
 					rel_source_root = source_dir.sub(@working_directory, '')
-					rel_source_root[0] = '' if rel_source_root.start_with? '/'
+					rel_source_root = rel_source_root.slice(1, rel_source_root.length) if rel_source_root.start_with? '/'
 
 					group_components = rel_source_root.split('/')
 					source_dir_component = group_components.first

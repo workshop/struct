@@ -176,3 +176,17 @@ versions:
   3.2.1:
   - Fixed a bug that prevented unit tests in subprojects from being run (thanks to
     raptorxcz for the PR!)
+  4.0.0:
+  - Struct 4.0 is here! There's a few breaking changes in this release to allow Struct
+    to move forward with the latest improvements in Xcode, Swift and Ruby.
+  - Xcode 11 and Swift 5 support has landed! The default Swift version is now 5.2.
+  - All of the default deployment targets now target the latest releases of each supported
+    platform.
+  - Ruby 2.6.3 is now the minimum version of Ruby for Struct, following the existing
+    strategy of supporting the latest macOS's pre-installed version of Ruby. As such,
+    if you currently use the system Ruby in El Capitan, please either upgrade to Catalina,
+    or use RVM to maintain your current Ruby version.
+  - Added support for native watchOS applications
+  - Removed support for 1.X.X spec files. Check out the migration guide on the wiki
+    to move to a newer spec format.
+  - Fixed bugs with CocoaPods integration
