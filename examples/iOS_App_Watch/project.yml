@@ -1,12 +1,12 @@
 ---
-version: 2.1.0
+version: 3.0.0
 configurations:
   debug:
     overrides:
-      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
   release:
     overrides:
-      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
 targets:
   iOSTest:
     sources: iOSTest
@@ -20,7 +20,7 @@ targets:
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       INFOPLIST_FILE: iOSTest/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTest
-      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
   iOSTestWatchApp:
     sources: iOSTestWatchApp
     type: ":application.watchapp2"
@@ -30,7 +30,7 @@ targets:
     configuration:
       INFOPLIST_FILE: iOSTestWatchApp/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTest.iOSTestWatchApp
-      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'
       IBSC_MODULE: iOSTestWatchExtension
   iOSTestWatchExtension:
     sources: iOSTestWatchExtension
@@ -39,4 +39,4 @@ targets:
     configuration:
       INFOPLIST_FILE: iOSTestWatchExtension/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: uk.lyptt.iOSTest.iOSTestWatchApp.iOSTestWatchExtension
-      IPHONEOS_DEPLOYMENT_TARGET: '10.2'
+      IPHONEOS_DEPLOYMENT_TARGET: '13.0'

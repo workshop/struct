@@ -176,3 +176,8 @@ versions:
   3.2.1:
   - Fixed a bug that prevented unit tests in subprojects from being run (thanks to
     raptorxcz for the PR!)
+  4.0.0:
+  - Added support for native watchOS applications
+  - Removed support for 1.X.X spec files. Check out the migration guide on the wiki
+    to move to a newer spec format.
+  - Fixed bugs with CocoaPods integration

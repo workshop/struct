@@ -3,7 +3,7 @@ require_relative '../spec_helper'
 RSpec.describe StructCore::Specfile do
 	describe '#initialize' do
 		it 'creates a Specfile with the expected values' do
-			version = StructCore::SPEC_VERSION_100
+			version = StructCore::SPEC_VERSION_300
 			base_dir = Dir.tmpdir
 			target = StructCore::Specfile::Target.new '', '', '', [], [], [], '', []
 			config = StructCore::Specfile::Configuration.new '', [], {}, 'debug'
@@ -40,7 +40,7 @@ RSpec.describe StructCore::Specfile do
 			fake_writer_result = {}
 			write_arg = '1/2/3.yaml'
 
-			version = StructCore::SPEC_VERSION_100
+			version = StructCore::SPEC_VERSION_300
 			base_dir = Dir.tmpdir
 			target = StructCore::Specfile::Target.new '', '', '', [], [], [], '', []
 			config = StructCore::Specfile::Configuration.new '', [], {}, 'debug'
@@ -55,7 +55,7 @@ RSpec.describe StructCore::Specfile do
 			fake_writer_result = {}
 			write_arg = '1/2/3.yaml'
 
-			version = StructCore::SPEC_VERSION_100
+			version = StructCore::SPEC_VERSION_300
 			base_dir = Dir.tmpdir
 			target = StructCore::Specfile::Target.new '', '', '', [], [], [], '', []
 			config = StructCore::Specfile::Configuration.new '', [], {}, 'debug'

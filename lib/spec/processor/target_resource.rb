@@ -17,7 +17,7 @@ module StructCore
 			# @param resource [Xcodeproj::Project::Object::PBXFileReference]
 			def process_xc_resource(resource)
 				path = resource.real_path.to_s.sub(@working_directory, '')
-				path[0] = '' if path.start_with? '/'
+				path = path.slice(1, path.length) if path.start_with? '/'
 
 				path = path.split(/\/[A-Za-z]*\.lproj/).first
 
