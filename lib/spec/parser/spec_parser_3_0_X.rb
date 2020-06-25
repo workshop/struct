@@ -224,7 +224,7 @@ module StructCore
 					next Specfile::Target::LocalFrameworkReference.new(path, raw_reference) if path.end_with? '.framework'
 					next Specfile::Target::LocalLibraryReference.new(path, raw_reference)
 
-				elsif raw_reference.key?('target') && @spec_version.minor >= 2
+				elsif raw_reference.key?('target')
 					next Specfile::Target::TargetReference.new(raw_reference['target'], raw_reference)
 				else
 					puts Paint["Warning: Invalid reference found for target #{target_name}. Ignoring...", :yellow]
@@ -247,7 +247,7 @@ module StructCore
 					next nil if s.start_with? '/' # Script file should be relative to project
 					next nil unless File.exist? File.join(project_base_dir, s)
 					Specfile::Target::RunScript.new s
-				elsif s.is_a?(Hash) && @spec_version.minor >= 2
+				elsif s.is_a?(Hash)
 					next nil unless s.key?('script')
 					script = s['script']
 					next nil if script.start_with? '/' # Script file should be relative to project
@@ -451,7 +451,7 @@ module StructCore
 					end
 
 					next Specfile::Target::FrameworkReference.new(path, raw_reference)
-				elsif raw_reference.key?('target') && @spec_version.minor >= 2
+				elsif raw_reference.key?('target')
 					next Specfile::Target::TargetReference.new(raw_reference['target'], raw_reference)
 				else
 					puts Paint["Warning: Invalid reference found for target #{target_name}. Ignoring...", :yellow]
@@ -630,7 +630,7 @@ module StructCore
 			reveal = opts['reveal'] if opts.key? 'reveal'
 
 			build_configuration = nil
-			if @spec_version.major == 2 && @spec_version.minor >= 1
+			if @spec_version.major == 2
 				build_configuration = opts['build_configuration'] if opts.key? 'build_configuration'
 			end
 
@@ -655,7 +655,7 @@ module StructCore
 			environment = opts['environment'] if opts.key?('environment') && opts['environment'].is_a?(Hash)
 
 			build_configuration = nil
-			if @spec_version.major == 2 && @spec_version.minor >= 1
+			if @spec_version.major == 2
 				build_configuration = opts['build_configuration'] if opts.key? 'build_configuration'
 			end
 
@@ -674,7 +674,7 @@ module StructCore
 			inherit_environment = opts['inherit_environment'] if opts.key? 'inherit_environment'
 
 			build_configuration = nil
-			if @spec_version.major == 2 && @spec_version.minor >= 1
+			if @spec_version.major == 2
 				build_configuration = opts['build_configuration'] if opts.key? 'build_configuration'
 			end
 
@@ -682,7 +682,7 @@ module StructCore
 		end
 
 		def parse_scheme_analyze_action(opts)
-			return nil if opts.nil? || @spec_version.minor < 2
+			return nil if opts.nil?
 
 			build_configuration = nil
 			build_configuration = opts['build_configuration'] if opts.key? 'build_configuration'
