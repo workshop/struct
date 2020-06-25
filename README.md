@@ -2,8 +2,8 @@
 
 # Struct
 [![Latest Gem Release](https://img.shields.io/gem/v/struct.svg)](https://rubygems.org/gems/struct) 
-[![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/4.0.0)
-[![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/4.0.0.svg)](https://github.com/lyptt/struct/commits/master)
+[![Git Version](https://img.shields.io/github/tag/lyptt/struct.svg)](https://github.com/lyptt/struct/releases/tag/4.0.1)
+[![Git Version](https://img.shields.io/github/commits-since/lyptt/struct/4.0.1.svg)](https://github.com/lyptt/struct/commits/master)
 [![Build status](https://api.travis-ci.org/lyptt/struct.svg?branch=master)](https://travis-ci.org/lyptt/struct)
 [![Coverage Status](https://coveralls.io/repos/github/lyptt/struct/badge.svg)](https://coveralls.io/github/lyptt/struct)
 [![Help Contribute to Open Source](https://www.codetriage.com/lyptt/struct/badges/users.svg)](https://www.codetriage.com/lyptt/struct)
