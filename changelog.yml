@@ -190,3 +190,5 @@ versions:
   - Removed support for 1.X.X spec files. Check out the migration guide on the wiki
     to move to a newer spec format.
   - Fixed bugs with CocoaPods integration
+  4.0.1:
+  - Fixed parsing bugs with the latest spec version
